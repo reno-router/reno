@@ -23,6 +23,6 @@ const logRequest = (req: ServerRequest) => {
 
   for await (const req of serve(BINDING)) {
     logRequest(req); // TODO: logger with standard interface, error logging etc.
-    app(req); // TODO: awaitable?!
+    await app(req);
   }
 })();
