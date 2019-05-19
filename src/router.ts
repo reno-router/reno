@@ -5,9 +5,11 @@ import {
 
 export type RouteHandler = (
   req: ServerRequest,
+  queryParams: URLSearchParams,
   ...params: string[]
 ) => Response | Promise<Response>;
-export class RouteMap extends Map<RegExp, RouteHandler> {}
+
+export class RouteMap extends Map<RegExp, RouteHandler> { }
 
 const encoder = new TextEncoder();
 
@@ -22,13 +24,22 @@ export const createRouter = (routes: RouteMap) => async (
   req: ServerRequest,
 ) => {
   for (let [path, handler] of routes) {
-    const matches = req.url.match(path);
+    const url = new URL(req.url, 'https://');
+    const matches = url.pathname.match(path);
+
     if (matches) {
-      return await handler(req, ...matches.slice(1));
+      return await handler(
+        req,
+        url.searchParams,
+        ...matches.slice(1)
+      );
     }
   }
 
   return {
+    headers: new Headers({
+      'Content-Type': 'text/plain',
+    }),
     status: 404,
     body: encoder.encode('Not found! :('),
   };
