@@ -1,11 +1,21 @@
 import { ServerRequest, Response } from 'https://deno.land/std@v0.5/http/server.ts';
 
-const encoder = new TextEncoder();
-
 type RouteHandler = (req: ServerRequest) => Response;
 
-const home = () => ({
-  body: encoder.encode('Hello world!'), // TODO: streamable
+const encoder = new TextEncoder();
+
+const json = <TResponseBody = {}>(body: TResponseBody) => ({
+  headers: new Headers({
+    'Content-Type': 'application/json',
+  }),
+  body: encoder.encode(
+    JSON.stringify(body),
+  ),
+});
+
+const home = () => json({
+  foo: 'bar',
+  isLol: true,
 });
 
 const routes = new Map<string, RouteHandler>([
