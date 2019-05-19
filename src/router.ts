@@ -9,7 +9,7 @@ export type RouteHandler = (
   ...params: string[]
 ) => Response | Promise<Response>;
 
-export class RouteMap extends Map<RegExp, RouteHandler> { }
+export class RouteMap extends Map<RegExp, RouteHandler> {}
 
 const encoder = new TextEncoder();
 
@@ -28,11 +28,7 @@ export const createRouter = (routes: RouteMap) => async (
     const matches = url.pathname.match(path);
 
     if (matches) {
-      return await handler(
-        req,
-        url.searchParams,
-        ...matches.slice(1)
-      );
+      return await handler(req, url.searchParams, ...matches.slice(1));
     }
   }
 
