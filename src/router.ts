@@ -1,6 +1,6 @@
 import {
   ServerRequest,
-  Response
+  Response,
 } from 'https://deno.land/std@v0.5/http/server.ts';
 
 export type RouteHandler = (
@@ -13,13 +13,13 @@ const encoder = new TextEncoder();
 
 export const json = <TResponseBody = {}>(body: TResponseBody) => ({
   headers: new Headers({
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   }),
-  body: encoder.encode(JSON.stringify(body))
+  body: encoder.encode(JSON.stringify(body)),
 });
 
 export const createRouter = (routes: RouteMap) => async (
-  req: ServerRequest
+  req: ServerRequest,
 ) => {
   for (let [path, handler] of routes) {
     const matches = req.url.match(path);
@@ -30,6 +30,6 @@ export const createRouter = (routes: RouteMap) => async (
 
   return {
     status: 404,
-    body: encoder.encode('Not found! :(')
+    body: encoder.encode('Not found! :('),
   };
 };

@@ -4,10 +4,10 @@ import { apiRouter } from './api/routes.ts';
 const home = () =>
   json({
     foo: 'bar',
-    isLol: true
+    isLol: true,
   });
 
 export const routes = new RouteMap([
   [/^\/$/, home],
-  [/^\/api\/.*$/, apiRouter]
+  [/^\/api\/.*$/, apiRouter],
 ]);
