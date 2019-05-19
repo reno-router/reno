@@ -1,6 +1,6 @@
 import { ServerRequest, Response } from 'https://deno.land/std@v0.5/http/server.ts';
 
-export type RouteHandler = (req: ServerRequest) => Response | Promise<Response>;
+export type RouteHandler = (req: ServerRequest, ...params: string[]) => Response | Promise<Response>;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
 const encoder = new TextEncoder();
@@ -17,8 +17,9 @@ export const json = <TResponseBody = {}>(body: TResponseBody) => ({
 export const createRouter = (routes: RouteMap) =>
   async (req: ServerRequest) => {
     for (let [path, handler] of routes) {
-      if (req.url.match(path)) {
-        return await handler(req);
+      const matches = req.url.match(path);
+      if (matches) {
+        return await handler(req, ...matches.slice(1));
       }
     }
 
