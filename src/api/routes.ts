@@ -3,7 +3,7 @@ import { createRouter, RouteMap, json } from '../router.ts';
 
 const ronSwansonQuote = async (req: ServerRequest, quotesCount = '1') => {
   const res = await fetch(
-    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
+    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
   );
   const quotes = await res.json();
 
@@ -11,7 +11,7 @@ const ronSwansonQuote = async (req: ServerRequest, quotesCount = '1') => {
 };
 
 const routes = new RouteMap([
-  [/\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote]
+  [/\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote],
 ]);
 
 export const apiRouter = createRouter(routes);

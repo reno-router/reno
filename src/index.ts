@@ -1,6 +1,6 @@
 import {
   serve,
-  ServerRequest
+  ServerRequest,
 } from 'https://deno.land/std@v0.5/http/server.ts';
 import app from './app.ts';
 
@@ -14,7 +14,7 @@ const formatDate = (date: Date) =>
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    timeZoneName: 'short'
+    timeZoneName: 'short',
   });
 
 const logRequest = (req: ServerRequest) => {
