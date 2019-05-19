@@ -1,7 +1,11 @@
 import { ServerRequest } from 'https://deno.land/std@v0.5/http/server.ts';
 import { createRouter, RouteMap, json } from '../router.ts';
 
-const ronSwansonQuote = async (req: ServerRequest, queryParams: URLSearchParams, quotesCount = '1') => {
+const ronSwansonQuote = async (
+  req: ServerRequest,
+  queryParams: URLSearchParams,
+  quotesCount = '1',
+) => {
   console.log('******', queryParams.get('foo'));
 
   const res = await fetch(
