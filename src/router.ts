@@ -4,7 +4,6 @@ import {
 } from 'https://deno.land/std@v0.5/http/server.ts';
 
 export type RouteHandler = (
-  req: ServerRequest,
   queryParams: URLSearchParams,
   ...params: string[]
 ) => Response | Promise<Response>;
@@ -28,7 +27,7 @@ export const createRouter = (routes: RouteMap) => async (
     const matches = url.pathname.match(path);
 
     if (matches) {
-      return await handler(req, url.searchParams, ...matches.slice(1));
+      return await handler(url.searchParams, ...matches.slice(1));
     }
   }
 
