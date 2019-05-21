@@ -5,29 +5,21 @@ import {
 
 export type ProtectedRequest = Pick<
   ServerRequest,
-  | 'url'
-  | 'method'
-  | 'headers'
-  | 'body'
-  | 'bodyStream'
+  'url' | 'method' | 'headers' | 'body' | 'bodyStream'
 > & {
-  queryParams: URLSearchParams,
-  routeParams: string[],
+  queryParams: URLSearchParams;
+  routeParams: string[];
 };
 
-export type RouteHandler = (req: ProtectedRequest) => Response | Promise<Response>;
+export type RouteHandler = (
+  req: ProtectedRequest,
+) => Response | Promise<Response>;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
 const encoder = new TextEncoder();
 
 const createProtectedRequest = (
-  {
-    url,
-    method,
-    headers,
-    body,
-    bodyStream,
-  }: ServerRequest,
+  { url, method, headers, body, bodyStream }: ServerRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
 ) => ({
@@ -55,7 +47,9 @@ export const createRouter = (routes: RouteMap) => async (
     const matches = url.pathname.match(path);
 
     if (matches) {
-      return await handler(createProtectedRequest(req, url.searchParams, matches.slice(1)));
+      return await handler(
+        createProtectedRequest(req, url.searchParams, matches.slice(1)),
+      );
     }
   }
 
