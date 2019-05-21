@@ -2,7 +2,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "lib": ["esnext"],
-    "module": "es2015",
+    "module": "esnext",
     "noEmit": true,
     "target": "es2018",
     "baseUrl": ".",

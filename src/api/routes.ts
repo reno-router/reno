@@ -4,8 +4,6 @@ const ronSwansonQuote = async (
   queryParams: URLSearchParams,
   quotesCount = '1',
 ) => {
-  console.log('******', queryParams.get('foo'));
-
   const res = await fetch(
     `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
   );
