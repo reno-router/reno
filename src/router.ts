@@ -3,20 +3,48 @@ import {
   Response,
 } from 'https://deno.land/std@v0.5/http/server.ts';
 
-export type RouteHandler = (
+export type ProtectedRequest = Pick<
+  ServerRequest,
+  | 'url'
+  | 'method'
+  | 'headers'
+  | 'body'
+  | 'bodyStream'
+> & {
   queryParams: URLSearchParams,
-  ...params: string[]
-) => Response | Promise<Response>;
+  routeParams: string[],
+};
 
+export type RouteHandler = (req: ProtectedRequest) => Response | Promise<Response>;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
 const encoder = new TextEncoder();
+
+const createProtectedRequest = (
+  {
+    url,
+    method,
+    headers,
+    body,
+    bodyStream,
+  }: ServerRequest,
+  queryParams: URLSearchParams,
+  routeParams: string[],
+) => ({
+  url,
+  method,
+  headers,
+  body,
+  bodyStream,
+  queryParams,
+  routeParams,
+});
 
 export const json = <TResponseBody = {}>(body: TResponseBody) => ({
   headers: new Headers({
     'Content-Type': 'application/json',
   }),
-  body: encoder.encode(JSON.stringify(body)),
+  body: encoder.encode(JSON.stringify(body)), // TODO: stream over response writer?
 });
 
 export const createRouter = (routes: RouteMap) => async (
@@ -27,7 +55,7 @@ export const createRouter = (routes: RouteMap) => async (
     const matches = url.pathname.match(path);
 
     if (matches) {
-      return await handler(url.searchParams, ...matches.slice(1));
+      return await handler(createProtectedRequest(req, url.searchParams, matches.slice(1)));
     }
   }
 

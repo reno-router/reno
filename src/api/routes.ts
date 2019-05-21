@@ -1,9 +1,9 @@
 import { createRouter, RouteMap, json } from '../router.ts';
+import { ProtectedRequest } from '../router.ts';
 
-const ronSwansonQuote = async (
-  queryParams: URLSearchParams,
-  quotesCount = '1',
-) => {
+const ronSwansonQuote = async (req: ProtectedRequest) => {
+  const [quotesCount = '1'] = req.routeParams;
+
   const res = await fetch(
     `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
   );
