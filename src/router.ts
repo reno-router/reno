@@ -39,6 +39,7 @@ export const json = <TResponseBody = {}>(body: TResponseBody) => ({
   body: encoder.encode(JSON.stringify(body)), // TODO: stream over response writer?
 });
 
+// TODO: tests!
 export const createRouter = (routes: RouteMap) => async (
   req: ServerRequest,
 ) => {
