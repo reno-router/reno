@@ -16,7 +16,7 @@
  */
 
 import { runTests } from 'https://deno.land/std@v0.5/testing/mod.ts';
-import './src/cookies_test.ts';
+import './src/router_test.ts';
 
 (async () => {
   await runTests({ parallel: true });
