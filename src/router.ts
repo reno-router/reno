@@ -19,6 +19,8 @@ export type RouteHandler = (
 
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
+export class NotFoundError extends Error {};
+
 const encoder = new TextEncoder();
 
 const createProtectedRequest = (
@@ -46,8 +48,9 @@ export const json = <TResponseBody = {}>(body: TResponseBody) => ({
 export const createRouter = (routes: RouteMap) => async (
   req: ServerRequest,
 ) => {
+  const url = new URL(req.url, 'https://');
+
   for (let [path, handler] of routes) {
-    const url = new URL(req.url, 'https://');
     const matches = url.pathname.match(path);
 
     if (matches) {
@@ -57,12 +60,7 @@ export const createRouter = (routes: RouteMap) => async (
     }
   }
 
-  // TODO: make this configurable!
-  return {
-    headers: new Headers({
-      'Content-Type': 'text/plain',
-    }),
-    status: 404,
-    body: encoder.encode('Not found! :('),
-  };
+  return Promise.reject(
+    new NotFoundError(`No match for ${req.url}`),
+  );
 };
