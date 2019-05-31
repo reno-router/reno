@@ -1,21 +1,34 @@
-import { test } from "https://deno.land/std@v0.7/testing/mod.ts";
-import { assertEquals, assertStrictEq } from "https://deno.land/std@v0.7/testing/asserts.ts";
-import { ServerRequest, Response, readRequest } from 'https://deno.land/std@v0.7/http/server.ts';
+import { test } from 'https://deno.land/std@v0.7/testing/mod.ts';
+import {
+  assertEquals,
+  assertStrictEq,
+} from 'https://deno.land/std@v0.7/testing/asserts.ts';
+import {
+  ServerRequest,
+  Response,
+  readRequest,
+} from 'https://deno.land/std@v0.7/http/server.ts';
 import { BufReader } from 'https://deno.land/std@v0.7/io/bufio.ts';
 import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
-import { NotFoundError, ProtectedRequest, RouteMap, createRouter, json } from './router.ts';
+import {
+  NotFoundError,
+  ProtectedRequest,
+  RouteMap,
+  createRouter,
+  json,
+} from './router.ts';
 
 // TODO: avoid any
 interface StubCall<TReturn, TArgs extends any[]> {
-  args: TArgs,
-  returnValue: TReturn,
+  args: TArgs;
+  returnValue: TReturn;
 }
 
 interface Stub<TReturn, TArgs extends any[]> {
-  fn: (...args: TArgs) => TReturn,
-  calls: StubCall<TReturn, TArgs>[],
-  returnValue: TReturn,
-  assertWasCalledWith(expectedCalls: TArgs[]): void,
+  fn: (...args: TArgs) => TReturn;
+  calls: StubCall<TReturn, TArgs>[];
+  returnValue: TReturn;
+  assertWasCalledWith(expectedCalls: TArgs[]): void;
 }
 
 /* TODO: add functionality
@@ -36,15 +49,12 @@ const createStub = <TReturn, TArgs extends any[]>() => {
       return [...calls];
     },
 
-    set returnValue (val: TReturn) {
+    set returnValue(val: TReturn) {
       returnValue = val;
     },
 
     assertWasCalledWith: (expectedCalls: TArgs[]) =>
-      assertEquals(
-        expectedCalls,
-        calls.map(({ args }) => args),
-      ),
+      assertEquals(expectedCalls, calls.map(({ args }) => args)),
   };
 };
 
@@ -56,22 +66,19 @@ const createServerRequest = async (
 ) => {
   const request = `${method} ${path} HTTP/1.1\n\n`;
 
-  const bufReader = BufReader.create(
-    new StringReader(request)
-  );
+  const bufReader = BufReader.create(new StringReader(request));
 
   /* readRequest can also return EOF,
    * thus we need to type assert here */
-  return await readRequest(bufReader) as ServerRequest;
-}
+  return (await readRequest(bufReader)) as ServerRequest;
+};
 
-const createRoutes = (stub: Stub<Promise<Response>, [ProtectedRequest]>)=>
-  new RouteMap([
-    [/\/foo$/, stub.fn],
-  ]);
+const createRoutes = (stub: Stub<Promise<Response>, [ProtectedRequest]>) =>
+  new RouteMap([[/\/foo$/, stub.fn]]);
 
 test({
-  name: 'createRouter`s routing function should invoke a handler for a given path from the provided map',
+  name:
+    'createRouter`s routing function should invoke a handler for a given path from the provided map',
   async fn() {
     const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
 
@@ -114,22 +121,23 @@ test({
 });
 
 test({
-  name: 'createRouter`s routing function should reject with a NotFoundError when no routes match',
+  name:
+    'createRouter`s routing function should reject with a NotFoundError when no routes match',
   async fn() {
     const mismatchedRequest = await createServerRequest('/foo-bar');
     const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
     const router = createRouter(createRoutes(routeStub));
 
-    await router(mismatchedRequest)
-      .catch(e => {
-        assertStrictEq(e instanceof NotFoundError, true);
-        assertStrictEq(e.message, 'No match for /foo-bar');
-      });
+    await router(mismatchedRequest).catch(e => {
+      assertStrictEq(e instanceof NotFoundError, true);
+      assertStrictEq(e.message, 'No match for /foo-bar');
+    });
   },
 });
 
 test({
-  name: 'createRouter`s routing function should forward route handler rejections',
+  name:
+    'createRouter`s routing function should forward route handler rejections',
   async fn() {
     const mismatchedRequest = await createServerRequest('/foo');
     const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
@@ -137,16 +145,16 @@ test({
 
     routeStub.returnValue = Promise.reject(new Error('Some error!'));
 
-    await router(mismatchedRequest)
-      .catch(e => {
-        assertStrictEq(e instanceof Error, true);
-        assertStrictEq(e.message, 'Some error!');
-      });
+    await router(mismatchedRequest).catch(e => {
+      assertStrictEq(e instanceof Error, true);
+      assertStrictEq(e.message, 'Some error!');
+    });
   },
 });
 
 test({
-  name: 'json builds an response object with the correct Content-Type header and an encoded body',
+  name:
+    'json builds an response object with the correct Content-Type header and an encoded body',
   fn() {
     const body = {
       foo: 'bar',
@@ -164,4 +172,4 @@ test({
 
     assertEquals(actualResponse, expectedResponse);
   },
-})
+});
