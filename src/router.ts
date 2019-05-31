@@ -14,9 +14,7 @@ export type ProtectedRequest = Pick<
 /* The function returned by
  * createRouter that performs
  * route lookups. Better name? */
-export type RouteParser = (
-  req: ServerRequest,
-  ) => Response | Promise<Response>;
+export type RouteParser = (req: ServerRequest) => Response | Promise<Response>;
 
 /* A user-defined handler for
  * a particular route. */
@@ -27,7 +25,7 @@ export type RouteHandler = (
 export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
-export class NotFoundError extends Error {};
+export class NotFoundError extends Error {}
 
 const encoder = new TextEncoder();
 
@@ -68,7 +66,5 @@ export const createRouter = (routes: RouteMap) => async (
     }
   }
 
-  return Promise.reject(
-    new NotFoundError(`No match for ${req.url}`),
-  );
+  return Promise.reject(new NotFoundError(`No match for ${req.url}`));
 };
