@@ -11,12 +11,20 @@ export type ProtectedRequest = Pick<
   routeParams: string[];
 };
 
-export type Router = (routes: RouteMap) => RouteHandler
+/* The function returned by
+ * createRouter that performs
+ * route lookups. Better name? */
+export type RouteParser = (
+  req: ServerRequest,
+  ) => Response | Promise<Response>;
 
+/* A user-defined handler for
+ * a particular route. */
 export type RouteHandler = (
   req: ProtectedRequest,
 ) => Response | Promise<Response>;
 
+export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
 export class NotFoundError extends Error {};
@@ -35,6 +43,7 @@ const createProtectedRequest = (
   bodyStream,
   queryParams,
   routeParams,
+  isProtected: true,
 });
 
 // TODO: test!
