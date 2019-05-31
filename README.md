@@ -1,6 +1,6 @@
 # Deno Playground
 
-This repository serves as my scratchpad for building a HTTP server with [Deno](https://deno.land/). Building upon Deno's substantial [HTTP moduke](https://github.com/denoland/deno_std/tree/master/http), this project introduces a thin routing layer for forward particular requests to asynchronous handler functions; one it reaches a point of maturity alongside Deno, I'll release this as a standalone library.
+This repository serves as my scratchpad for building a HTTP server with [Deno](https://deno.land/). Building upon Deno's substantial [HTTP module](https://github.com/denoland/deno_std/tree/master/http), this project introduces a thin routing layer for forward particular requests to asynchronous handler functions; one it reaches a point of maturity alongside Deno, I'll release this as a standalone library.
 
 ## Running Locally
 
