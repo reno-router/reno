@@ -83,7 +83,7 @@ test({
       headers: new Headers(),
       body: request.body,
       bodyStream: request.bodyStream,
-      queryParams: new URLSearchParams(),
+      queryParams: new URL('/foo', 'https://').searchParams,
       routeParams: [],
     };
 
@@ -94,12 +94,10 @@ test({
 
     assertEquals(actualResponse, response);
 
-    const [actualRequest] = routeStub.calls[0].args;
-
-    assertEquals(actualRequest.url, '/foo');
-
-    // routeStub.assertWasCalledWith([
-    //   [protectedRequest],
-    // ]);
+    /* TODO: currently failing, but diffs
+     * match. Wait to see if bug first */
+    routeStub.assertWasCalledWith([
+      [protectedRequest],
+    ]);
   },
 });
