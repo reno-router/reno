@@ -2,6 +2,21 @@ import { ServerRequest } from 'https://deno.land/std@v0.7/http/server.ts';
 import { routes } from './routes.ts';
 import { createRouter, NotFoundError } from './router.ts';
 
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short',
+  });
+
+const logRequest = (req: ServerRequest) => {
+  console.log(`[${formatDate(new Date())}] Request for ${req.url}`);
+};
+
 const router = createRouter(routes);
 
 // TODO: should these live here?
@@ -18,6 +33,8 @@ const notFound = (e: NotFoundError) => createErrorResponse(404, e);
 const serverError = (e: Error) => createErrorResponse(500, e);
 
 const app = async (req: ServerRequest) => {
+  logRequest(req);
+
   /* If error handling is exposed
    * via promises, then perhaps
    * user is responsible for setting
