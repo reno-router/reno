@@ -15,7 +15,7 @@
  * https://deno.land/style_guide.html#eachmoduleshouldcomewithtests
  */
 
-import { runTests } from 'https://deno.land/std@v0.5/testing/mod.ts';
+import { runTests } from 'https://deno.land/std@v0.7/testing/mod.ts';
 import './src/router_test.ts';
 
 (async () => {

@@ -1,6 +1,6 @@
 import { test } from "https://deno.land/std/testing/mod.ts";
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
-import { Response } from 'https://deno.land/std@v0.5/http/server.ts';
+import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
 import { ProtectedRequest, RouteMap, createRouter } from './router.ts';
 
 // TODO: avoid any
@@ -60,7 +60,7 @@ test({
       method: 'GET',
       proto: '',
       headers: new Headers(),
-      conn: {} as DenoConn,
+      conn: {} as Deno.Buf,
       r: {} as Deno.Reader,
       w: {} as Deno.Writer,
       bodyStream: () => [],

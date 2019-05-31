@@ -1,7 +1,7 @@
 import {
   serve,
   ServerRequest,
-} from 'https://deno.land/std@v0.5/http/server.ts';
+} from 'https://deno.land/std@v0.7/http/server.ts';
 import app from './app.ts';
 
 const BINDING = ':8000';
