@@ -3,7 +3,7 @@ import { assertEquals, assertStrictEq } from "https://deno.land/std@v0.7/testing
 import { ServerRequest, Response, readRequest } from 'https://deno.land/std@v0.7/http/server.ts';
 import { BufReader } from 'https://deno.land/std@v0.7/io/bufio.ts';
 import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
-import { NotFoundError, ProtectedRequest, RouteMap, createRouter } from './router.ts';
+import { NotFoundError, ProtectedRequest, RouteMap, createRouter, json } from './router.ts';
 
 // TODO: avoid any
 interface StubCall<TReturn, TArgs extends any[]> {
@@ -144,3 +144,24 @@ test({
       });
   },
 });
+
+test({
+  name: 'json builds an response object with the correct Content-Type header and an encoded body',
+  fn() {
+    const body = {
+      foo: 'bar',
+      bar: 1,
+    };
+
+    const expectedResponse = {
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: new TextEncoder().encode(JSON.stringify(body)),
+    };
+
+    const actualResponse = json(body);
+
+    assertEquals(actualResponse, expectedResponse);
+  },
+})
