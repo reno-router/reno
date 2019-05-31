@@ -127,3 +127,20 @@ test({
       });
   },
 });
+
+test({
+  name: 'createRouter`s routing function should forward route handler rejections',
+  async fn() {
+    const mismatchedRequest = await createServerRequest('/foo');
+    const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
+    const router = createRouter(createRoutes(routeStub));
+
+    routeStub.returnValue = Promise.reject(new Error('Some error!'));
+
+    await router(mismatchedRequest)
+      .catch(e => {
+        assertStrictEq(e instanceof Error, true);
+        assertStrictEq(e.message, 'Some error!');
+      });
+  },
+});
