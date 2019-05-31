@@ -1,7 +1,7 @@
 import {
   ServerRequest,
   Response,
-} from 'https://deno.land/std@v0.5/http/server.ts';
+} from 'https://deno.land/std@v0.7/http/server.ts';
 
 export type ProtectedRequest = Pick<
   ServerRequest,
@@ -11,9 +11,12 @@ export type ProtectedRequest = Pick<
   routeParams: string[];
 };
 
+export type Router = (routes: RouteMap) => RouteHandler
+
 export type RouteHandler = (
   req: ProtectedRequest,
 ) => Response | Promise<Response>;
+
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 
 const encoder = new TextEncoder();
