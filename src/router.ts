@@ -46,7 +46,6 @@ const createProtectedRequest = (
   isProtected: true,
 });
 
-// TODO: test!
 export const json = <TResponseBody = {}>(body: TResponseBody) => ({
   headers: new Headers({
     'Content-Type': 'application/json',
