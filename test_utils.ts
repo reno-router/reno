@@ -40,6 +40,9 @@ export const createStub = <TReturn, TArgs extends any[]>() => {
 
     assertWasCalledWith: (expectedCalls: TArgs[]) =>
       assertEquals(expectedCalls, calls.map(({ args }) => args)),
+
+    assertWasCalled: () => calls.length > 0,
+    assertWasNotCalled: () => calls.length === 0,
   };
 };
 
