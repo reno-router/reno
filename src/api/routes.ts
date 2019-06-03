@@ -32,7 +32,9 @@ const ronSwansonQuote = async (req: ProtectedRequest) => {
 
   const quotes = await res.json();
 
-  return json(quotes);
+  return json(quotes, {
+    'X-Foo': 'bar',
+  });
 };
 
 const routes = new RouteMap([

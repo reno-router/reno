@@ -46,11 +46,12 @@ const createProtectedRequest = (
   w,
 });
 
-export const json = <TResponseBody = {}>(body: TResponseBody) => ({
+export const json = <TResponseBody = {}>(body: TResponseBody, headers: domTypes.HeadersInit = {}) => ({
   headers: new Headers({
+    ...headers,
     'Content-Type': 'application/json',
   }),
-  body: encoder.encode(JSON.stringify(body)), // TODO: stream over response writer?
+  body: encoder.encode(JSON.stringify(body)),
 });
 
 export const createRouter = (routes: RouteMap) => async (
