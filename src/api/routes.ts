@@ -1,6 +1,6 @@
-import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
 import colossalJson from './colossal.json';
-import { ProtectedRequest, createRouter, RouteMap, json } from '../router.ts';
+import { ProtectedRequest, createRouter, RouteMap } from '../router.ts';
+import { jsonResponse } from './json.ts';
 
 const serialised = JSON.stringify(colossalJson);
 
@@ -32,7 +32,7 @@ const ronSwansonQuote = async (req: ProtectedRequest) => {
 
   const quotes = await res.json();
 
-  return json(quotes, {
+  return jsonResponse(quotes, {
     'X-Foo': 'bar',
   });
 };
