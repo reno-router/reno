@@ -10,20 +10,20 @@ import {
 } from 'https://deno.land/std@v0.7/http/server.ts';
 import {
   NotFoundError,
-  ProtectedRequest,
+  AugmentedRequest,
   RouteMap,
   createRouter,
 } from './router.ts';
 import { Stub, createStub, createServerRequest } from '../test_utils.ts';
 
-const createRoutes = (stub: Stub<Promise<Response>, [ProtectedRequest]>) =>
+const createRoutes = (stub: Stub<Promise<Response>, [AugmentedRequest]>) =>
   new RouteMap([[/\/foo$/, stub.fn]]);
 
 test({
   name:
     'createRouter`s routing function should invoke a handler for a given path from the provided map',
   async fn() {
-    const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
+    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
 
     const response = {
       headers: new Headers(),
@@ -39,15 +39,15 @@ test({
 
     assertEquals(actualResponse, response);
 
-    const [protectedRequest] = routeStub.calls[0].args;
+    const [AugmentedRequest] = routeStub.calls[0].args;
 
     // WIP assertion. See TODO below
-    assertEquals(protectedRequest.url, '/foo');
+    assertEquals(AugmentedRequest.url, '/foo');
 
     /* TODO: currently failing, but diffs
      * match. Try again with a new release */
 
-    // const protectedRequest = {
+    // const AugmentedRequest = {
     //   url: '/foo',
     //   method: 'GET',
     //   headers: new Headers(),
@@ -58,7 +58,7 @@ test({
     // };
 
     // routeStub.assertWasCalledWith([
-    //   [protectedRequest],
+    //   [AugmentedRequest],
     // ]);
   },
 });
@@ -68,7 +68,7 @@ test({
     'createRouter`s routing function should reject with a NotFoundError when no routes match',
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: '/foo-bar' });
-    const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
+    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
     const router = createRouter(createRoutes(routeStub));
 
     await router(mismatchedRequest).catch(e => {
@@ -83,7 +83,7 @@ test({
     'createRouter`s routing function should forward route handler rejections',
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: '/foo' });
-    const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
+    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
     const router = createRouter(createRoutes(routeStub));
 
     routeStub.returnValue = Promise.reject(new Error('Some error!'));

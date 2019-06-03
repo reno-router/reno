@@ -4,9 +4,9 @@ import {
   assertEquals, assertStrictEq,
 } from 'https://deno.land/std@v0.7/testing/asserts.ts';
 
-import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
-
+import { Response, ServerRequest } from 'https://deno.land/std@v0.7/http/server.ts';
 import { JsonRequest, jsonResponse, withJsonBody } from './json.ts';
+import { AugmentedRequest } from './router.ts';
 import { createStub } from '../test_utils.ts';
 
 test({
@@ -100,6 +100,8 @@ test({
       headers: new Headers(),
       queryParams: new URLSearchParams(),
       routeParams: [],
+      respond: undefined, // TODO: omit!
+      bodyStream: undefined, // TODO: omit!
     };
 
     const rawRequest = {
@@ -114,12 +116,57 @@ test({
       body: parsedBody,
     };
 
-    const actualResponse = await augmentedHandler(rawRequest);
+    // TODO: use createServerRequest helper!
+    const actualResponse = await augmentedHandler(rawRequest as unknown as AugmentedRequest);
 
     assertEquals(actualResponse, expectedResponse);
 
     handlerStub.assertWasCalledWith([
-      [augmentedRequest],
+      [augmentedRequest as unknown as JsonRequest<Body>],
+    ]);
+  }
+});
+
+test({
+  name: 'withJsonBody should silently delegate to the wrapped handler if there`s no request body',
+  async fn() {
+    const handlerStub = createStub<Response, [JsonRequest<{}>]>();
+    const augmentedHandler = withJsonBody<{}>(handlerStub.fn);
+
+    const expectedResponse = {
+      headers: new Headers(),
+      body: new Uint8Array(0),
+    };
+
+    handlerStub.returnValue = expectedResponse;
+
+    const baseRequest = {
+      url: '/',
+      method: 'GET',
+      headers: new Headers(),
+      queryParams: new URLSearchParams(),
+      routeParams: [],
+      respond: undefined, // TODO: omit!
+      bodyStream: undefined, // TODO: omit!
+    };
+
+    const request = {
+      ...baseRequest,
+      body: () => Promise.resolve(new Uint8Array(0)),
+    };
+
+    const augmentedRequest = {
+      ...baseRequest,
+      body: {}, // Default when no body is provided
+    }
+
+    // TODO: use createServerRequest helper!
+    const actualResponse = await augmentedHandler(request as unknown as AugmentedRequest);
+
+    assertEquals(actualResponse, expectedResponse);
+
+    handlerStub.assertWasCalledWith([
+      [augmentedRequest as unknown as JsonRequest<{}>],
     ]);
   }
 });
@@ -146,7 +193,8 @@ test({
       ),
     };
 
-    await augmentedHandler(rawRequest)
+    // TODO: use createServerRequest helper!
+    await augmentedHandler(rawRequest as unknown as AugmentedRequest)
       .catch(e => {
         handlerStub.assertWasNotCalled();
         assertStrictEq(e instanceof SyntaxError, true);
