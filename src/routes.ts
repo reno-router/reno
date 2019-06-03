@@ -1,8 +1,9 @@
-import { json, RouteMap } from './router.ts';
+import { RouteMap } from './router.ts';
 import { apiRouter } from './api/routes.ts';
+import { jsonResponse } from './json.ts';
 
 const home = () =>
-  json({
+  jsonResponse({
     foo: 'bar',
     isLol: true,
   });

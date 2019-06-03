@@ -17,6 +17,7 @@
 
 import { runTests } from 'https://deno.land/std@v0.7/testing/mod.ts';
 import './src/router_test.ts';
+import './src/json_test.ts';
 
 (async () => {
   await runTests({ parallel: true });

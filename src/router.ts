@@ -42,14 +42,6 @@ const createProtectedRequest = (
   routeParams,
 });
 
-export const json = <TResponseBody = {}>(body: TResponseBody, headers: domTypes.HeadersInit = {}) => ({
-  headers: new Headers({
-    ...headers,
-    'Content-Type': 'application/json',
-  }),
-  body: encoder.encode(JSON.stringify(body)),
-});
-
 export const createRouter = (routes: RouteMap) => async (
   req: ServerRequest | ProtectedRequest,
 ) => {
