@@ -1,6 +1,28 @@
 import colossalJson from './colossal.json';
-import { ProtectedRequest, createRouter, RouteMap } from '../router.ts';
-import { jsonResponse } from './json.ts';
+import { AugmentedRequest, createRouter, RouteMap } from '../router.ts';
+import { JsonRequest, jsonResponse, withJsonBody } from '../json.ts';
+
+interface JsonBody {
+  foo: string,
+  bar: number,
+  baz: boolean,
+}
+
+type JsonBodyResponse = JsonBody & {
+  message: string,
+}
+
+// TODO: share reference?
+const encoder = new TextEncoder();
+
+// TODO: lift into responses module?
+const methodNotAllowed = (url: string, method: string) => ({
+  status: 405,
+  headers: new Headers({
+    'Content-Type': 'text/plain',
+  }),
+  body: encoder.encode(`Method ${method} not allowed for ${url}`),
+});
 
 const serialised = JSON.stringify(colossalJson);
 
@@ -20,10 +42,26 @@ const colossal = () => ({
   body: new TextEncoder().encode(serialised),
 });
 
+/* Handler to demonstrate request
+ * body parsing with withJsonBody
+ * higher-order function. Ideally
+ * this would validate, but I feel
+ * this should be handled by a
+ * third-party dependency */
+const jsonBody = withJsonBody(
+  ({ url, method, body }: JsonRequest<JsonBody>) =>
+    method === 'POST'
+      ? jsonResponse<JsonBodyResponse>({
+        message: 'Here`s the body you posted to this endpoint',
+        ...body,
+      })
+      : methodNotAllowed(url, method),
+);
+
 /* TODO: is it possible to pipe
  * fetch responses to the
  * requests's response body? */
-const ronSwansonQuote = async (req: ProtectedRequest) => {
+const ronSwansonQuote = async (req: AugmentedRequest) => {
   const [quotesCount = '1'] = req.routeParams;
 
   const res = await fetch(
@@ -39,6 +77,7 @@ const ronSwansonQuote = async (req: ProtectedRequest) => {
 
 const routes = new RouteMap([
   [/\/colossal$/, colossal],
+  [/\/json-body$/, jsonBody],
   [/\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote],
 ]);
 

@@ -3,10 +3,7 @@ import {
   Response,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
-export type ProtectedRequest = Pick<
-  ServerRequest,
-  'url' | 'method' | 'headers' | 'body'
-> & {
+export type AugmentedRequest = ServerRequest & {
   queryParams: URLSearchParams;
   routeParams: string[];
 };
@@ -18,29 +15,29 @@ export type RouteParser = (req: ServerRequest) => Response | Promise<Response>;
 
 /* A user-defined handler for
  * a particular route. */
-export type RouteHandler<TRequest = ProtectedRequest> = (
+export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
-) => Response | Promise<Response> | void;
+) => Response | Promise<void | Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 export class NotFoundError extends Error {}
 
-const createProtectedRequest = (
-  { url, method, headers, body }: ServerRequest,
+const createAugmentedRequest = (
+  { body, bodyStream, respond, ...rest }: ServerRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
-) => ({
-  url,
-  method,
-  headers,
+): AugmentedRequest => ({
+  ...rest,
   body,
+  bodyStream,
+  respond, // TODO: omit!!!
   queryParams,
   routeParams,
 });
 
 export const createRouter = (routes: RouteMap) => async (
-  req: ServerRequest | ProtectedRequest,
+  req: ServerRequest | AugmentedRequest,
 ) => {
   const url = new URL(req.url, 'https://');
 
@@ -49,9 +46,7 @@ export const createRouter = (routes: RouteMap) => async (
 
     if (matches) {
       return await handler(
-        req instanceof ServerRequest
-          ? createProtectedRequest(req, url.searchParams, matches.slice(1))
-          : req // requests forwarded to sub-routers are already protected!
+        createAugmentedRequest(req, url.searchParams, matches.slice(1))
       );
     }
   }
