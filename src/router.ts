@@ -6,7 +6,7 @@ import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
 
 export type ProtectedRequest = Pick<
   ServerRequest,
-  'url' | 'method' | 'headers' | 'body' | 'bodyStream' | 'w'
+  'url' | 'method' | 'headers' | 'body'
 > & {
   queryParams: URLSearchParams;
   routeParams: string[];
@@ -25,13 +25,12 @@ export type RouteHandler = (
 
 export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
-
 export class NotFoundError extends Error {}
 
 const encoder = new TextEncoder();
 
 const createProtectedRequest = (
-  { url, method, headers, body, bodyStream, w }: ServerRequest,
+  { url, method, headers, body }: ServerRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
 ) => ({
@@ -39,11 +38,8 @@ const createProtectedRequest = (
   method,
   headers,
   body,
-  bodyStream,
   queryParams,
   routeParams,
-  isProtected: true,
-  w,
 });
 
 export const json = <TResponseBody = {}>(body: TResponseBody, headers: domTypes.HeadersInit = {}) => ({
