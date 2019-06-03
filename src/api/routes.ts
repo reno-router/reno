@@ -3,14 +3,14 @@ import { AugmentedRequest, createRouter, RouteMap } from '../router.ts';
 import { JsonRequest, jsonResponse, withJsonBody } from '../json.ts';
 
 interface JsonBody {
-  foo: string,
-  bar: number,
-  baz: boolean,
+  foo: string;
+  bar: number;
+  baz: boolean;
 }
 
 type JsonBodyResponse = JsonBody & {
-  message: string,
-}
+  message: string;
+};
 
 // TODO: share reference?
 const encoder = new TextEncoder();
@@ -48,14 +48,13 @@ const colossal = () => ({
  * this would validate, but I feel
  * this should be handled by a
  * third-party dependency */
-const jsonBody = withJsonBody(
-  ({ url, method, body }: JsonRequest<JsonBody>) =>
-    method === 'POST'
-      ? jsonResponse<JsonBodyResponse>({
+const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
+  method === 'POST'
+    ? jsonResponse<JsonBodyResponse>({
         message: 'Here`s the body you posted to this endpoint',
         ...body,
       })
-      : methodNotAllowed(url, method),
+    : methodNotAllowed(url, method),
 );
 
 /* TODO: is it possible to pipe

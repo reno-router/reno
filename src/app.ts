@@ -29,7 +29,6 @@ const createErrorResponse = (status: number, { message }: Error) => ({
 });
 
 const notFound = (e: NotFoundError) => createErrorResponse(404, e);
-
 const serverError = (e: Error) => createErrorResponse(500, e);
 
 const app = async (req: ServerRequest) => {

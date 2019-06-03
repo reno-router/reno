@@ -46,7 +46,7 @@ export const createRouter = (routes: RouteMap) => async (
 
     if (matches) {
       return await handler(
-        createAugmentedRequest(req, url.searchParams, matches.slice(1))
+        createAugmentedRequest(req, url.searchParams, matches.slice(1)),
       );
     }
   }
