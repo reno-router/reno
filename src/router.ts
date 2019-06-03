@@ -2,10 +2,11 @@ import {
   ServerRequest,
   Response,
 } from 'https://deno.land/std@v0.7/http/server.ts';
+import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
 
 export type ProtectedRequest = Pick<
   ServerRequest,
-  'url' | 'method' | 'headers' | 'body' | 'bodyStream'
+  'url' | 'method' | 'headers' | 'body' | 'bodyStream' | 'w'
 > & {
   queryParams: URLSearchParams;
   routeParams: string[];
@@ -20,7 +21,7 @@ export type RouteParser = (req: ServerRequest) => Response | Promise<Response>;
  * a particular route. */
 export type RouteHandler = (
   req: ProtectedRequest,
-) => Response | Promise<Response>;
+) => Response | Promise<Response | void>;
 
 export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
@@ -30,7 +31,7 @@ export class NotFoundError extends Error {}
 const encoder = new TextEncoder();
 
 const createProtectedRequest = (
-  { url, method, headers, body, bodyStream }: ServerRequest,
+  { url, method, headers, body, bodyStream, w }: ServerRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
 ) => ({
@@ -42,6 +43,7 @@ const createProtectedRequest = (
   queryParams,
   routeParams,
   isProtected: true,
+  w,
 });
 
 export const json = <TResponseBody = {}>(body: TResponseBody) => ({
@@ -52,7 +54,7 @@ export const json = <TResponseBody = {}>(body: TResponseBody) => ({
 });
 
 export const createRouter = (routes: RouteMap) => async (
-  req: ServerRequest,
+  req: ServerRequest | ProtectedRequest,
 ) => {
   const url = new URL(req.url, 'https://');
 
@@ -61,7 +63,9 @@ export const createRouter = (routes: RouteMap) => async (
 
     if (matches) {
       return await handler(
-        createProtectedRequest(req, url.searchParams, matches.slice(1)),
+        req instanceof ServerRequest
+          ? createProtectedRequest(req, url.searchParams, matches.slice(1))
+          : req // requests forwarded to sub-routers are already protected!
       );
     }
   }

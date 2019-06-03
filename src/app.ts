@@ -41,11 +41,14 @@ const app = async (req: ServerRequest) => {
    * up Deno HTTP server initially?
    * I.e. is this lib merely a thin
    * routing layer upon Deno?! */
-  req.respond(
-    await router(req).catch(e =>
-      e instanceof NotFoundError ? notFound(e) : serverError(e),
-    ),
+
+  const res = await router(req).catch(e =>
+    e instanceof NotFoundError ? notFound(e) : serverError(e),
   );
+
+  if (res) {
+    req.respond(res);
+  }
 };
 
 export default app;
