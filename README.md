@@ -24,7 +24,7 @@ Then you can run:
 * [x] Query params
 * [x] Response helpers
 * [x] JSON
-* [ ] Custom headers
+* [x] Custom headers
 * [ ] Request bodies
 * [ ] Cookie helpers
 
