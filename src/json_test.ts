@@ -1,7 +1,7 @@
 import { test } from 'https://deno.land/std@v0.7/testing/mod.ts';
 
 import {
-  assertEquals,
+  assertEquals, assertStrictEq,
 } from 'https://deno.land/std@v0.7/testing/asserts.ts';
 
 import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
@@ -122,4 +122,35 @@ test({
       [augmentedRequest],
     ]);
   }
-})
+});
+
+test({
+  name: 'withJsonBody should reject if the body can`t be parsed',
+  async fn() {
+    const handlerStub = createStub<Response, [JsonRequest<{}>]>();
+    const augmentedHandler = withJsonBody<{}>(handlerStub.fn);
+    const serialisedBody = '{ not json rofl';
+
+    const baseRequest = {
+      url: '/',
+      method: 'GET',
+      headers: new Headers(),
+      queryParams: new URLSearchParams(),
+      routeParams: [],
+    };
+
+    const rawRequest = {
+      ...baseRequest,
+      body: () => Promise.resolve(
+        new TextEncoder().encode(serialisedBody),
+      ),
+    };
+
+    await augmentedHandler(rawRequest)
+      .catch(e => {
+        handlerStub.assertWasNotCalled();
+        assertStrictEq(e instanceof SyntaxError, true);
+        assertStrictEq(e.message, 'Unexpected token n in JSON at position 2');
+      });
+  }
+});
