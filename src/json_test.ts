@@ -4,7 +4,10 @@ import {
   assertEquals,
 } from 'https://deno.land/std@v0.7/testing/asserts.ts';
 
-import { jsonResponse } from './json.ts';
+import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
+
+import { JsonRequest, jsonResponse, withJsonBody } from './json.ts';
+import { createStub } from '../test_utils.ts';
 
 test({
   name:
@@ -64,3 +67,59 @@ test({
     );
   },
 });
+
+test({
+  name: 'withJsonBody should return a higher-order route handler that parses req.body into JS object',
+  async fn() {
+    interface Body {
+      foo: string,
+      bar: number,
+      baz: boolean,
+    };
+
+    const parsedBody = {
+      foo: 'bar',
+      bar: 42,
+      baz: true,
+    };
+
+    const serialisedBody = JSON.stringify(parsedBody);
+    const handlerStub = createStub<Response, [JsonRequest<Body>]>();
+    const augmentedHandler = withJsonBody<Body>(handlerStub.fn);
+
+    const expectedResponse = {
+      headers: new Headers(),
+      body: new Uint8Array(0),
+    };
+
+    handlerStub.returnValue = expectedResponse;
+
+    const baseRequest = {
+      url: '/',
+      method: 'GET',
+      headers: new Headers(),
+      queryParams: new URLSearchParams(),
+      routeParams: [],
+    };
+
+    const rawRequest = {
+      ...baseRequest,
+      body: () => Promise.resolve(
+        new TextEncoder().encode(serialisedBody),
+      ),
+    };
+
+    const augmentedRequest = {
+      ...baseRequest,
+      body: parsedBody,
+    };
+
+    const actualResponse = await augmentedHandler(rawRequest);
+
+    assertEquals(actualResponse, expectedResponse);
+
+    handlerStub.assertWasCalledWith([
+      [augmentedRequest],
+    ]);
+  }
+})

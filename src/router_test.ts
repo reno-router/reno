@@ -8,69 +8,13 @@ import {
   Response,
   readRequest,
 } from 'https://deno.land/std@v0.7/http/server.ts';
-import { BufReader } from 'https://deno.land/std@v0.7/io/bufio.ts';
-import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
 import {
   NotFoundError,
   ProtectedRequest,
   RouteMap,
   createRouter,
 } from './router.ts';
-
-// TODO: avoid any
-interface StubCall<TReturn, TArgs extends any[]> {
-  args: TArgs;
-  returnValue: TReturn;
-}
-
-interface Stub<TReturn, TArgs extends any[]> {
-  fn: (...args: TArgs) => TReturn;
-  calls: StubCall<TReturn, TArgs>[];
-  returnValue: TReturn;
-  assertWasCalledWith(expectedCalls: TArgs[]): void;
-}
-
-/* TODO: add functionality
- * as it's required. */
-const createStub = <TReturn, TArgs extends any[]>() => {
-  const calls: StubCall<TReturn, TArgs>[] = [];
-  let returnValue: TReturn = undefined;
-
-  const fn = (...args: TArgs) => {
-    calls.push({ args, returnValue });
-    return returnValue;
-  };
-
-  return {
-    fn,
-
-    get calls() {
-      return [...calls];
-    },
-
-    set returnValue(val: TReturn) {
-      returnValue = val;
-    },
-
-    assertWasCalledWith: (expectedCalls: TArgs[]) =>
-      assertEquals(expectedCalls, calls.map(({ args }) => args)),
-  };
-};
-
-// TODO: body support, consume headers!
-const createServerRequest = async (
-  path: string,
-  method = 'GET',
-  headers = new Headers(),
-) => {
-  const request = `${method} ${path} HTTP/1.1\n\n`;
-
-  const bufReader = BufReader.create(new StringReader(request));
-
-  /* readRequest can also return EOF,
-   * thus we need to type assert here */
-  return (await readRequest(bufReader)) as ServerRequest;
-};
+import { Stub, createStub, createServerRequest } from '../test_utils.ts';
 
 const createRoutes = (stub: Stub<Promise<Response>, [ProtectedRequest]>) =>
   new RouteMap([[/\/foo$/, stub.fn]]);
@@ -87,7 +31,7 @@ test({
     };
 
     const router = createRouter(createRoutes(routeStub));
-    const request = await createServerRequest('/foo');
+    const request = await createServerRequest({ path: '/foo' });
 
     routeStub.returnValue = Promise.resolve(response);
 
@@ -123,7 +67,7 @@ test({
   name:
     'createRouter`s routing function should reject with a NotFoundError when no routes match',
   async fn() {
-    const mismatchedRequest = await createServerRequest('/foo-bar');
+    const mismatchedRequest = await createServerRequest({ path: '/foo-bar' });
     const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
     const router = createRouter(createRoutes(routeStub));
 
@@ -138,7 +82,7 @@ test({
   name:
     'createRouter`s routing function should forward route handler rejections',
   async fn() {
-    const mismatchedRequest = await createServerRequest('/foo');
+    const mismatchedRequest = await createServerRequest({ path: '/foo' });
     const routeStub = createStub<Promise<Response>, [ProtectedRequest]>();
     const router = createRouter(createRoutes(routeStub));
 
