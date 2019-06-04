@@ -25,7 +25,7 @@ export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
 export class NotFoundError extends Error {}
 
-const createAugmentedRequest = (
+export const createAugmentedRequest = (
   { body, bodyStream, ...rest }: ServerRequest,
   queryParams: URLSearchParams,
   routeParams: string[],

@@ -19,7 +19,7 @@ const createJsonRequest = <TBody>(
   ...rest,
   body,
   bodyStream,
-  respond, // TODO: omit!!!
+  respond,
 });
 
 export const withJsonBody = <TBody>(
