@@ -7,11 +7,10 @@ import {
 
 import {
   Response,
-  ServerRequest,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 import { JsonRequest, jsonResponse, withJsonBody } from './json.ts';
 import { AugmentedRequest } from './router.ts';
-import { createStub } from '../test_utils.ts';
+import { createStub, createAugmentedRequest } from '../test_utils.ts';
 
 test({
   name:
@@ -98,35 +97,22 @@ test({
 
     handlerStub.returnValue = expectedResponse;
 
-    const baseRequest = {
-      url: '/',
-      method: 'GET',
-      headers: new Headers(),
-      queryParams: new URLSearchParams(),
-      routeParams: [],
-      respond: undefined,
-      bodyStream: undefined,
-    };
+    const request = createAugmentedRequest({
+      path: '/',
+      body: serialisedBody,
+    });
 
-    const rawRequest = {
-      ...baseRequest,
-      body: () => Promise.resolve(new TextEncoder().encode(serialisedBody)),
-    };
-
-    const augmentedRequest = {
-      ...baseRequest,
+    const parsedRequest: JsonRequest<Body> = {
+      ...request,
       body: parsedBody,
     };
 
-    // TODO: use createServerRequest helper!
-    const actualResponse = await augmentedHandler(
-      (rawRequest as unknown) as AugmentedRequest,
-    );
+    const actualResponse = await augmentedHandler(request);
 
     assertEquals(actualResponse, expectedResponse);
 
     handlerStub.assertWasCalledWith([
-      [(augmentedRequest as unknown) as JsonRequest<Body>],
+      [parsedRequest],
     ]);
   },
 });
