@@ -3,10 +3,12 @@ import {
   Response,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
-export type AugmentedRequest = ServerRequest & {
-  queryParams: URLSearchParams;
-  routeParams: string[];
-};
+export type AugmentedRequest = ServerRequest
+  & Pick<ServerRequest, Exclude<keyof ServerRequest, 'respond'>>
+  & {
+    queryParams: URLSearchParams;
+    routeParams: string[];
+  };
 
 /* The function returned by
  * createRouter that performs
@@ -24,16 +26,16 @@ export class RouteMap extends Map<RegExp, RouteHandler> {}
 export class NotFoundError extends Error {}
 
 const createAugmentedRequest = (
-  { body, bodyStream, respond, ...rest }: ServerRequest,
+  { body, bodyStream, ...rest }: ServerRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
 ): AugmentedRequest => ({
   ...rest,
   body,
   bodyStream,
-  respond, // TODO: omit!!!
   queryParams,
   routeParams,
+  respond: undefined,
 });
 
 export const createRouter = (routes: RouteMap) => async (
