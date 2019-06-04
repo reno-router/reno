@@ -104,8 +104,8 @@ test({
       headers: new Headers(),
       queryParams: new URLSearchParams(),
       routeParams: [],
-      respond: undefined, // TODO: omit!
-      bodyStream: undefined, // TODO: omit!
+      respond: undefined,
+      bodyStream: undefined,
     };
 
     const rawRequest = {
@@ -151,8 +151,8 @@ test({
       headers: new Headers(),
       queryParams: new URLSearchParams(),
       routeParams: [],
-      respond: undefined, // TODO: omit!
-      bodyStream: undefined, // TODO: omit!
+      respond: undefined,
+      bodyStream: undefined,
     };
 
     const request = {
