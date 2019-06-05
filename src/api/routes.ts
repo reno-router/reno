@@ -12,10 +12,8 @@ type JsonBodyResponse = JsonBody & {
   message: string;
 };
 
-// TODO: share reference?
 const encoder = new TextEncoder();
 
-// TODO: lift into responses module?
 const methodNotAllowed = (url: string, method: string) => ({
   status: 405,
   headers: new Headers({
@@ -39,7 +37,7 @@ const colossal = () => ({
   headers: new Headers({
     'Content-Type': 'application/json',
   }),
-  body: new TextEncoder().encode(serialised),
+  body: encoder.encode(serialised),
 });
 
 /* Handler to demonstrate request
