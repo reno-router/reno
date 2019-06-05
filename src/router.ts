@@ -3,8 +3,7 @@ import {
   Response,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
-export type AugmentedRequest = ServerRequest
-  & Pick<ServerRequest, Exclude<keyof ServerRequest, 'respond'>>
+export type AugmentedRequest = Pick<ServerRequest, Exclude<keyof ServerRequest, 'respond'>>
   & {
     queryParams: URLSearchParams;
     routeParams: string[];
@@ -26,7 +25,7 @@ export class RouteMap extends Map<RegExp, RouteHandler> {}
 export class NotFoundError extends Error {}
 
 export const createAugmentedRequest = (
-  { body, bodyStream, ...rest }: ServerRequest,
+  { body, bodyStream, ...rest }: ServerRequest | AugmentedRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
 ): AugmentedRequest => ({
@@ -35,7 +34,6 @@ export const createAugmentedRequest = (
   bodyStream,
   queryParams,
   routeParams,
-  respond: undefined,
 });
 
 export const createRouter = (routes: RouteMap) => async (

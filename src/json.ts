@@ -4,7 +4,7 @@ import { AugmentedRequest, RouteHandler } from './router.ts';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-export type JsonRequest<TBody> = Pick<
+export type JsonRequest<TBody = {}> = Pick<
   AugmentedRequest,
   Exclude<keyof AugmentedRequest, 'body'>
 > & {
@@ -13,13 +13,12 @@ export type JsonRequest<TBody> = Pick<
 
 // TODO: find a better way?!
 const createJsonRequest = <TBody>(
-  { bodyStream, respond, ...rest }: AugmentedRequest,
+  { bodyStream, ...rest }: AugmentedRequest,
   body: TBody,
 ) => ({
   ...rest,
   body,
   bodyStream,
-  respond,
 });
 
 export const withJsonBody = <TBody>(
