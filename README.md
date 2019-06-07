@@ -22,7 +22,7 @@ export const routes = new RouteMap([
     body: encoder.encode('Hello world!\n'),
   })],
 
-  [/\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
+  [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
     const [quotesCount = '1'] = req.routeParams;
 
     const res = await fetch(
