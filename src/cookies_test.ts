@@ -41,8 +41,8 @@ test({
     writeCookies(res);
 
     cookieSetter.assertWasCalledWith([
-      [{ 'X-Foo': 'bar' }],
-      [{ 'X-Bar': 'baz' }],
+      [res, { name: 'X-Foo', value: 'bar' }],
+      [res, { name: 'X-Bar', value: 'baz' }],
     ]);
   }
 });
