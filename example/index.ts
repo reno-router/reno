@@ -3,10 +3,12 @@ import {
   serve,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
-import { createRouter, writeCookies, NotFoundError } from '../reno/mod.ts';
+import { createRouter, NotFoundError } from '../reno/mod.ts';
 import { routes } from './routes.ts';
 
 const BINDING = ':8000';
+
+const encoder = new TextEncoder();
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString('en-GB', {
@@ -28,11 +30,14 @@ const createErrorResponse = (status: number, { message }: Error) => ({
   headers: new Headers({
     'Content-Type': 'text/plain',
   }),
-  body: new TextEncoder().encode(message), // TODO: share encoder?!
+  body: encoder.encode(message),
 });
 
 const notFound = (e: NotFoundError) => createErrorResponse(404, e);
 const serverError = (e: Error) => createErrorResponse(500, e);
+
+const mapToErrorResponse = (e: Error) =>
+  e instanceof NotFoundError ? notFound(e) : serverError(e);
 
 const router = createRouter(routes);
 
@@ -42,11 +47,7 @@ const router = createRouter(routes);
   for await (const req of serve(BINDING)) {
     logRequest(req);
 
-    const res = await router(req).catch((e: Error) =>
-      e instanceof NotFoundError ? notFound(e) : serverError(e),
-    );
-
-    writeCookies(res);
+    const res = await router(req).catch(mapToErrorResponse);
 
     req.respond(res);
   }
