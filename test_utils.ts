@@ -2,7 +2,7 @@ import { assertEquals } from 'https://deno.land/std@v0.7/testing/asserts.ts';
 import { BufReader } from 'https://deno.land/std@v0.7/io/bufio.ts';
 import { readRequest, ServerRequest } from 'https://deno.land/std@v0.7/http/server.ts';
 import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
-import { createAugmentedRequest as createAugmentedRouterRequest } from './src/router.ts';
+import { createAugmentedRequest as createAugmentedRouterRequest } from './reno/router.ts';
 
 // TODO: avoid any
 interface StubCall<TReturn, TArgs extends any[]> {

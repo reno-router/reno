@@ -6,7 +6,7 @@
   "scripts": {
     "format": "prettier --write 'src/**/*.ts'",
     "test": "deno run tests.ts",
-    "start": "deno run --allow-net src/index.ts"
+    "start": "deno run --allow-net src/example/index.ts"
   },
   "keywords": [],
   "author": "",

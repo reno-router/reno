@@ -3,9 +3,10 @@ import {
   serve,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
-import { createRouter, NotFoundError } from './router.ts';
+// TODO: single Reno mod.ts entry
+import { createRouter, NotFoundError } from '../reno/router.ts';
+import { writeCookies } from '../reno/cookies.ts';
 import { routes } from './routes.ts';
-import { writeCookies } from './cookies.ts';
 
 const BINDING = ':8000';
 
