@@ -1,6 +1,9 @@
 import { assertEquals } from 'https://deno.land/std@v0.7/testing/asserts.ts';
 import { BufReader } from 'https://deno.land/std@v0.7/io/bufio.ts';
-import { readRequest, ServerRequest } from 'https://deno.land/std@v0.7/http/server.ts';
+import {
+  readRequest,
+  ServerRequest,
+} from 'https://deno.land/std@v0.7/http/server.ts';
 import { StringReader } from 'https://deno.land/std@v0.7/io/readers.ts';
 import { createAugmentedRequest as createAugmentedRouterRequest } from './reno/router.ts';
 
@@ -48,11 +51,11 @@ export const createStub = <TReturn, TArgs extends any[]>() => {
 };
 
 interface CreateServerRequestOptions {
-  path: string,
-  method?: string,
-  headers?: Headers,
-  body?: string,
-};
+  path: string;
+  method?: string;
+  headers?: Headers;
+  body?: string;
+}
 
 export const createServerRequest = async ({
   path,
@@ -92,7 +95,12 @@ export const createAugmentedRequest = async ({
    * places and are aware of implementation
    * details. Instead, we should write an
    * abstraction that hides this. TODO: abstract! */
-  const { body: sBody, bodyStream, respond, ...rest } = await createServerRequest({
+  const {
+    body: sBody,
+    bodyStream,
+    respond,
+    ...rest
+  } = await createServerRequest({
     path,
     method,
     headers,
@@ -103,5 +111,5 @@ export const createAugmentedRequest = async ({
     { body: sBody, bodyStream, respond, ...rest },
     queryParams,
     routeParams,
-  )
+  );
 };

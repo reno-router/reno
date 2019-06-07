@@ -1,5 +1,12 @@
 import colossalJson from './colossal.json';
-import { AugmentedRequest, createRouter, RouteMap, JsonRequest, jsonResponse, withJsonBody } from '../../reno/mod.ts';
+import {
+  AugmentedRequest,
+  createRouter,
+  RouteMap,
+  JsonRequest,
+  jsonResponse,
+  withJsonBody,
+} from '../../reno/mod.ts';
 
 interface JsonBody {
   foo: string;
