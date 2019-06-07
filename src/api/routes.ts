@@ -72,9 +72,22 @@ const ronSwansonQuote = async (req: AugmentedRequest) => {
   });
 };
 
+const setCookies = () => ({
+  cookies: new Map([
+    ['deno-playground-foo', 'bar'],
+    ['deno-playground-bar', 'baz'],
+  ]),
+  headers: new Headers({
+    'Content-Type': 'text/plain',
+    'X-Foo': 'bar',
+  }),
+  body: encoder.encode('Cookies set!'),
+});
+
 const routes = new RouteMap([
   [/\/colossal$/, colossal],
   [/\/json-body$/, jsonBody],
+  [/\/set-cookies$/, setCookies],
   [/\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote],
 ]);
 
