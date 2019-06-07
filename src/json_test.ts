@@ -5,9 +5,7 @@ import {
   assertStrictEq,
 } from 'https://deno.land/std@v0.7/testing/asserts.ts';
 
-import {
-  Response,
-} from 'https://deno.land/std@v0.7/http/server.ts';
+import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
 import { JsonRequest, jsonResponse, withJsonBody } from './json.ts';
 import { AugmentedRequest } from './router.ts';
 import { createStub, createAugmentedRequest } from '../test_utils.ts';
@@ -145,9 +143,7 @@ test({
 
     assertEquals(actualResponse, expectedResponse);
 
-    handlerStub.assertWasCalledWith([
-      [parsedRequest],
-    ]);
+    handlerStub.assertWasCalledWith([[parsedRequest]]);
   },
 });
 
@@ -163,12 +159,10 @@ test({
       body,
     });
 
-    await augmentedHandler(request).catch(
-      e => {
-        handlerStub.assertWasNotCalled();
-        assertStrictEq(e instanceof SyntaxError, true);
-        assertStrictEq(e.message, 'Unexpected token n in JSON at position 2');
-      },
-    );
+    await augmentedHandler(request).catch(e => {
+      handlerStub.assertWasNotCalled();
+      assertStrictEq(e instanceof SyntaxError, true);
+      assertStrictEq(e.message, 'Unexpected token n in JSON at position 2');
+    });
   },
 });

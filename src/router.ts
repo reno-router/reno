@@ -3,20 +3,24 @@ import {
   Response,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
-export type AugmentedRequest = Pick<ServerRequest, Exclude<keyof ServerRequest, 'respond'>>
-  & {
-    queryParams: URLSearchParams;
-    routeParams: string[];
-  };
+export type AugmentedRequest = Pick<
+  ServerRequest,
+  Exclude<keyof ServerRequest, 'respond'>
+> & {
+  queryParams: URLSearchParams;
+  routeParams: string[];
+};
 
 export type AugmentedResponse = Response & {
-  cookies?: Map<string, string>,
+  cookies?: Map<string, string>;
 };
 
 /* The function returned by
  * createRouter that performs
  * route lookups. Better name? */
-export type RouteParser = (req: ServerRequest) => AugmentedResponse | Promise<AugmentedResponse>;
+export type RouteParser = (
+  req: ServerRequest,
+) => AugmentedResponse | Promise<AugmentedResponse>;
 
 /* A user-defined handler for
  * a particular route. */
