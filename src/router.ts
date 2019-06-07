@@ -22,7 +22,7 @@ export type RouteParser = (req: ServerRequest) => AugmentedResponse | Promise<Au
  * a particular route. */
 export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
-) => Response | Promise<void | Response>;
+) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
