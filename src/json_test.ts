@@ -7,7 +7,6 @@ import {
 
 import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
 import { JsonRequest, jsonResponse, withJsonBody } from './json.ts';
-import { AugmentedRequest } from './router.ts';
 import { createStub, createAugmentedRequest } from '../test_utils.ts';
 
 test({
