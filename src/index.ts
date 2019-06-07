@@ -1,14 +1,54 @@
 import {
+  ServerRequest,
   serve,
 } from 'https://deno.land/std@v0.7/http/server.ts';
-import app from './app.ts';
+
+import { createRouter, NotFoundError } from './router.ts';
+import { routes } from './routes.ts';
+import { writeCookies } from './cookies.ts';
 
 const BINDING = ':8000';
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('en-GB', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short',
+  });
+
+const logRequest = (req: ServerRequest) => {
+  console.log(`[${formatDate(new Date())}] Request for ${req.url}`);
+};
+
+const createErrorResponse = (status: number, { message }: Error) => ({
+  status,
+  headers: new Headers({
+    'Content-Type': 'text/plain',
+  }),
+  body: new TextEncoder().encode(message), // TODO: share encoder?!
+});
+
+const notFound = (e: NotFoundError) => createErrorResponse(404, e);
+const serverError = (e: Error) => createErrorResponse(500, e);
+
+const router = createRouter(routes);
 
 (async () => {
   console.log(`Listening for requests on ${BINDING}...`);
 
   for await (const req of serve(BINDING)) {
-    await app(req);
+    logRequest(req);
+
+    const res = await router(req).catch((e: Error) =>
+      e instanceof NotFoundError ? notFound(e) : serverError(e),
+    );
+
+    writeCookies(res);
+
+    req.respond(res);
   }
 })();
