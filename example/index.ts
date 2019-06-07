@@ -46,7 +46,6 @@ const router = createRouter(routes);
 
   for await (const req of serve(BINDING)) {
     logRequest(req);
-
     req.respond(await router(req).catch(mapToErrorResponse));
   }
 })();
