@@ -1,10 +1,4 @@
 import { test } from 'https://deno.land/std@v0.7/testing/mod.ts';
-
-import {
-  assertEquals,
-  assertStrictEq,
-} from 'https://deno.land/std@v0.7/testing/asserts.ts';
-
 import { createCookieWriter } from './cookies.ts';
 import { createStub } from '../test_utils.ts';
 
