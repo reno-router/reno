@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts' && git commit -am 'Fixes formatting'",
     "test": "deno run tests.ts",
     "start": "deno run --allow-net src/example/index.ts"
   },
