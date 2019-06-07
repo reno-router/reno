@@ -1,8 +1,7 @@
 {
-  "name": "deno-playground",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "reno",
+  "version": "0.0.1",
+  "description": "A thin routing library designed to sit on top of Deno's standard HTTP module",
   "scripts": {
     "format": "prettier --write '**/*.ts' && git commit -am 'Fixes formatting'",
     "test": "deno run tests.ts",

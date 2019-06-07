@@ -1,8 +1,50 @@
-# Deno Playground
+# Reno
 
-This repository serves as my scratchpad for building a HTTP server with [Deno](https://deno.land/). Building upon Deno's substantial [HTTP module](https://github.com/denoland/deno_std/tree/master/http), this project introduces a thin routing layer for forwarding particular requests to asynchronous handler functions; one it reaches a point of maturity alongside the runtime, I'll release this as a standalone library.
+Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
-## Running Locally
+```ts
+import { serve } from 'https://deno.land/std@v0.7/http/server.ts';
+
+import {
+  createRouter,
+  AugmentedRequest,
+  RouteMap,
+  jsonResponse,
+} from 'https://entropic.jamesswright.co.uk/reno/0.0.1/mod.ts';
+
+const encoder = new TextEncoder();
+
+export const routes = new RouteMap([
+  [/^\/$/, () => ({
+    headers: new Headers({
+      'Content-Type': 'text/plain',
+    }),
+    body: encoder.encode('Hello world!\n'),
+  })],
+
+  [/\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
+    const [quotesCount = '1'] = req.routeParams;
+
+    const res = await fetch(
+      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
+    );
+
+    return jsonResponse(await res.json());
+  }],
+]);
+
+const router = createRouter(routes);
+
+(async () => {
+  console.log('Listening for requests...');
+
+  for await (const req of serve(':8001')) {
+    req.respond(await router(req));
+  }
+})();
+```
+
+## Local Development
 
 Once you've cloned the repository, you'll need to ensure you're running the version of Deno against which this project is developed; this is stored in `.deno-version`. To install the correct version, run:
 
@@ -12,7 +54,7 @@ $ curl -fsSL https://deno.land/x/install/install.sh | sh -s $(cat .deno-version)
 
 Then you can run:
 
-* `deno run src/index.ts` - starts the server
+* `deno run example/index.ts` - starts the example server
 * `deno run tests.ts` - runs the unit tests
 
 ## Functionality Checklist
