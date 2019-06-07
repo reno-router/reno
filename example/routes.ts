@@ -1,5 +1,4 @@
-import { RouteMap } from '../reno/router.ts';
-import { jsonResponse } from '../reno/json.ts';
+import { RouteMap, jsonResponse } from '../reno/mod.ts';
 import { apiRouter } from './api/routes.ts';
 
 const home = () =>
