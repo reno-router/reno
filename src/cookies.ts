@@ -11,3 +11,5 @@ export const createCookieWriter = (cookieSetter: typeof setCookie) =>
       cookieSetter(res, { name, value });
     })
   };
+
+export const writeCookies = createCookieWriter(setCookie);
