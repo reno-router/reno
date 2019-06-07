@@ -3,6 +3,8 @@ import {
   Response,
 } from 'https://deno.land/std@v0.7/http/server.ts';
 
+import { writeCookies } from './cookies.ts';
+
 export type AugmentedRequest = Pick<
   ServerRequest,
   Exclude<keyof ServerRequest, 'respond'>
@@ -53,9 +55,14 @@ export const createRouter = (routes: RouteMap) => async (
     const matches = url.pathname.match(path);
 
     if (matches) {
-      return await handler(
+      const res = await handler(
         createAugmentedRequest(req, url.searchParams, matches.slice(1)),
       );
+
+      // TODO: inject and test!
+      writeCookies(res);
+
+      return res;
     }
   }
 
