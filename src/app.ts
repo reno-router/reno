@@ -32,6 +32,9 @@ const createErrorResponse = (status: number, { message }: Error) => ({
 const notFound = (e: NotFoundError) => createErrorResponse(404, e);
 const serverError = (e: Error) => createErrorResponse(500, e);
 
+/* TODO: lift logRequest into index.ts
+ * given it should be user-defined, then
+ * test req.respond calls */
 const app = async (req: ServerRequest) => {
   logRequest(req);
 
