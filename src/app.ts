@@ -1,6 +1,7 @@
 import { ServerRequest } from 'https://deno.land/std@v0.7/http/server.ts';
 import { routes } from './routes.ts';
 import { createRouter, NotFoundError } from './router.ts';
+import { writeCookies } from './cookies.ts';
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString('en-GB', {
@@ -34,20 +35,13 @@ const serverError = (e: Error) => createErrorResponse(500, e);
 const app = async (req: ServerRequest) => {
   logRequest(req);
 
-  /* If error handling is exposed
-   * via promises, then perhaps
-   * user is responsible for setting
-   * up Deno HTTP server initially?
-   * I.e. is this lib merely a thin
-   * routing layer upon Deno?! */
-
-  const res = await router(req).catch(e =>
+  const res = await router(req).catch((e: Error) =>
     e instanceof NotFoundError ? notFound(e) : serverError(e),
   );
 
-  if (res) {
-    req.respond(res);
-  }
+  writeCookies(res);
+
+  req.respond(res);
 };
 
 export default app;

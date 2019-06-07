@@ -26,7 +26,6 @@ Then you can run:
 * [x] JSON
 * [x] Custom headers
 * [x] Request bodies
-* [ ] Cookie helpers
 
 ## Is middleware support planned?
 

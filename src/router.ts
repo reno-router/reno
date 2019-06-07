@@ -9,10 +9,14 @@ export type AugmentedRequest = Pick<ServerRequest, Exclude<keyof ServerRequest, 
     routeParams: string[];
   };
 
+export type AugmentedResponse = Response & {
+  cookies?: Map<string, string>,
+};
+
 /* The function returned by
  * createRouter that performs
  * route lookups. Better name? */
-export type RouteParser = (req: ServerRequest) => Response | Promise<Response>;
+export type RouteParser = (req: ServerRequest) => AugmentedResponse | Promise<AugmentedResponse>;
 
 /* A user-defined handler for
  * a particular route. */
@@ -22,7 +26,7 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
 
 export type Router = (routes: RouteMap) => RouteParser;
 export class RouteMap extends Map<RegExp, RouteHandler> {}
-export class NotFoundError extends Error {}
+export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
 
 export const createAugmentedRequest = (
   { body, bodyStream, ...rest }: ServerRequest | AugmentedRequest,
