@@ -3,14 +3,14 @@
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 ```ts
-import { serve } from 'https://deno.land/std@v0.7/http/server.ts';
+import { serve } from 'https://deno.land/std@v0.8/http/server.ts';
 
 import {
   createRouter,
   AugmentedRequest,
   RouteMap,
   jsonResponse,
-} from 'https://deno.jamesswright.co.uk/reno/0.0.1/mod.ts';
+} from 'https://deno.jamesswright.co.uk/reno/0.0.2/mod.ts';
 
 const encoder = new TextEncoder();
 
@@ -54,8 +54,8 @@ $ curl -fsSL https://deno.land/x/install/install.sh | sh -s $(cat .deno-version)
 
 Then you can run:
 
-* `deno run example/index.ts` - starts the example server
-* `deno run tests.ts` - runs the unit tests
+* `deno example/index.ts` - starts the example server
+* `deno tests.ts` - runs the unit tests
 
 ## Functionality Checklist
 
