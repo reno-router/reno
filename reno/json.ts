@@ -1,4 +1,4 @@
-import { AugmentedRequest, RouteHandler } from './router.ts';
+import { AugmentedRequest, RouteHandler } from "./router.ts";
 
 // TODO: share reference?
 const encoder = new TextEncoder();
@@ -6,7 +6,7 @@ const decoder = new TextDecoder();
 
 export type JsonRequest<TBody = {}> = Pick<
   AugmentedRequest,
-  Exclude<keyof AugmentedRequest, 'body'>
+  Exclude<keyof AugmentedRequest, "body">
 > & {
   body: TBody;
 };
@@ -14,15 +14,15 @@ export type JsonRequest<TBody = {}> = Pick<
 // TODO: find a better way?!
 const createJsonRequest = <TBody>(
   { bodyStream, ...rest }: AugmentedRequest,
-  body: TBody,
+  body: TBody
 ) => ({
   ...rest,
   body,
-  bodyStream,
+  bodyStream
 });
 
 export const withJsonBody = <TBody>(
-  handler: RouteHandler<JsonRequest<TBody | unknown>>,
+  handler: RouteHandler<JsonRequest<TBody | unknown>>
 ) => async (req: AugmentedRequest) => {
   const rawBody = await req.body();
 
@@ -30,8 +30,8 @@ export const withJsonBody = <TBody>(
     return handler(
       createJsonRequest(
         req,
-        {} as TBody, // TODO: runtime safety!
-      ),
+        {} as TBody // TODO: runtime safety!
+      )
     );
   }
 
@@ -43,11 +43,11 @@ export const withJsonBody = <TBody>(
 
 export const jsonResponse = <TResponseBody = {}>(
   body: TResponseBody,
-  headers: domTypes.HeadersInit = {},
+  headers: domTypes.HeadersInit = {}
 ) => ({
   headers: new Headers({
     ...headers,
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json"
   }),
-  body: encoder.encode(JSON.stringify(body)),
+  body: encoder.encode(JSON.stringify(body))
 });
