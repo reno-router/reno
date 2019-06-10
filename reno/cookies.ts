@@ -1,5 +1,5 @@
-import { setCookie } from 'https://deno.land/std@v0.8/http/cookie.ts';
-import { AugmentedResponse } from './router.ts';
+import { setCookie } from "https://deno.land/std@v0.8/http/cookie.ts";
+import { AugmentedResponse } from "./router.ts";
 
 /* Currently, setCookie will overwrite
  * any current Set-Cookie instances in
@@ -14,7 +14,7 @@ import { AugmentedResponse } from './router.ts';
  * if and when a fix will land in Deno. Raise
  * this as known in this repo's GitHub issues */
 export const createCookieWriter = (cookieSetter: typeof setCookie) => (
-  res: AugmentedResponse,
+  res: AugmentedResponse
 ) => {
   if (!res.cookies) {
     return;

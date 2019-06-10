@@ -1,13 +1,13 @@
 import {
   ServerRequest,
-  Response,
-} from 'https://deno.land/std@v0.8/http/server.ts';
+  Response
+} from "https://deno.land/std@v0.8/http/server.ts";
 
-import { writeCookies } from './cookies.ts';
+import { writeCookies } from "./cookies.ts";
 
 export type AugmentedRequest = Pick<
   ServerRequest,
-  Exclude<keyof ServerRequest, 'respond'>
+  Exclude<keyof ServerRequest, "respond">
 > & {
   queryParams: URLSearchParams;
   routeParams: string[];
@@ -21,13 +21,13 @@ export type AugmentedResponse = Response & {
  * createRouter that performs
  * route lookups. Better name? */
 export type RouteParser = (
-  req: ServerRequest,
+  req: ServerRequest
 ) => AugmentedResponse | Promise<AugmentedResponse>;
 
 /* A user-defined handler for
  * a particular route. */
 export type RouteHandler<TRequest = AugmentedRequest> = (
-  req: TRequest,
+  req: TRequest
 ) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
@@ -37,26 +37,26 @@ export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
 export const createAugmentedRequest = (
   { body, bodyStream, ...rest }: ServerRequest | AugmentedRequest,
   queryParams: URLSearchParams,
-  routeParams: string[],
+  routeParams: string[]
 ): AugmentedRequest => ({
   ...rest,
   body,
   bodyStream,
   queryParams,
-  routeParams,
+  routeParams
 });
 
 export const createRouter = (routes: RouteMap) => async (
-  req: ServerRequest | AugmentedRequest,
+  req: ServerRequest | AugmentedRequest
 ) => {
-  const url = new URL(req.url, 'https://');
+  const url = new URL(req.url, "https://");
 
   for (let [path, handler] of routes) {
     const matches = url.pathname.match(path);
 
     if (matches) {
       const res = await handler(
-        createAugmentedRequest(req, url.searchParams, matches.slice(1)),
+        createAugmentedRequest(req, url.searchParams, matches.slice(1))
       );
 
       // TODO: inject and test!
