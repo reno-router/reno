@@ -1,11 +1,11 @@
-import { test } from 'https://deno.land/std@v0.7/testing/mod.ts';
+import { test } from 'https://deno.land/std@v0.8/testing/mod.ts';
 
 import {
   assertEquals,
   assertStrictEq,
-} from 'https://deno.land/std@v0.7/testing/asserts.ts';
+} from 'https://deno.land/std@v0.8/testing/asserts.ts';
 
-import { Response } from 'https://deno.land/std@v0.7/http/server.ts';
+import { Response } from 'https://deno.land/std@v0.8/http/server.ts';
 import { JsonRequest, jsonResponse, withJsonBody } from './json.ts';
 import { createStub, createAugmentedRequest } from '../test_utils.ts';
 

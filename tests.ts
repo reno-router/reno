@@ -15,7 +15,7 @@
  * https://deno.land/style_guide.html#eachmoduleshouldcomewithtests
  */
 
-import { runTests } from 'https://deno.land/std@v0.7/testing/mod.ts';
+import { runTests } from 'https://deno.land/std@v0.8/testing/mod.ts';
 import './reno/router_test.ts';
 import './reno/json_test.ts';
 import './reno/cookies_test.ts';
