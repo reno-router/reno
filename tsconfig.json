@@ -7,8 +7,7 @@
     "target": "es2018",
     "baseUrl": ".",
     "paths": {
-      "https://deno.land/std@v0.8/*": ["../../Library/Caches/deno/deps/https/raw.githubusercontent.com/denoland/deno_std/v0.7/*"],
-      "*.ts": ["*"]
+      "https://deno.land/std@v0.8/*": ["../../Library/Caches/deno/deps/https/raw.githubusercontent.com/denoland/deno_std/v0.8/*"]
     }
   },
   "include": [
