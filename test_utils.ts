@@ -64,6 +64,7 @@ export const createServerRequest = async ({
   body = '',
 }: CreateServerRequestOptions) => {
   const request = `${method} ${path} HTTP/1.1
+Content-Length: ${body.length}
 ${[...headers.entries()].reduce(
   (acc, [name, val]) => `${acc}\n${name}: ${val}`,
   '',
