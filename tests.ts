@@ -15,10 +15,10 @@
  * https://deno.land/style_guide.html#eachmoduleshouldcomewithtests
  */
 
-import { runTests } from 'https://deno.land/std@v0.8/testing/mod.ts';
-import './reno/router_test.ts';
-import './reno/helpers_test.ts';
-import './reno/cookies_test.ts';
+import { runTests } from "https://deno.land/std@v0.8/testing/mod.ts";
+import "./reno/router_test.ts";
+import "./reno/helpers_test.ts";
+import "./reno/cookies_test.ts";
 
 (async () => {
   await runTests({ parallel: true });
