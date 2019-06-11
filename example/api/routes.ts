@@ -90,6 +90,7 @@ const setCookies = () => ({
   body: encoder.encode("Cookies set!")
 });
 
+// TODO: add handler for form data
 const routes = new RouteMap([
   [/\/colossal$/, colossal],
   [/\/json-body$/, jsonBody],
