@@ -26,8 +26,7 @@ const createProcessedRequest = <TBody>(
 
 /* Maybe we'll need to write a
  * dedicated impl at some point */
-const parseFormBody = (body: string) =>
-  new URLSearchParams(body);
+const parseFormBody = (body: string) => new URLSearchParams(body);
 
 export const withJsonBody = <TBody>(
   handler: RouteHandler<JsonRequest<TBody | unknown>>
@@ -64,18 +63,13 @@ export const jsonResponse = <TResponseBody = {}>(
   body: encoder.encode(JSON.stringify(body))
 });
 
-export const withFormBody = (
-  handler: RouteHandler<FormRequest>
-) => async (req: AugmentedRequest) => {
+export const withFormBody = (handler: RouteHandler<FormRequest>) => async (
+  req: AugmentedRequest
+) => {
   const rawBody = await req.body();
 
   if (!rawBody.byteLength) {
-    return handler(
-      createProcessedRequest(
-        req,
-        new URLSearchParams(),
-      )
-    );
+    return handler(createProcessedRequest(req, new URLSearchParams()));
   }
 
   const bodyText = decoder.decode(rawBody);

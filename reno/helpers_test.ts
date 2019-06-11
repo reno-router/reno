@@ -6,7 +6,13 @@ import {
 } from "https://deno.land/std@v0.8/testing/asserts.ts";
 
 import { Response } from "https://deno.land/std@v0.8/http/server.ts";
-import { JsonRequest, FormRequest, jsonResponse, withJsonBody, withFormBody } from "./helpers.ts";
+import {
+  JsonRequest,
+  FormRequest,
+  jsonResponse,
+  withJsonBody,
+  withFormBody
+} from "./helpers.ts";
 import { createStub, createAugmentedRequest } from "../test_utils.ts";
 
 test({
@@ -159,7 +165,7 @@ test({
 });
 
 test({
-  name: 'withFormBody should parse form data and expose the values as a Map',
+  name: "withFormBody should parse form data and expose the values as a Map",
   async fn() {
     const handlerStub = createStub<Response, [FormRequest]>();
     const augmentedHandler = withFormBody(handlerStub.fn);
@@ -169,14 +175,14 @@ test({
       body: new Uint8Array(0)
     };
 
-    const body = 'foo=bar&bar=baz&baz=rofl';
+    const body = "foo=bar&bar=baz&baz=rofl";
     const expectedBody = new URLSearchParams(body);
 
     handlerStub.returnValue = expectedResponse;
 
     const request = await createAugmentedRequest({
       path: "/",
-      body,
+      body
     });
 
     const actualResponse = await augmentedHandler(request);

@@ -1,11 +1,11 @@
-import { assertEquals } from 'https://deno.land/std@v0.8/testing/asserts.ts';
-import { BufReader } from 'https://deno.land/std@v0.8/io/bufio.ts';
+import { assertEquals } from "https://deno.land/std@v0.8/testing/asserts.ts";
+import { BufReader } from "https://deno.land/std@v0.8/io/bufio.ts";
 import {
   readRequest,
-  ServerRequest,
-} from 'https://deno.land/std@v0.8/http/server.ts';
-import { StringReader } from 'https://deno.land/std@v0.8/io/readers.ts';
-import { createAugmentedRequest as createAugmentedRouterRequest } from './reno/router.ts';
+  ServerRequest
+} from "https://deno.land/std@v0.8/http/server.ts";
+import { StringReader } from "https://deno.land/std@v0.8/io/readers.ts";
+import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 // TODO: avoid any
 interface StubCall<TReturn, TArgs extends any[]> {
@@ -46,7 +46,7 @@ export const createStub = <TReturn, TArgs extends any[]>() => {
       assertEquals(expectedCalls, calls.map(({ args }) => args)),
 
     assertWasCalled: () => calls.length > 0,
-    assertWasNotCalled: () => calls.length === 0,
+    assertWasNotCalled: () => calls.length === 0
   };
 };
 
@@ -59,15 +59,15 @@ interface CreateServerRequestOptions {
 
 export const createServerRequest = async ({
   path,
-  method = 'GET',
+  method = "GET",
   headers = new Headers(),
-  body = '',
+  body = ""
 }: CreateServerRequestOptions) => {
   const request = `${method} ${path} HTTP/1.1
 Content-Length: ${body.length}
 ${[...headers.entries()].reduce(
   (acc, [name, val]) => `${acc}\n${name}: ${val}`,
-  '',
+  ""
 )}
 ${body}`;
 
@@ -82,11 +82,11 @@ ${body}`;
  * request from raw options */
 export const createAugmentedRequest = async ({
   path,
-  method = 'GET',
+  method = "GET",
   headers = new Headers(),
-  body = '',
+  body = "",
   queryParams = new URLSearchParams(),
-  routeParams = [] as string[], // TODO: avoid type assertion with opts interface
+  routeParams = [] as string[] // TODO: avoid type assertion with opts interface
 }) => {
   /* We have to explicitly destruture methods
    * here as they aren't enumerable by default.
@@ -103,12 +103,12 @@ export const createAugmentedRequest = async ({
     path,
     method,
     headers,
-    body,
+    body
   });
 
   return createAugmentedRouterRequest(
     { body: sBody, bodyStream, respond, ...rest },
     queryParams,
-    routeParams,
+    routeParams
   );
 };
