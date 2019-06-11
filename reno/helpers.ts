@@ -49,7 +49,7 @@ export const withJsonBody = <TBody>(
 
   const body = JSON.parse(bodyText) as TBody;
 
-  return handler(createProcessedRequest(req, body));
+  return await handler(createProcessedRequest(req, body));
 };
 
 export const jsonResponse = <TResponseBody = {}>(
@@ -67,13 +67,8 @@ export const withFormBody = (handler: RouteHandler<FormRequest>) => async (
   req: AugmentedRequest
 ) => {
   const rawBody = await req.body();
-
-  if (!rawBody.byteLength) {
-    return handler(createProcessedRequest(req, new URLSearchParams()));
-  }
-
   const bodyText = decoder.decode(rawBody);
   const body = parseFormBody(bodyText);
 
-  return handler(createProcessedRequest(req, body));
+  return await handler(createProcessedRequest(req, body));
 };
