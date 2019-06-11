@@ -69,9 +69,7 @@ ${[...headers.entries()].reduce(
   (acc, [name, val]) => `${acc}\n${name}: ${val}`,
   '',
 )}
-
-${body}
-`;
+${body}`;
 
   const bufReader = BufReader.create(new StringReader(request));
 
