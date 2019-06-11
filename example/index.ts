@@ -33,6 +33,7 @@ const createErrorResponse = (status: number, { message }: Error) => ({
   body: encoder.encode(message)
 });
 
+// TODO: use HTTP's Status enum
 const notFound = (e: NotFoundError) => createErrorResponse(404, e);
 const serverError = (e: Error) => createErrorResponse(500, e);
 

@@ -6,7 +6,7 @@ import {
 } from "https://deno.land/std@v0.8/testing/asserts.ts";
 
 import { Response } from "https://deno.land/std@v0.8/http/server.ts";
-import { JsonRequest, jsonResponse, withJsonBody } from "./json.ts";
+import { JsonRequest, FormRequest, jsonResponse, withJsonBody, withFormBody } from "./helpers.ts";
 import { createStub, createAugmentedRequest } from "../test_utils.ts";
 
 test({
@@ -99,19 +99,11 @@ test({
       body: serialisedBody
     });
 
-    const parsedRequest: JsonRequest<Body> = {
-      ...request,
-      body: parsedBody
-    };
-
     const actualResponse = await augmentedHandler(request);
+    const [actualRequest] = handlerStub.calls[0].args;
 
     assertEquals(actualResponse, expectedResponse);
-
-    // TODO: more deep equality issues. Try again later
-    // handlerStub.assertWasCalledWith([
-    //   [parsedRequest],
-    // ]);
+    assertEquals(actualRequest.body, parsedBody);
   }
 });
 
@@ -161,7 +153,39 @@ test({
     await augmentedHandler(request).catch(e => {
       handlerStub.assertWasNotCalled();
       assertStrictEq(e instanceof SyntaxError, true);
-      assertStrictEq(e.message, "Unexpected token n in JSON at position 2");
+      assertStrictEq(e.message, "Unexpected token n in JSON at position 3");
+    });
+  }
+});
+
+test({
+  name: 'withFormBody should parse form data and expose the values as a Map',
+  async fn() {
+    const handlerStub = createStub<Response, [FormRequest]>();
+    const augmentedHandler = withFormBody(handlerStub.fn);
+
+    const expectedResponse = {
+      headers: new Headers(),
+      body: new Uint8Array(0)
+    };
+
+    const body = 'foo=bar&bar=baz&baz=rofl';
+    const expectedBody = new URLSearchParams(body);
+
+    handlerStub.returnValue = expectedResponse;
+
+    const request = await createAugmentedRequest({
+      path: "/",
+      body,
+    });
+
+    const actualResponse = await augmentedHandler(request);
+    const [actualRequest] = handlerStub.calls[0].args;
+
+    assertEquals(actualResponse, expectedResponse);
+
+    actualRequest.body.forEach((value, key) => {
+      assertStrictEq(value, expectedBody.get(key));
     });
   }
 });
