@@ -153,7 +153,7 @@ test({
     await augmentedHandler(request).catch(e => {
       handlerStub.assertWasNotCalled();
       assertStrictEq(e instanceof SyntaxError, true);
-      assertStrictEq(e.message, "Unexpected token n in JSON at position 3");
+      assertStrictEq(e.message, "Unexpected token n in JSON at position 2");
     });
   }
 });
@@ -184,8 +184,6 @@ test({
 
     assertEquals(actualResponse, expectedResponse);
 
-    actualRequest.body.forEach((value, key) => {
-      assertStrictEq(value, expectedBody.get(key));
-    });
+    assertEquals(actualRequest.body, expectedBody);
   }
 });
