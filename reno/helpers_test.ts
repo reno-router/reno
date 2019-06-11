@@ -189,7 +189,33 @@ test({
     const [actualRequest] = handlerStub.calls[0].args;
 
     assertEquals(actualResponse, expectedResponse);
+    assertEquals(actualRequest.body, expectedBody);
+  }
+});
 
+test({
+  name: "withFormBody should silently delegate to the wrapped handler if there's no req body",
+  async fn() {
+    const handlerStub = createStub<Response, [FormRequest]>();
+    const augmentedHandler = withFormBody(handlerStub.fn);
+
+    const expectedResponse = {
+      headers: new Headers(),
+      body: new Uint8Array(0)
+    };
+
+    const expectedBody = new URLSearchParams();
+
+    handlerStub.returnValue = expectedResponse;
+
+    const request = await createAugmentedRequest({
+      path: "/",
+    });
+
+    const actualResponse = await augmentedHandler(request);
+    const [actualRequest] = handlerStub.calls[0].args;
+
+    assertEquals(actualResponse, expectedResponse);
     assertEquals(actualRequest.body, expectedBody);
   }
 });
