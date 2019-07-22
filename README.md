@@ -10,7 +10,7 @@ import {
   AugmentedRequest,
   RouteMap,
   jsonResponse,
-} from 'https://deno.jamesswright.co.uk/reno/0.0.2/mod.ts';
+} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.0.2/reno/mod.ts';
 
 const encoder = new TextEncoder();
 
