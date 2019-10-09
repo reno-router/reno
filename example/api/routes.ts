@@ -5,6 +5,7 @@ import {
   RouteMap,
   JsonRequest,
   jsonResponse,
+  textResponse,
   withJsonBody
 } from "../../reno/mod.ts";
 
@@ -18,14 +19,9 @@ type JsonBodyResponse = JsonBody & {
   message: string;
 };
 
-const encoder = new TextEncoder();
-
 const methodNotAllowed = (url: string, method: string) => ({
   status: 405,
-  headers: new Headers({
-    "Content-Type": "text/plain"
-  }),
-  body: encoder.encode(`Method ${method} not allowed for ${url}`)
+  ...textResponse(`Method ${method} not allowed for ${url}`)
 });
 
 const serialised = JSON.stringify(colossalJson);
@@ -39,11 +35,8 @@ const serialised = JSON.stringify(colossalJson);
  * new StringReader(): 8 secs
  * TextEncoder#encode: 0.7 secs
  */
-const colossal = () => ({
-  headers: new Headers({
-    "Content-Type": "application/json"
-  }),
-  body: encoder.encode(serialised)
+const colossal = () => textResponse(serialised, {
+  "Content-Type": "application/json"
 });
 
 /* Handler to demonstrate request
@@ -83,11 +76,7 @@ const setCookies = () => ({
     ["deno-playground-foo", "bar"],
     ["deno-playground-bar", "baz"]
   ]),
-  headers: new Headers({
-    "Content-Type": "text/plain",
-    "X-Foo": "bar"
-  }),
-  body: encoder.encode("Cookies set!")
+  ...textResponse("Cookies set!")
 });
 
 // TODO: add handler for form data

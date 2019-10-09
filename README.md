@@ -9,18 +9,14 @@ import {
   createRouter,
   AugmentedRequest,
   RouteMap,
+  textResponse,
   jsonResponse,
 } from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.0.2/reno/mod.ts';
 
 const encoder = new TextEncoder();
 
 export const routes = new RouteMap([
-  [/^\/$/, () => ({
-    headers: new Headers({
-      'Content-Type': 'text/plain',
-    }),
-    body: encoder.encode('Hello world!\n'),
-  })],
+  [/^\/$/, () => textResponse('Hello world!')],
 
   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
     const [quotesCount = '1'] = req.routeParams;
