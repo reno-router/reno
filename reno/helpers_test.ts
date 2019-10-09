@@ -10,6 +10,7 @@ import {
   JsonRequest,
   FormRequest,
   jsonResponse,
+  textResponse,
   withJsonBody,
   withFormBody
 } from "./helpers.ts";
@@ -65,6 +66,53 @@ test({
     });
 
     const actualResponse = jsonResponse(body, headers);
+
+    assertEquals(
+      [...actualResponse.headers.entries()],
+      [...expectedHeaders.entries()]
+    );
+  }
+});
+
+test({
+  name:
+    "textResponse builds an response object with the correct Content-Type header and an encoded body",
+  fn() {
+    const body = "Hello, world!";
+    const expectedBody = new TextEncoder().encode(body);
+
+    const expectedHeaders = new Headers({
+      "Content-Type": "text/plain"
+    });
+
+    const actualResponse = textResponse(body);
+
+    assertEquals(actualResponse.body, expectedBody);
+
+    assertEquals(
+      [...actualResponse.headers.entries()],
+      [...expectedHeaders.entries()]
+    );
+  }
+});
+
+test({
+  name: "textResponse accepts custom headers",
+  fn() {
+    const body = "Hello, world!";
+
+    const headers = {
+      "X-Foo": "bar",
+      "X-Bar": "baz"
+    };
+
+    const expectedHeaders = new Headers({
+      "X-Foo": "bar",
+      "X-Bar": "baz",
+      "Content-Type": "text/plain"
+    });
+
+    const actualResponse = textResponse(body, headers);
 
     assertEquals(
       [...actualResponse.headers.entries()],
