@@ -63,6 +63,17 @@ export const jsonResponse = <TResponseBody = {}>(
   body: encoder.encode(JSON.stringify(body))
 });
 
+export const textResponse = (
+  body: string,
+  headers: domTypes.HeadersInit = {}
+) => ({
+  headers: new Headers({
+    ...headers,
+    "Content-Type": "text/plain"
+  }),
+  body: encoder.encode(body)
+});
+
 export const withFormBody = (handler: RouteHandler<FormRequest>) => async (
   req: AugmentedRequest
 ) => {
