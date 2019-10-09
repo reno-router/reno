@@ -19,6 +19,7 @@ test({
     const path = "/api/foo/*/bar";
     const regExp = parsePath(path);
 
+    // TODO: ASSERT CAPTURE GROUPS!!!
     assertMatch("/api/foo/lol/bar", regExp);
     assertNotMatch("/api/foo/lol", regExp);
   }
