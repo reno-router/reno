@@ -55,7 +55,7 @@ $ curl -fsSL https://deno.land/x/install/install.sh | sh -s $(cat .deno-version)
 Then you can run:
 
 * `deno example/index.ts` - starts the example server
-* `deno tests.ts` - runs the unit tests
+* `deno test` - runs the unit tests
 
 ## Functionality Checklist
 
