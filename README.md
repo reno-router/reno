@@ -11,7 +11,7 @@ import {
   RouteMap,
   textResponse,
   jsonResponse,
-} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.0.2/reno/mod.ts';
+} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.1.0/reno/mod.ts';
 
 const encoder = new TextEncoder();
 
