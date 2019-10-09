@@ -15,8 +15,8 @@ interface StubCall<TReturn, TArgs extends any[]> {
 
 class StubConn implements Deno.Conn {
   constructor() {
-    this.localAddr = '';
-    this.remoteAddr = '';
+    this.localAddr = "";
+    this.remoteAddr = "";
     this.rid = 1;
   }
 

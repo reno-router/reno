@@ -242,7 +242,8 @@ test({
 });
 
 test({
-  name: "withFormBody should silently delegate to the wrapped handler if there's no req body",
+  name:
+    "withFormBody should silently delegate to the wrapped handler if there's no req body",
   async fn() {
     const handlerStub = createStub<Response, [FormRequest]>();
     const augmentedHandler = withFormBody(handlerStub.fn);
@@ -257,7 +258,7 @@ test({
     handlerStub.returnValue = expectedResponse;
 
     const request = await createAugmentedRequest({
-      path: "/",
+      path: "/"
     });
 
     const actualResponse = await augmentedHandler(request);

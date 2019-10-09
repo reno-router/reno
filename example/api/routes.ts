@@ -35,9 +35,10 @@ const serialised = JSON.stringify(colossalJson);
  * new StringReader(): 8 secs
  * TextEncoder#encode: 0.7 secs
  */
-const colossal = () => textResponse(serialised, {
-  "Content-Type": "application/json"
-});
+const colossal = () =>
+  textResponse(serialised, {
+    "Content-Type": "application/json"
+  });
 
 /* Handler to demonstrate request
  * body parsing with withJsonBody
