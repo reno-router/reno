@@ -20,3 +20,15 @@ test({
     assertNotMatch('/api/foo/lol', regExp);
   }
 });
+
+test({
+  name: 'parsePath should treat the last wildcard as optional',
+  async fn() {
+    const path = '/api/foo/*';
+    const regExp = parsePath(path);
+
+    assertMatch('/api/foo/lol', regExp);
+    assertMatch('/api/foo', regExp);
+    assertMatch('/api/foo/lol/rofl', regExp);
+  }
+});
