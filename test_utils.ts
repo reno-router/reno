@@ -1,16 +1,40 @@
-import { assertEquals } from "https://deno.land/std@v0.8/testing/asserts.ts";
-import { BufReader } from "https://deno.land/std@v0.8/io/bufio.ts";
+import { assertEquals } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
+import { BufReader } from "https://deno.land/std@v0.20.0/io/bufio.ts";
 import {
   readRequest,
   ServerRequest
-} from "https://deno.land/std@v0.8/http/server.ts";
-import { StringReader } from "https://deno.land/std@v0.8/io/readers.ts";
+} from "https://deno.land/std@v0.20.0/http/server.ts";
+import { StringReader } from "https://deno.land/std@v0.20.0/io/readers.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 // TODO: avoid any
 interface StubCall<TReturn, TArgs extends any[]> {
   args: TArgs;
   returnValue: TReturn;
+}
+
+class StubConn implements Deno.Conn {
+  constructor() {
+    this.localAddr = '';
+    this.remoteAddr = '';
+    this.rid = 1;
+  }
+
+  localAddr: string;
+  remoteAddr: string;
+  rid: number;
+
+  closeRead(): void {}
+  closeWrite(): void {}
+  close(): void {}
+
+  read(p: Uint8Array): Promise<number> {
+    return Promise.resolve(p.length);
+  }
+
+  write(p: Uint8Array): Promise<number> {
+    return Promise.resolve(p.length);
+  }
 }
 
 export interface Stub<TReturn, TArgs extends any[]> {
@@ -75,7 +99,7 @@ ${body}`;
 
   /* readRequest can also return EOF,
    * thus we need to type assert here */
-  return (await readRequest(bufReader)) as ServerRequest;
+  return (await readRequest(new StubConn(), bufReader)) as ServerRequest;
 };
 
 /* Helper to create router-compatible

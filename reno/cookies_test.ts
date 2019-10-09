@@ -1,4 +1,4 @@
-import { test } from "https://deno.land/std@v0.8/testing/mod.ts";
+import { test } from "https://deno.land/std@v0.20.0/testing/mod.ts";
 import { createCookieWriter } from "./cookies.ts";
 import { createStub } from "../test_utils.ts";
 
