@@ -7,7 +7,9 @@ const parsePath = (path: string) =>
   new RegExp(
     `${path
       .split("/")
-      .map((part, i, { length }) => (part === "*" ? getWildcard(i, length) : part))
+      .map((part, i, { length }) =>
+        part === "*" ? getWildcard(i, length) : part
+      )
       .join("/")}`
   );
 

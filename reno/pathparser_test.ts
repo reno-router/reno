@@ -1,7 +1,7 @@
 import { test } from "https://deno.land/std@v0.20.0/testing/mod.ts";
 import {
   assertStrictEq,
-  assertMatch,
+  assertMatch
 } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
 import parsePath from "./pathparser.ts";
 
@@ -22,7 +22,7 @@ test({
     assertMatch("/api/foo/lol/bar", regExp);
     assertMatch("/api/foo/lol/bar/", regExp);
     assertNotMatch("/api/foo/lol", regExp);
-    assertStrictEq('rofl', '/api/foo/rofl/bar'.match(regExp)[1]);
+    assertStrictEq("rofl", "/api/foo/rofl/bar".match(regExp)[1]);
   }
 });
 
