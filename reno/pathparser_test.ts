@@ -1,5 +1,6 @@
 import { test } from "https://deno.land/std@v0.20.0/testing/mod.ts";
 import {
+  assertEquals,
   assertStrictEq,
   assertMatch
 } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
@@ -16,13 +17,14 @@ const assertNotMatch = (actual: string, regExp: RegExp) => {
 test({
   name: "parsePath should convert a human-friendly path spec into a RegExp",
   async fn() {
-    const path = "/api/foo/*/bar";
+    const path = "/api/foo/*/bar/*/*/baz";
     const regExp = parsePath(path);
 
-    assertMatch("/api/foo/lol/bar", regExp);
-    assertMatch("/api/foo/lol/bar/", regExp);
-    assertNotMatch("/api/foo/lol", regExp);
-    assertStrictEq("rofl", "/api/foo/rofl/bar".match(regExp)[1]);
+    assertMatch("/api/foo/lol/bar/qux/kek/baz", regExp);
+    assertMatch("/api/foo/lol/bar/qux/kek/baz/", regExp);
+    assertNotMatch("/api/foo/lol/bar", regExp);
+
+    assertEquals(["lol", "qux", "kek"], "/api/foo/lol/bar/qux/kek/baz/".match(regExp).slice(1));
   }
 });
 
