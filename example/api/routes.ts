@@ -82,9 +82,9 @@ const setCookies = () => ({
 
 // TODO: add handler for form data
 const routes = new RouteMap([
-  [/\/colossal$/, colossal],
-  [/\/json-body$/, jsonBody],
-  [/\/set-cookies$/, setCookies],
+  ["/colossal", colossal],
+  ["/json-body", jsonBody],
+  ["/set-cookies", setCookies],
   [/\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote]
 ]);
 

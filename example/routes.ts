@@ -8,6 +8,6 @@ const home = () =>
   });
 
 export const routes = new RouteMap([
-  [/^\/$/, home],
+  ["/", home],
   [/^\/api\/.*$/, apiRouter]
 ]);
