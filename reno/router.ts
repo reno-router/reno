@@ -32,6 +32,8 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
 ) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
+
+// TODO: write createRouteMap func for consistency
 export class RouteMap extends Map<RegExp | string, RouteHandler> {}
 export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
 
