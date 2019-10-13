@@ -13,8 +13,6 @@ import {
   jsonResponse,
 } from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.1.0/reno/mod.ts';
 
-const encoder = new TextEncoder();
-
 export const routes = new RouteMap([
   [/^\/$/, () => textResponse('Hello world!')],
 
