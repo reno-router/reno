@@ -40,27 +40,9 @@ test({
 
     assertEquals(actualResponse, response);
 
-    const [AugmentedRequest] = routeStub.calls[0].args;
+    const [augmentedRequest] = routeStub.calls[0].args;
 
-    // WIP assertion. See TODO below
-    assertEquals(AugmentedRequest.url, "/foo");
-
-    /* TODO: currently failing, but diffs
-     * match. Try again with a new release */
-
-    // const AugmentedRequest = {
-    //   url: '/foo',
-    //   method: 'GET',
-    //   headers: new Headers(),
-    //   body: request.body,
-    //   bodyStream: request.bodyStream,
-    //   queryParams: new URL('/foo', 'https://').searchParams,
-    //   routeParams: [],
-    // };
-
-    // routeStub.assertWasCalledWith([
-    //   [AugmentedRequest],
-    // ]);
+    assertEquals(augmentedRequest.url, "/foo");
   }
 });
 
