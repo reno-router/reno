@@ -43,6 +43,7 @@ test({
     const [augmentedRequest] = routeStub.calls[0].args;
 
     assertEquals(augmentedRequest.url, "/foo");
+    assertEquals(augmentedRequest.routeParams, []);
   }
 });
 
