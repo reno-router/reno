@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
+import { assertEquals, assertStrictEq } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
 import { BufReader } from "https://deno.land/std@v0.20.0/io/bufio.ts";
 import {
   readRequest,
@@ -42,6 +42,8 @@ export interface Stub<TReturn, TArgs extends any[] = any[]> {
   calls: StubCall<TReturn, TArgs>[];
   returnValue: TReturn;
   assertWasCalledWith(expectedCalls: TArgs[]): void;
+  assertWasCalled(): void;
+  assertWasNotCalled(): void;
 }
 
 /* TODO: add functionality
@@ -69,8 +71,8 @@ export const createStub = <TReturn, TArgs extends any[] = any[]>() => {
     assertWasCalledWith: (expectedCalls: TArgs[]) =>
       assertEquals(expectedCalls, calls.map(({ args }) => args)),
 
-    assertWasCalled: () => calls.length > 0,
-    assertWasNotCalled: () => calls.length === 0
+    assertWasCalled: () => assertStrictEq(calls.length > 0, true),
+    assertWasNotCalled: () => assertStrictEq(calls.length > 0, false)
   };
 };
 

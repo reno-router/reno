@@ -11,6 +11,7 @@ import {
 import {
   NotFoundError,
   AugmentedRequest,
+  AugmentedResponse,
   RouteMap,
   routerCreator
 } from "./router.ts";
@@ -30,7 +31,9 @@ test({
       body: new Uint8Array()
     };
 
-    const createRouter = routerCreator(createStub<RegExp, [string]>().fn, createStub<void>().fn);
+    const pathParser = createStub<RegExp, [string]>();
+    const cookieWriter = createStub<void, [AugmentedResponse]>();
+    const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
     const router = createRouter(createRoutes(routeStub));
     const request = await createServerRequest({ path: "/foo" });
 
@@ -44,6 +47,12 @@ test({
 
     assertEquals(augmentedRequest.url, "/foo");
     assertEquals(augmentedRequest.routeParams, []);
+
+    pathParser.assertWasNotCalled();
+
+    cookieWriter.assertWasCalledWith([
+      [actualResponse]
+    ]);
   }
 });
 
