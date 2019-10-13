@@ -32,7 +32,7 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
 ) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
-export class RouteMap extends Map<RegExp, RouteHandler> {}
+export class RouteMap extends Map<RegExp | string, RouteHandler> {}
 export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
 
 export const createAugmentedRequest = (
@@ -57,7 +57,7 @@ export const routerCreator = (
     const url = new URL(req.url, "https://");
 
     for (let [path, handler] of routes) {
-      const matches = url.pathname.match(path);
+      const matches = url.pathname.match(pathParser(path));
 
       if (matches) {
         const res = await handler(

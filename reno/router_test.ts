@@ -22,7 +22,7 @@ const createRoutes = (stub: Stub<Promise<Response>, [AugmentedRequest]>) =>
 
 test({
   name:
-    "createRouter`s routing function should invoke a handler for a given path from the provided map",
+    "createRouter`s routing function should invoke a handler for a given path from the provided map, and call the cookie writer and path parser",
   async fn() {
     const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
 
@@ -31,7 +31,7 @@ test({
       body: new Uint8Array()
     };
 
-    const pathParser = createStub<RegExp, [string]>();
+    const pathParser = createStub<RegExp, [RegExp | string]>();
     const cookieWriter = createStub<void, [AugmentedResponse]>();
     const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
     const router = createRouter(createRoutes(routeStub));
@@ -48,7 +48,9 @@ test({
     assertEquals(augmentedRequest.url, "/foo");
     assertEquals(augmentedRequest.routeParams, []);
 
-    pathParser.assertWasNotCalled();
+    pathParser.assertWasCalledWith([
+      [/\/foo$/],
+    ]);
 
     cookieWriter.assertWasCalledWith([
       [actualResponse]
