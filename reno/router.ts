@@ -4,6 +4,7 @@ import {
 } from "https://deno.land/std@v0.20.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";
+import parsePath from './pathparser.ts';
 
 export type AugmentedRequest = Pick<
   ServerRequest,
@@ -46,25 +47,30 @@ export const createAugmentedRequest = (
   routeParams
 });
 
-export const createRouter = (routes: RouteMap) => async (
-  req: ServerRequest | AugmentedRequest
-) => {
-  const url = new URL(req.url, "https://");
+export const routerCreator = (
+  pathParser: typeof parsePath,
+  cookieWriter: typeof writeCookies,
+) =>
+  (routes: RouteMap) => async (
+    req: ServerRequest | AugmentedRequest
+  ) => {
+    const url = new URL(req.url, "https://");
 
-  for (let [path, handler] of routes) {
-    const matches = url.pathname.match(path);
+    for (let [path, handler] of routes) {
+      const matches = url.pathname.match(path);
 
-    if (matches) {
-      const res = await handler(
-        createAugmentedRequest(req, url.searchParams, matches.slice(1))
-      );
+      if (matches) {
+        const res = await handler(
+          createAugmentedRequest(req, url.searchParams, matches.slice(1))
+        );
 
-      // TODO: inject and test!
-      writeCookies(res);
+        cookieWriter(res);
 
-      return res;
+        return res;
+      }
     }
-  }
 
-  return Promise.reject(new NotFoundError(`No match for ${req.url}`));
-};
+    return Promise.reject(new NotFoundError(`No match for ${req.url}`));
+  };
+
+export const createRouter = routerCreator(parsePath, writeCookies);

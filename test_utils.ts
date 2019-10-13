@@ -8,7 +8,7 @@ import { StringReader } from "https://deno.land/std@v0.20.0/io/readers.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 // TODO: avoid any
-interface StubCall<TReturn, TArgs extends any[]> {
+interface StubCall<TReturn, TArgs = any[]> {
   args: TArgs;
   returnValue: TReturn;
 }
@@ -37,7 +37,7 @@ class StubConn implements Deno.Conn {
   }
 }
 
-export interface Stub<TReturn, TArgs extends any[]> {
+export interface Stub<TReturn, TArgs extends any[] = any[]> {
   fn: (...args: TArgs) => TReturn;
   calls: StubCall<TReturn, TArgs>[];
   returnValue: TReturn;
@@ -46,7 +46,7 @@ export interface Stub<TReturn, TArgs extends any[]> {
 
 /* TODO: add functionality
  * as it's required. */
-export const createStub = <TReturn, TArgs extends any[]>() => {
+export const createStub = <TReturn, TArgs extends any[] = any[]>() => {
   const calls: StubCall<TReturn, TArgs>[] = [];
   let returnValue: TReturn = undefined;
 

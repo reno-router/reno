@@ -12,7 +12,7 @@ import {
   NotFoundError,
   AugmentedRequest,
   RouteMap,
-  createRouter
+  routerCreator
 } from "./router.ts";
 import { Stub, createStub, createServerRequest } from "../test_utils.ts";
 
@@ -30,6 +30,7 @@ test({
       body: new Uint8Array()
     };
 
+    const createRouter = routerCreator(createStub<RegExp, [string]>().fn, createStub<void>().fn);
     const router = createRouter(createRoutes(routeStub));
     const request = await createServerRequest({ path: "/foo" });
 
@@ -69,6 +70,7 @@ test({
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
     const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
+    const createRouter = routerCreator(createStub<RegExp, [string]>().fn, createStub().fn);
     const router = createRouter(createRoutes(routeStub));
 
     await router(mismatchedRequest).catch(e => {
@@ -84,6 +86,7 @@ test({
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo" });
     const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
+    const createRouter = routerCreator(createStub<RegExp, [string]>().fn, createStub().fn);
     const router = createRouter(createRoutes(routeStub));
 
     routeStub.returnValue = Promise.reject(new Error("Some error!"));
