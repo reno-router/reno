@@ -40,3 +40,13 @@ test({
     assertMatch("/api/foo/lol/rofl", regExp);
   }
 });
+
+test({
+  name: "parsePath should return the input parameter if it`s a RegExp",
+  async fn() {
+    const path = /\/api\/foo\/.*/;
+    const regExp = parsePath(path);
+
+    assertStrictEq(regExp, path);
+  }
+});
