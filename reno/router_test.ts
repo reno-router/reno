@@ -4,9 +4,7 @@ import {
   assertStrictEq
 } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
 import {
-  ServerRequest,
   Response,
-  readRequest
 } from "https://deno.land/std@v0.20.0/http/server.ts";
 import {
   NotFoundError,
