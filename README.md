@@ -67,20 +67,4 @@ Then you can run:
 
 ## Is middleware support planned?
 
-No. While [middleware](https://expressjs.com/en/guide/using-middleware.html) enables one to perform common logic and mutations upon request and response references, my personal experience with this pattern demonstrates that it scales poorly in larger codebases. I've thus omitted such a mechanism in to promote the explicit declaration of said common logic in a bid to localise it to expected sites. For instance:
-
-```ts
-const app = async (req: ServerRequest) => {
-  logRequest(req);
-
-  req.respond(
-    await router(req).catch(e =>
-      e instanceof NotFoundError ? notFound(e) : serverError(e),
-    ),
-  );
-};
-```
-
-Without having to mentally grok the flow of a request within a chain of middlewares, we're able to build foundational functionality around our router. Want to serve error respones? Handle `Promise` rejections with `#catch`. Want to `log` requests? Call your logger of choice explicitly before forwarding a request to the router.
-
-There are certainly instances in which the middleware pattern _can_ be beneficial, but I believe it compromises the ability to explicitly declare intent. I'll provide more examples as I further flesh out this project.
+Not directly, but Reno will eventually export a `pipe` function to combine multiple route handlers.
