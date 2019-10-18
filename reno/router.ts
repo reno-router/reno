@@ -29,6 +29,7 @@ export type RouteParser = (
  * a particular route. */
 export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
+  rootQueryParams?: URLSearchParams,
   childPathParts?: string[]
 ) => Response | Promise<Response>;
 
@@ -56,16 +57,19 @@ export const routerCreator = (
 ) =>
   (routes: RouteMap) => async (
     req: ServerRequest | AugmentedRequest,
+    rootQueryParams?: URLSearchParams,
     childPathParts?: string[]
   ) => {
     const url = new URL(childPathParts ? childPathParts.join('/') : req.url, "https://");
+    const queryParams = rootQueryParams || url.searchParams;
 
     for (let [path, handler] of routes) {
       const matches = url.pathname.match(pathParser(path));
 
       if (matches) {
         const res = await handler(
-          createAugmentedRequest(req, url.searchParams, matches.slice(1)),
+          createAugmentedRequest(req, queryParams, matches.slice(1)),
+          queryParams,
           matches.slice(1)
         );
 

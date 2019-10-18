@@ -22,13 +22,12 @@ test({
   name:
     "createRouter`s routing function should invoke a handler for a given path from the provided map, and call the cookie writer and path parser",
   async fn() {
-    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-
     const response = {
       headers: new Headers(),
       body: new Uint8Array()
     };
 
+    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
     const pathParser = createStub<RegExp, [RegExp | string]>();
     const cookieWriter = createStub<void, [AugmentedResponse]>();
     const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
@@ -52,6 +51,54 @@ test({
 
     cookieWriter.assertWasCalledWith([
       [actualResponse]
+    ]);
+  }
+});
+
+test({
+  name: "createRouter`s routing function should support nested routers",
+  async fn() {
+    const response = {
+      headers: new Headers(),
+      body: new Uint8Array()
+    };
+
+    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
+    const pathParser = createStub<RegExp, [RegExp | string]>();
+    const cookieWriter = createStub<void, [AugmentedResponse]>();
+    const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
+
+    const routes = new RouteMap([
+      ["/foo/*", createRouter(new RouteMap([
+        ["/bar/*", createRouter(new RouteMap([
+          ["/baz", routeStub.fn]
+        ]))]
+      ]))]
+    ]);
+
+    const router = createRouter(routes);
+    const request = await createServerRequest({ path: "/foo/bar/baz?lol=rofl&rofl=lmao" });
+
+    routeStub.returnValue = Promise.resolve(response);
+
+    const actualResponse = await router(request);
+
+    assertEquals(actualResponse, response);
+
+    const [augmentedRequest] = routeStub.calls[0].args;
+
+    assertEquals(augmentedRequest.url, "/foo/bar/baz?lol=rofl&rofl=lmao");
+    assertEquals(augmentedRequest.routeParams, []);
+
+    assertEquals([...augmentedRequest.queryParams.entries()], [
+      ["lol", "rofl"],
+      ["rofl", "lmao"]
+    ]);
+
+    pathParser.assertWasCalledWith([
+      ["/foo/*"],
+      ["/bar/*"],
+      ["/baz"]
     ]);
   }
 });
