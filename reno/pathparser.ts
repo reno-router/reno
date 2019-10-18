@@ -12,7 +12,7 @@ const parsePath = (path: string | RegExp) =>
         .map((part, i, { length }) =>
           part === "*" ? getWildcard(i, length) : part
         )
-        .join("/")}$`
+        .join("/")}/?$`
   );
 
 export default parsePath;
