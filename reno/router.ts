@@ -28,7 +28,8 @@ export type RouteParser = (
 /* A user-defined handler for
  * a particular route. */
 export type RouteHandler<TRequest = AugmentedRequest> = (
-  req: TRequest
+  req: TRequest,
+  childPathParts?: string[]
 ) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
@@ -54,16 +55,18 @@ export const routerCreator = (
   cookieWriter: typeof writeCookies,
 ) =>
   (routes: RouteMap) => async (
-    req: ServerRequest | AugmentedRequest
+    req: ServerRequest | AugmentedRequest,
+    childPathParts?: string[]
   ) => {
-    const url = new URL(req.url, "https://");
+    const url = new URL(childPathParts ? childPathParts.join('/') : req.url, "https://");
 
     for (let [path, handler] of routes) {
       const matches = url.pathname.match(pathParser(path));
 
       if (matches) {
         const res = await handler(
-          createAugmentedRequest(req, url.searchParams, matches.slice(1))
+          createAugmentedRequest(req, url.searchParams, matches.slice(1)),
+          matches.slice(1)
         );
 
         cookieWriter(res);

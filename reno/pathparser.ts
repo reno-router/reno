@@ -7,12 +7,12 @@ const parsePath = (path: string | RegExp) =>
   path instanceof RegExp
     ? path
     : new RegExp(
-      `${path
+      `^${path
         .split("/")
         .map((part, i, { length }) =>
           part === "*" ? getWildcard(i, length) : part
         )
-        .join("/")}`
+        .join("/")}$`
   );
 
 export default parsePath;

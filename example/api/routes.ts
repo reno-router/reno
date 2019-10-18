@@ -85,7 +85,7 @@ const routes = new RouteMap([
   ["/colossal", colossal],
   ["/json-body", jsonBody],
   ["/set-cookies", setCookies],
-  [/\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote]
+  [/^\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote]
 ]);
 
 export const apiRouter = createRouter(routes);
