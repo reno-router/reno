@@ -31,7 +31,11 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
   rootQueryParams?: URLSearchParams,
   childPathParts?: string[]
-) => Response | Promise<Response>;
+
+  /* number allows us to return
+   * Deno.copy()'s Promise from
+   * route handlers for streaming responses */
+) => Response | Promise<Response | number>;
 
 export type Router = (routes: RouteMap) => RouteParser;
 
@@ -73,7 +77,11 @@ export const routerCreator = (
           matches.slice(1)
         );
 
-        cookieWriter(res);
+        /* TODO: remove this condition and write
+         * a common response wrapper */
+        if (res instanceof Response) {
+          cookieWriter(res);
+        }
 
         return res;
       }

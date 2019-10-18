@@ -1,4 +1,7 @@
+import { StringReader } from 'https://deno.land/std@v0.20.0/io/readers.ts';
+
 import colossalJson from "./colossal.json";
+
 import {
   AugmentedRequest,
   createRouter,
@@ -80,11 +83,19 @@ const setCookies = () => ({
   ...textResponse("Cookies set!")
 });
 
+// TODO: abstract!
+const streamedResponse = async (req: AugmentedRequest) => {
+  await Deno.copy(req.conn, new StringReader("This was written directly to the request reference`s underlying socket!"));
+  req.conn.close();
+  return "This was written directly to the request reference`s underlying socket!".length;
+};
+
 // TODO: add handler for form data
 const routes = new RouteMap([
   ["/colossal", colossal],
   ["/json-body", jsonBody],
   ["/set-cookies", setCookies],
+  ["/streamed-response", streamedResponse],
   [/^\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote]
 ]);
 

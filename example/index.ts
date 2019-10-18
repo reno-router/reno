@@ -47,6 +47,16 @@ const router = createRouter(routes);
 
   for await (const req of serve(BINDING)) {
     logRequest(req);
-    req.respond(await router(req).catch(mapToErrorResponse));
+
+    const response = await router(req).catch(mapToErrorResponse);
+
+    /* TODO: like the conditional branch in router,
+     * this is another workaround to support streaming
+     * responses. We should write a common abstraction
+     * over responses or some sort of adapter so we can
+     * remove these two conditional branches. */
+    if (typeof response !== 'number') {
+      req.respond(response);
+    }
   }
 })();
