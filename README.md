@@ -11,11 +11,12 @@ import {
   RouteMap,
   textResponse,
   jsonResponse,
-} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.1.0/reno/mod.ts';
+} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.2.0/reno/mod.ts';
 
 export const routes = new RouteMap([
-  [/^\/$/, () => textResponse('Hello world!')],
+  ["/home", () => textResponse('Hello world!')],
 
+  // Supports RegExp routes for further granularity
   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
     const [quotesCount = '1'] = req.routeParams;
 
