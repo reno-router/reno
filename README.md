@@ -14,7 +14,7 @@ import {
 } from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.2.0/reno/mod.ts';
 
 export const routes = new RouteMap([
-  ["/home", () => textResponse('Hello world!')],
+  ['/home', () => textResponse('Hello world!')],
 
   // Supports RegExp routes for further granularity
   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
@@ -65,6 +65,7 @@ Then you can run:
 * [x] Request bodies
 * [x] Cookies
 * [ ] Streaming responses with [`Reader`](https://deno.land/typedoc/interfaces/_deno_.reader.html)/[`Deno.copy()`](https://deno.land/typedoc/index.html#copy)
+* [ ] Streaming request bodies
 
 ## Is middleware support planned?
 

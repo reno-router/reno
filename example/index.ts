@@ -50,8 +50,6 @@ const router = createRouter(routes);
 
     const response = await router(req).catch(mapToErrorResponse);
 
-    if (response) {
-      await req.respond(response);
-    }
+    await req.respond(response);
   }
 })();
