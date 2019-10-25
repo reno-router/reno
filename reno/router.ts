@@ -31,10 +31,6 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
   rootQueryParams?: URLSearchParams,
   childPathParts?: string[]
-
-  /* number allows us to return
-   * Deno.copy()'s Promise from
-   * route handlers for streaming responses */
 ) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
