@@ -70,7 +70,7 @@ Then you can run:
 * [x] Custom headers
 * [x] Request bodies
 * [x] Cookies
-* [ ] Streaming responses with [`Reader`](https://deno.land/typedoc/interfaces/_deno_.reader.html)/[`Deno.copy()`](https://deno.land/typedoc/index.html#copy)
+* [x] Streaming responses with [`Reader`](https://deno.land/typedoc/interfaces/_deno_.reader.html)
 * [ ] Streaming request bodies
 
 ## Is middleware support planned?
