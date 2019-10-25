@@ -12,7 +12,7 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.2.0/reno/mod.ts';
+} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.3.0/reno/mod.ts';
 
 export const routes = new RouteMap([
   ['/home', () => textResponse('Hello world!')],
