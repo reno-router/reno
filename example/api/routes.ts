@@ -59,9 +59,6 @@ const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
     : methodNotAllowed(url, method)
 );
 
-/* TODO: is it possible to pipe
- * fetch responses to the
- * requests's response body? */
 const ronSwansonQuote = async (req: AugmentedRequest) => {
   const [quotesCount = "1"] = req.routeParams;
 
