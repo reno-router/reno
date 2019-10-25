@@ -31,7 +31,7 @@ export const routes = new RouteMap([
   // Supports Reader for streaming responses in chunks
   ['/streamed-response', () => streamResponse(
     new ReactReader(<App />),
-  ],
+  )],
 ]);
 
 const router = createRouter(routes);
