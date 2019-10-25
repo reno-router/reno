@@ -14,12 +14,6 @@ export type ProcessedRequest<TBody> = Pick<
 export type JsonRequest<TBody = {}> = ProcessedRequest<TBody>;
 export type FormRequest = ProcessedRequest<URLSearchParams>;
 
-export interface StreamResponse {
-  headers: Headers;
-  targetWriter: Deno.WriteCloser;
-  sourceReader: Deno.Reader;
-}
-
 // TODO: find a better way?!
 const createProcessedRequest = <TBody>(
   { bodyStream, ...rest }: AugmentedRequest,
@@ -81,17 +75,12 @@ export const textResponse = (
 });
 
 export const streamResponse = (
-  targetWriter: Deno.WriteCloser,
-  sourceReader: Deno.Reader,
+  body: Deno.Reader,
   headers: domTypes.HeadersInit = {}
-): StreamResponse => ({
+) => ({
   headers: new Headers(headers),
-  targetWriter,
-  sourceReader,
+  body
 });
-
-export const isStreamResponse = (response: unknown): response is StreamResponse =>
-  ['targetWriter', 'sourceReader'].every(key => key in (response as StreamResponse));
 
 export const withFormBody = (handler: RouteHandler<FormRequest>) => async (
   req: AugmentedRequest

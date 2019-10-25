@@ -84,8 +84,7 @@ const setCookies = () => ({
   ...textResponse("Cookies set!")
 });
 
-const streamedResponse = async (req: AugmentedRequest) => streamResponse(
-  req.conn,
+const streamedResponse = async () => streamResponse(
   new StringReader("This was written directly to the request reference`s underlying socket!")
 );
 

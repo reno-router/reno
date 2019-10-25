@@ -3,7 +3,7 @@ import {
   serve
 } from "https://deno.land/std@v0.20.0/http/server.ts";
 
-import { createRouter, NotFoundError, isStreamResponse, StreamResponse } from "../reno/mod.ts";
+import { createRouter, NotFoundError } from "../reno/mod.ts";
 import { routes } from "./routes.ts";
 
 const BINDING = ":8000";
@@ -42,13 +42,6 @@ const mapToErrorResponse = (e: Error) =>
 
 const router = createRouter(routes);
 
-/* TODO: move this and related conditional
- * branch into library-provided abstraction */
-const writeStreamResponse = async ({ targetWriter, sourceReader }: StreamResponse) => {
-  await Deno.copy(targetWriter, sourceReader);
-  targetWriter.close();
-}
-
 (async () => {
   console.log(`Listening for requests on ${BINDING}...`);
 
@@ -57,13 +50,8 @@ const writeStreamResponse = async ({ targetWriter, sourceReader }: StreamRespons
 
     const response = await router(req).catch(mapToErrorResponse);
 
-    if (isStreamResponse(response)) {
-      await writeStreamResponse(response);
-      return;
-    }
-
     if (response) {
-      req.respond(response);
+      await req.respond(response);
     }
   }
 })();
