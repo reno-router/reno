@@ -2,7 +2,7 @@
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
-```ts
+```tsx
 import { serve } from 'https://deno.land/std@v0.20.0/http/server.ts';
 
 import {
@@ -11,6 +11,7 @@ import {
   RouteMap,
   textResponse,
   jsonResponse,
+  streamResponse,
 } from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.2.0/reno/mod.ts';
 
 export const routes = new RouteMap([
@@ -26,6 +27,11 @@ export const routes = new RouteMap([
 
     return jsonResponse(await res.json());
   }],
+
+  // Supports Reader for streaming responses in chunks
+  ['/streamed-response', () => streamResponse(
+    new ReactReader(<App />),
+  ],
 ]);
 
 const router = createRouter(routes);
