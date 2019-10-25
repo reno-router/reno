@@ -3,12 +3,10 @@ import {
   serve
 } from "https://deno.land/std@v0.20.0/http/server.ts";
 
-import { createRouter, NotFoundError } from "../reno/mod.ts";
+import { createRouter, NotFoundError, textResponse } from "../reno/mod.ts";
 import { routes } from "./routes.ts";
 
 const BINDING = ":8000";
-
-const encoder = new TextEncoder();
 
 const formatDate = (date: Date) =>
   date.toLocaleDateString("en-GB", {
@@ -27,10 +25,7 @@ const logRequest = (req: ServerRequest) => {
 
 const createErrorResponse = (status: number, { message }: Error) => ({
   status,
-  headers: new Headers({
-    "Content-Type": "text/plain"
-  }),
-  body: encoder.encode(message)
+  ...textResponse(message)
 });
 
 // TODO: use HTTP's Status enum

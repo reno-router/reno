@@ -1,6 +1,5 @@
 import { AugmentedRequest, RouteHandler, AugmentedResponse } from "./router.ts";
 
-// TODO: share reference?
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
