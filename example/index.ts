@@ -3,7 +3,7 @@ import {
   serve
 } from "https://deno.land/std@v0.20.0/http/server.ts";
 
-import { createRouter, NotFoundError } from "../reno/mod.ts";
+import { createRouter, NotFoundError, isStreamResponse, StreamResponse } from "../reno/mod.ts";
 import { routes } from "./routes.ts";
 
 const BINDING = ":8000";
@@ -42,6 +42,13 @@ const mapToErrorResponse = (e: Error) =>
 
 const router = createRouter(routes);
 
+/* TODO: move this and related conditional
+ * branch into library-provided abstraction */
+const writeStreamResponse = async ({ targetWriter, sourceReader }: StreamResponse) => {
+  await Deno.copy(targetWriter, sourceReader);
+  targetWriter.close();
+}
+
 (async () => {
   console.log(`Listening for requests on ${BINDING}...`);
 
@@ -50,12 +57,12 @@ const router = createRouter(routes);
 
     const response = await router(req).catch(mapToErrorResponse);
 
-    /* TODO: like the conditional branch in router,
-     * this is another workaround to support streaming
-     * responses. We should write a common abstraction
-     * over responses or some sort of adapter so we can
-     * remove these two conditional branches. */
-    if (typeof response !== 'number') {
+    if (isStreamResponse(response)) {
+      await writeStreamResponse(response);
+      return;
+    }
+
+    if (response) {
       req.respond(response);
     }
   }

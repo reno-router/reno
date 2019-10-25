@@ -4,7 +4,8 @@ import {
 } from "https://deno.land/std@v0.20.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";
-import parsePath from './pathparser.ts';
+import parsePath from "./pathparser.ts";
+import { StreamResponse } from "./helpers.ts";
 
 export type AugmentedRequest = Pick<
   ServerRequest,
@@ -35,7 +36,7 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
   /* number allows us to return
    * Deno.copy()'s Promise from
    * route handlers for streaming responses */
-) => Response | Promise<Response | number>;
+) => Response | Promise<Response | StreamResponse>;
 
 export type Router = (routes: RouteMap) => RouteParser;
 

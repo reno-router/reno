@@ -9,7 +9,8 @@ import {
   JsonRequest,
   jsonResponse,
   textResponse,
-  withJsonBody
+  withJsonBody,
+  streamResponse
 } from "../../reno/mod.ts";
 
 interface JsonBody {
@@ -83,12 +84,10 @@ const setCookies = () => ({
   ...textResponse("Cookies set!")
 });
 
-// TODO: abstract!
-const streamedResponse = async (req: AugmentedRequest) => {
-  await Deno.copy(req.conn, new StringReader("This was written directly to the request reference`s underlying socket!"));
-  req.conn.close();
-  return "This was written directly to the request reference`s underlying socket!".length;
-};
+const streamedResponse = async (req: AugmentedRequest) => streamResponse(
+  req.conn,
+  new StringReader("This was written directly to the request reference`s underlying socket!")
+);
 
 // TODO: add handler for form data
 const routes = new RouteMap([
