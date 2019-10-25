@@ -73,11 +73,7 @@ export const routerCreator = (
           matches.slice(1)
         );
 
-        /* TODO: remove this condition and write
-         * a common response wrapper */
-        if (res instanceof Response) {
-          cookieWriter(res);
-        }
+        cookieWriter(res);
 
         return res;
       }
