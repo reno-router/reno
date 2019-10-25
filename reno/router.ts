@@ -53,33 +53,35 @@ export const createAugmentedRequest = (
 
 export const routerCreator = (
   pathParser: typeof parsePath,
-  cookieWriter: typeof writeCookies,
-) =>
-  (routes: RouteMap) => async (
-    req: ServerRequest | AugmentedRequest,
-    rootQueryParams?: URLSearchParams,
-    childPathParts?: string[]
-  ) => {
-    const url = new URL(childPathParts ? childPathParts.join('/') : req.url, "https://");
-    const queryParams = rootQueryParams || url.searchParams;
+  cookieWriter: typeof writeCookies
+) => (routes: RouteMap) => async (
+  req: ServerRequest | AugmentedRequest,
+  rootQueryParams?: URLSearchParams,
+  childPathParts?: string[]
+) => {
+  const url = new URL(
+    childPathParts ? childPathParts.join("/") : req.url,
+    "https://"
+  );
+  const queryParams = rootQueryParams || url.searchParams;
 
-    for (let [path, handler] of routes) {
-      const matches = url.pathname.match(pathParser(path));
+  for (let [path, handler] of routes) {
+    const matches = url.pathname.match(pathParser(path));
 
-      if (matches) {
-        const res = await handler(
-          createAugmentedRequest(req, queryParams, matches.slice(1)),
-          queryParams,
-          matches.slice(1)
-        );
+    if (matches) {
+      const res = await handler(
+        createAugmentedRequest(req, queryParams, matches.slice(1)),
+        queryParams,
+        matches.slice(1)
+      );
 
-        cookieWriter(res);
+      cookieWriter(res);
 
-        return res;
-      }
+      return res;
     }
+  }
 
-    return Promise.reject(new NotFoundError(`No match for ${req.url}`));
-  };
+  return Promise.reject(new NotFoundError(`No match for ${req.url}`));
+};
 
 export const createRouter = routerCreator(parsePath, writeCookies);

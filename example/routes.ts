@@ -7,7 +7,4 @@ const home = () =>
     isLol: true
   });
 
-export const routes = new RouteMap([
-  ["/", home],
-  ["/api/*", apiRouter]
-]);
+export const routes = new RouteMap([["/", home], ["/api/*", apiRouter]]);

@@ -3,9 +3,7 @@ import {
   assertEquals,
   assertStrictEq
 } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
-import {
-  Response,
-} from "https://deno.land/std@v0.20.0/http/server.ts";
+import { Response } from "https://deno.land/std@v0.20.0/http/server.ts";
 import {
   NotFoundError,
   AugmentedRequest,
@@ -45,13 +43,9 @@ test({
     assertEquals(augmentedRequest.url, "/foo");
     assertEquals(augmentedRequest.routeParams, []);
 
-    pathParser.assertWasCalledWith([
-      [/\/foo$/],
-    ]);
+    pathParser.assertWasCalledWith([[/\/foo$/]]);
 
-    cookieWriter.assertWasCalledWith([
-      [actualResponse]
-    ]);
+    cookieWriter.assertWasCalledWith([[actualResponse]]);
   }
 });
 
@@ -69,15 +63,20 @@ test({
     const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
 
     const routes = new RouteMap([
-      ["/foo/*", createRouter(new RouteMap([
-        ["/bar/*", createRouter(new RouteMap([
-          ["/baz", routeStub.fn]
-        ]))]
-      ]))]
+      [
+        "/foo/*",
+        createRouter(
+          new RouteMap([
+            ["/bar/*", createRouter(new RouteMap([["/baz", routeStub.fn]]))]
+          ])
+        )
+      ]
     ]);
 
     const router = createRouter(routes);
-    const request = await createServerRequest({ path: "/foo/bar/baz?lol=rofl&rofl=lmao" });
+    const request = await createServerRequest({
+      path: "/foo/bar/baz?lol=rofl&rofl=lmao"
+    });
 
     routeStub.returnValue = Promise.resolve(response);
 
@@ -90,16 +89,12 @@ test({
     assertEquals(augmentedRequest.url, "/foo/bar/baz?lol=rofl&rofl=lmao");
     assertEquals(augmentedRequest.routeParams, []);
 
-    assertEquals([...augmentedRequest.queryParams.entries()], [
-      ["lol", "rofl"],
-      ["rofl", "lmao"]
-    ]);
+    assertEquals(
+      [...augmentedRequest.queryParams.entries()],
+      [["lol", "rofl"], ["rofl", "lmao"]]
+    );
 
-    pathParser.assertWasCalledWith([
-      ["/foo/*"],
-      ["/bar/*"],
-      ["/baz"]
-    ]);
+    pathParser.assertWasCalledWith([["/foo/*"], ["/bar/*"], ["/baz"]]);
   }
 });
 
@@ -109,7 +104,10 @@ test({
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
     const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-    const createRouter = routerCreator(createStub<RegExp, [string]>().fn, createStub().fn);
+    const createRouter = routerCreator(
+      createStub<RegExp, [string]>().fn,
+      createStub().fn
+    );
     const router = createRouter(createRoutes(routeStub));
 
     await router(mismatchedRequest).catch(e => {
@@ -125,7 +123,10 @@ test({
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo" });
     const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-    const createRouter = routerCreator(createStub<RegExp, [string]>().fn, createStub().fn);
+    const createRouter = routerCreator(
+      createStub<RegExp, [string]>().fn,
+      createStub().fn
+    );
     const router = createRouter(createRoutes(routeStub));
 
     routeStub.returnValue = Promise.reject(new Error("Some error!"));

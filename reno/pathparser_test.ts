@@ -24,7 +24,10 @@ test({
     assertMatch("/api/foo/lol/bar/qux/kek/baz/", regExp);
     assertNotMatch("/api/foo/lol/bar", regExp);
 
-    assertEquals(["lol", "qux", "kek"], "/api/foo/lol/bar/qux/kek/baz/".match(regExp).slice(1));
+    assertEquals(
+      ["lol", "qux", "kek"],
+      "/api/foo/lol/bar/qux/kek/baz/".match(regExp).slice(1)
+    );
   }
 });
 
