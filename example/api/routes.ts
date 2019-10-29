@@ -59,19 +59,20 @@ const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
     : methodNotAllowed(url, method)
 );
 
-const ronSwansonQuote = async (req: AugmentedRequest) => {
-  const [quotesCount = "1"] = req.routeParams;
+export const createRonSwansonQuoteHandler = (fetch: (url: string) => Promise<Pick<Response, 'json'>>) =>
+  async (req: Pick<AugmentedRequest, 'routeParams'>) => {
+    const [quotesCount = "1"] = req.routeParams;
 
-  const res = await fetch(
-    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
-  );
+    const res = await fetch(
+      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
+    );
 
-  const quotes = await res.json();
+    const quotes = await res.json();
 
-  return jsonResponse(quotes, {
-    "X-Foo": "bar"
-  });
-};
+    return jsonResponse(quotes, {
+      "X-Foo": "bar"
+    });
+  };
 
 const setCookies = () => ({
   cookies: new Map([
@@ -91,7 +92,7 @@ const routes = new RouteMap([
   ["/json-body", jsonBody],
   ["/set-cookies", setCookies],
   ["/streamed-response", streamedResponse],
-  [/^\/ron-swanson-quote\/?([0-9]?)$/, ronSwansonQuote]
+  [/^\/ron-swanson-quote\/?([0-9]?)$/, createRonSwansonQuoteHandler(window.fetch)]
 ]);
 
 export const apiRouter = createRouter(routes);

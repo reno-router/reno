@@ -46,8 +46,7 @@ export interface Stub<TReturn, TArgs extends any[] = any[]> {
   assertWasNotCalled(): void;
 }
 
-/* TODO: add functionality
- * as it's required. */
+// TODO: replace this with Sinon
 export const createStub = <TReturn, TArgs extends any[] = any[]>() => {
   const calls: StubCall<TReturn, TArgs>[] = [];
   let returnValue: TReturn = undefined;
