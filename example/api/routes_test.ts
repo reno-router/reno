@@ -30,4 +30,32 @@ test({
       "X-Foo": "bar"
     }));
   }
-})
+});
+
+test({
+  name: "ronSwansonQuoteHandler should fetch the number of quotes specified in the route params if present",
+  async fn() {
+    const quotesCount = 5;
+    const stubFetch = createStub<Promise<Pick<Response, 'json'>>, [string]>();
+    const quotes = Array(quotesCount).fill("Some Ron Swanson Quote");
+    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(stubFetch.fn);
+
+    const req = {
+      routeParams: [`${quotesCount}`]
+    };
+
+    stubFetch.returnValue = Promise.resolve({
+      json: () => Promise.resolve(quotes)
+    });
+
+    const response = await ronSwansonQuoteHandler(req);
+
+    assertEquals(response, jsonResponse(quotes, {
+      "X-Foo": "bar"
+    }));
+
+    stubFetch.assertWasCalledWith([
+      [`https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`]
+    ]);
+  }
+});
