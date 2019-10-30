@@ -26,7 +26,9 @@ test({
     const response = await ronSwansonQuoteHandler(req);
 
     assertEquals(response, jsonResponse(quotes, {
-      // TODO: headers aren't deeply matched. Raise a PR in testing lib or find a workaround
+      /* Headers aren't deeply matched right now,
+       * but will be with the next Deno release.
+       * TODO: verify with next Deno version when available */
       "X-Foo": "bar"
     }));
   }
