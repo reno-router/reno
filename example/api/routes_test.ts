@@ -5,7 +5,7 @@ import {
 } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 
 import { createStub } from "../../test_utils.ts";
-import { jsonResponse } from "../../reno/mod.ts";
+import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from './routes.ts';
 
 test({
@@ -25,11 +25,8 @@ test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertEquals(response, jsonResponse(quotes, {
-      /* Headers aren't deeply matched right now,
-       * but will be with the next Deno release.
-       * TODO: verify with next Deno version when available */
-      "X-Foo": "baz"
+    assertResponsesMatch(response, jsonResponse(quotes, {
+      "X-Foo": "bar"
     }));
   }
 });
