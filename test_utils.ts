@@ -1,10 +1,10 @@
-import { assertEquals, assertStrictEq } from "https://deno.land/std@v0.20.0/testing/asserts.ts";
-import { BufReader } from "https://deno.land/std@v0.20.0/io/bufio.ts";
+import { assertEquals, assertStrictEq } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
+import { BufReader } from "https://deno.land/std@v0.23.0/io/bufio.ts";
 import {
   readRequest,
   ServerRequest
-} from "https://deno.land/std@v0.20.0/http/server.ts";
-import { StringReader } from "https://deno.land/std@v0.20.0/io/readers.ts";
+} from "https://deno.land/std@v0.23.0/http/server.ts";
+import { StringReader } from "https://deno.land/std@v0.23.0/io/readers.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 // TODO: avoid any

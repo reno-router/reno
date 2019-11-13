@@ -1,7 +1,7 @@
 import {
   ServerRequest,
   serve
-} from "https://deno.land/std@v0.20.0/http/server.ts";
+} from "https://deno.land/std@v0.23.0/http/server.ts";
 
 import { createRouter, NotFoundError, textResponse } from "../reno/mod.ts";
 import { routes } from "./routes.ts";

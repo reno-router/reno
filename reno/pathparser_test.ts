@@ -1,9 +1,9 @@
-import { test } from "https://deno.land/std@v0.20.0/testing/mod.ts";
+import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
 import {
   assertEquals,
   assertStrictEq,
   assertMatch
-} from "https://deno.land/std@v0.20.0/testing/asserts.ts";
+} from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 import parsePath from "./pathparser.ts";
 
 const assertNotMatch = (actual: string, regExp: RegExp) => {
