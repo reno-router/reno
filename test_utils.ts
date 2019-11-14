@@ -1,4 +1,3 @@
-import { assertEquals, assertStrictEq } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 import { BufReader } from "https://deno.land/std@v0.23.0/io/bufio.ts";
 import {
   readRequest,
@@ -6,12 +5,6 @@ import {
 } from "https://deno.land/std@v0.23.0/http/server.ts";
 import { StringReader } from "https://deno.land/std@v0.23.0/io/readers.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
-
-// TODO: avoid any
-interface StubCall<TReturn, TArgs = any[]> {
-  args: TArgs;
-  returnValue: TReturn;
-}
 
 class StubConn implements Deno.Conn {
   constructor() {
@@ -36,44 +29,6 @@ class StubConn implements Deno.Conn {
     return Promise.resolve(p.length);
   }
 }
-
-export interface Stub<TReturn, TArgs extends any[] = any[]> {
-  fn: (...args: TArgs) => TReturn;
-  calls: StubCall<TReturn, TArgs>[];
-  returnValue: TReturn;
-  assertWasCalledWith(expectedCalls: TArgs[]): void;
-  assertWasCalled(): void;
-  assertWasNotCalled(): void;
-}
-
-// TODO: replace this with Sinon
-export const createStub = <TReturn, TArgs extends any[] = any[]>() => {
-  const calls: StubCall<TReturn, TArgs>[] = [];
-  let returnValue: TReturn = undefined;
-
-  const fn = (...args: TArgs) => {
-    calls.push({ args, returnValue });
-    return returnValue;
-  };
-
-  return {
-    fn,
-
-    get calls() {
-      return [...calls];
-    },
-
-    set returnValue(val: TReturn) {
-      returnValue = val;
-    },
-
-    assertWasCalledWith: (expectedCalls: TArgs[]) =>
-      assertEquals(expectedCalls, calls.map(({ args }) => args)),
-
-    assertWasCalled: () => assertStrictEq(calls.length > 0, true),
-    assertWasNotCalled: () => assertStrictEq(calls.length > 0, false)
-  };
-};
 
 interface CreateServerRequestOptions {
   path: string;

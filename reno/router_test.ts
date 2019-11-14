@@ -1,20 +1,19 @@
 import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
+
 import {
   assertEquals,
   assertStrictEq
 } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
-import { Response } from "https://deno.land/std@v0.23.0/http/server.ts";
+
 import {
   NotFoundError,
-  AugmentedRequest,
-  AugmentedResponse,
   RouteMap,
   routerCreator
 } from "./router.ts";
-import { Stub, createStub, createServerRequest } from "../test_utils.ts";
 
-const createRoutes = (stub: Stub<Promise<Response>, [AugmentedRequest]>) =>
-  new RouteMap([[/\/foo$/, stub.fn]]);
+import { assertResponsesMatch } from "./testing.ts";
+import { sinon } from "../deps.ts";
+import { createServerRequest } from "../test_utils.ts";
 
 test({
   name:
@@ -25,27 +24,24 @@ test({
       body: new Uint8Array()
     };
 
-    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-    const pathParser = createStub<RegExp, [RegExp | string]>();
-    const cookieWriter = createStub<void, [AugmentedResponse]>();
-    const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
-    const router = createRouter(createRoutes(routeStub));
+    const routeStub = sinon.stub().resolves(response);
+    const pathParser = sinon.stub();
+    const cookieWriter = sinon.stub();
+    const createRouter = routerCreator(pathParser, cookieWriter);
+    const router = createRouter(new RouteMap([[/\/foo$/, routeStub]]));
     const request = await createServerRequest({ path: "/foo" });
-
-    routeStub.returnValue = Promise.resolve(response);
 
     const actualResponse = await router(request);
 
-    assertEquals(actualResponse, response);
+    assertResponsesMatch(actualResponse, response);
 
-    const [augmentedRequest] = routeStub.calls[0].args;
+    const [augmentedRequest] = routeStub.firstCall.args;
 
     assertEquals(augmentedRequest.url, "/foo");
     assertEquals(augmentedRequest.routeParams, []);
 
-    pathParser.assertWasCalledWith([[/\/foo$/]]);
-
-    cookieWriter.assertWasCalledWith([[actualResponse]]);
+    sinon.assert.calledWithExactly(pathParser, /\/foo$/);
+    sinon.assert.calledWithExactly(cookieWriter, actualResponse);
   }
 });
 
@@ -57,17 +53,17 @@ test({
       body: new Uint8Array()
     };
 
-    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-    const pathParser = createStub<RegExp, [RegExp | string]>();
-    const cookieWriter = createStub<void, [AugmentedResponse]>();
-    const createRouter = routerCreator(pathParser.fn, cookieWriter.fn);
+    const routeStub = sinon.stub().resolves(response);
+    const pathParser = sinon.stub();
+    const cookieWriter = sinon.stub();
+    const createRouter = routerCreator(pathParser, cookieWriter);
 
     const routes = new RouteMap([
       [
         "/foo/*",
         createRouter(
           new RouteMap([
-            ["/bar/*", createRouter(new RouteMap([["/baz", routeStub.fn]]))]
+            ["/bar/*", createRouter(new RouteMap([["/baz", routeStub]]))]
           ])
         )
       ]
@@ -78,13 +74,11 @@ test({
       path: "/foo/bar/baz?lol=rofl&rofl=lmao"
     });
 
-    routeStub.returnValue = Promise.resolve(response);
-
     const actualResponse = await router(request);
 
-    assertEquals(actualResponse, response);
+    assertResponsesMatch(actualResponse, response);
 
-    const [augmentedRequest] = routeStub.calls[0].args;
+    const [augmentedRequest] = routeStub.firstCall.args;
 
     assertEquals(augmentedRequest.url, "/foo/bar/baz?lol=rofl&rofl=lmao");
     assertEquals(augmentedRequest.routeParams, []);
@@ -94,7 +88,10 @@ test({
       [["lol", "rofl"], ["rofl", "lmao"]]
     );
 
-    pathParser.assertWasCalledWith([["/foo/*"], ["/bar/*"], ["/baz"]]);
+    sinon.assert.calledThrice(pathParser);
+    sinon.assert.calledWithExactly(pathParser, "/foo/*");
+    sinon.assert.calledWithExactly(pathParser, "/bar/*");
+    sinon.assert.calledWithExactly(pathParser, "/baz");
   }
 });
 
@@ -103,13 +100,11 @@ test({
     "createRouter`s routing function should reject with a NotFoundError when no routes match",
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
-    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-    const createRouter = routerCreator(
-      createStub<RegExp, [string]>().fn,
-      createStub().fn
-    );
-    const router = createRouter(createRoutes(routeStub));
+    const routeStub = sinon.stub();
+    const createRouter = routerCreator(sinon.stub(), sinon.stub());
+    const router = createRouter(new RouteMap([[/\/foo$/, routeStub]]));
 
+    // TODO: doesn't seem to be catching. Why?!
     await router(mismatchedRequest).catch(e => {
       assertStrictEq(e instanceof NotFoundError, true);
       assertStrictEq(e.message, "No match for /foo-bar");
@@ -122,14 +117,9 @@ test({
     "createRouter`s routing function should forward route handler rejections",
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo" });
-    const routeStub = createStub<Promise<Response>, [AugmentedRequest]>();
-    const createRouter = routerCreator(
-      createStub<RegExp, [string]>().fn,
-      createStub().fn
-    );
-    const router = createRouter(createRoutes(routeStub));
-
-    routeStub.returnValue = Promise.reject(new Error("Some error!"));
+    const routeStub = sinon.stub().rejects(new Error("Some error!"));
+    const createRouter = routerCreator(sinon.stub(), sinon.stub());
+    const router = createRouter(new RouteMap([[/\/foo$/, routeStub]]));
 
     await router(mismatchedRequest).catch(e => {
       assertStrictEq(e instanceof Error, true);
