@@ -6,6 +6,8 @@ import {
 } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 
 import { Response } from "https://deno.land/std@v0.23.0/http/server.ts";
+import { sinon } from '../deps.ts';
+
 import {
   JsonRequest,
   FormRequest,
@@ -14,7 +16,9 @@ import {
   withJsonBody,
   withFormBody
 } from "./helpers.ts";
-import { createStub, createAugmentedRequest } from "../test_utils.ts";
+
+import { assertResponsesMatch } from "./testing.ts";
+import { createAugmentedRequest } from "../test_utils.ts";
 
 test({
   name:
@@ -25,24 +29,16 @@ test({
       bar: 1
     };
 
-    const expectedBody = new TextEncoder().encode(JSON.stringify(body));
-
-    const expectedHeaders = new Headers({
-      "Content-Type": "application/json"
-    });
+    const expectedResponse = {
+      headers: new Headers({
+        "Content-Type": "application/json"
+      }),
+      body: new TextEncoder().encode(JSON.stringify(body))
+    }
 
     const actualResponse = jsonResponse(body);
 
-    assertEquals(actualResponse.body, expectedBody);
-
-    /* assertEquals doesn't currently deeply
-     * compare HeaderInit objects, although
-     * this could be due to the nature
-     * of that object, so my workaround is: */
-    assertEquals(
-      [...actualResponse.headers.entries()],
-      [...expectedHeaders.entries()]
-    );
+    assertResponsesMatch(actualResponse, expectedResponse);
   }
 });
 
@@ -59,18 +55,18 @@ test({
       "X-Bar": "baz"
     };
 
-    const expectedHeaders = new Headers({
-      "X-Foo": "bar",
-      "X-Bar": "baz",
-      "Content-Type": "application/json"
-    });
+    const expectedResponse = {
+      headers: new Headers({
+        "X-Foo": "bar",
+        "X-Bar": "baz",
+        "Content-Type": "application/json"
+      }),
+      body: new TextEncoder().encode(JSON.stringify(body))
+    }
 
     const actualResponse = jsonResponse(body, headers);
 
-    assertEquals(
-      [...actualResponse.headers.entries()],
-      [...expectedHeaders.entries()]
-    );
+    assertResponsesMatch(actualResponse, expectedResponse);
   }
 });
 
@@ -79,20 +75,17 @@ test({
     "textResponse builds an response object with the correct Content-Type header and an encoded body",
   fn() {
     const body = "Hello, world!";
-    const expectedBody = new TextEncoder().encode(body);
 
-    const expectedHeaders = new Headers({
-      "Content-Type": "text/plain"
-    });
+    const expectedResponse = {
+      body: new TextEncoder().encode(body),
+      headers: new Headers({
+        "Content-Type": "text/plain"
+      })
+    };
 
     const actualResponse = textResponse(body);
 
-    assertEquals(actualResponse.body, expectedBody);
-
-    assertEquals(
-      [...actualResponse.headers.entries()],
-      [...expectedHeaders.entries()]
-    );
+    assertResponsesMatch(actualResponse, expectedResponse);
   }
 });
 
@@ -106,18 +99,18 @@ test({
       "X-Bar": "baz"
     };
 
-    const expectedHeaders = new Headers({
-      "X-Foo": "bar",
-      "X-Bar": "baz",
-      "Content-Type": "text/plain"
-    });
+    const expectedResponse = {
+      body: new TextEncoder().encode(body),
+      headers: new Headers({
+        "X-Foo": "bar",
+        "X-Bar": "baz",
+        "Content-Type": "text/plain"
+      })
+    };
 
     const actualResponse = textResponse(body, headers);
 
-    assertEquals(
-      [...actualResponse.headers.entries()],
-      [...expectedHeaders.entries()]
-    );
+    assertResponsesMatch(actualResponse, expectedResponse);
   }
 });
 
@@ -138,15 +131,14 @@ test({
     };
 
     const serialisedBody = JSON.stringify(parsedBody);
-    const handlerStub = createStub<Response, [JsonRequest<Body>]>();
-    const augmentedHandler = withJsonBody<Body>(handlerStub.fn);
 
     const expectedResponse = {
       headers: new Headers(),
       body: new Uint8Array(0)
     };
 
-    handlerStub.returnValue = expectedResponse;
+    const handlerStub = sinon.stub().returns(expectedResponse);
+    const augmentedHandler = withJsonBody<Body>(handlerStub);
 
     const request = await createAugmentedRequest({
       path: "/",
@@ -154,9 +146,9 @@ test({
     });
 
     const actualResponse = await augmentedHandler(request);
-    const [actualRequest] = handlerStub.calls[0].args;
+    const [actualRequest] = handlerStub.firstCall.args;
 
-    assertEquals(actualResponse, expectedResponse);
+    assertResponsesMatch(actualResponse, expectedResponse);
     assertEquals(actualRequest.body, parsedBody);
   }
 });
@@ -165,15 +157,13 @@ test({
   name:
     "withJsonBody should silently delegate to the wrapped handler if there`s no request body",
   async fn() {
-    const handlerStub = createStub<Response, [JsonRequest<{}>]>();
-    const augmentedHandler = withJsonBody<{}>(handlerStub.fn);
-
     const expectedResponse = {
       headers: new Headers(),
       body: new Uint8Array(0)
     };
 
-    handlerStub.returnValue = expectedResponse;
+    const handlerStub = sinon.stub().returns(expectedResponse);
+    const augmentedHandler = withJsonBody<{}>(handlerStub);
 
     const request = await createAugmentedRequest({
       path: "/"
@@ -188,15 +178,16 @@ test({
 
     assertEquals(actualResponse, expectedResponse);
 
-    handlerStub.assertWasCalledWith([[parsedRequest]]);
+    sinon.assert.calledOnce(handlerStub);
+    sinon.assert.alwaysCalledWithExactly(handlerStub, parsedRequest);
   }
 });
 
 test({
   name: "withJsonBody should reject if the body can`t be parsed",
   async fn() {
-    const handlerStub = createStub<Response, [JsonRequest<{}>]>();
-    const augmentedHandler = withJsonBody<{}>(handlerStub.fn);
+    const handlerStub = sinon.stub();
+    const augmentedHandler = withJsonBody<{}>(handlerStub);
     const body = "{ not json rofl";
 
     const request = await createAugmentedRequest({
@@ -205,7 +196,7 @@ test({
     });
 
     await augmentedHandler(request).catch(e => {
-      handlerStub.assertWasNotCalled();
+      sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof SyntaxError, true);
       assertStrictEq(e.message, "Unexpected token n in JSON at position 2");
     });
@@ -215,9 +206,6 @@ test({
 test({
   name: "withFormBody should parse form data and expose the values as a Map",
   async fn() {
-    const handlerStub = createStub<Response, [FormRequest]>();
-    const augmentedHandler = withFormBody(handlerStub.fn);
-
     const expectedResponse = {
       headers: new Headers(),
       body: new Uint8Array(0)
@@ -225,8 +213,8 @@ test({
 
     const body = "foo=bar&bar=baz&baz=rofl";
     const expectedBody = new URLSearchParams(body);
-
-    handlerStub.returnValue = expectedResponse;
+    const handlerStub = sinon.stub().returns(expectedResponse);
+    const augmentedHandler = withFormBody(handlerStub);
 
     const request = await createAugmentedRequest({
       path: "/",
@@ -234,9 +222,9 @@ test({
     });
 
     const actualResponse = await augmentedHandler(request);
-    const [actualRequest] = handlerStub.calls[0].args;
+    const [actualRequest] = handlerStub.firstCall.args;
 
-    assertEquals(actualResponse, expectedResponse);
+    assertResponsesMatch(actualResponse, expectedResponse);
     assertEquals(actualRequest.body, expectedBody);
   }
 });
@@ -245,26 +233,23 @@ test({
   name:
     "withFormBody should silently delegate to the wrapped handler if there's no req body",
   async fn() {
-    const handlerStub = createStub<Response, [FormRequest]>();
-    const augmentedHandler = withFormBody(handlerStub.fn);
-
     const expectedResponse = {
       headers: new Headers(),
       body: new Uint8Array(0)
     };
 
     const expectedBody = new URLSearchParams();
-
-    handlerStub.returnValue = expectedResponse;
+    const handlerStub = sinon.stub().returns(expectedResponse);
+    const augmentedHandler = withFormBody(handlerStub);
 
     const request = await createAugmentedRequest({
       path: "/"
     });
 
     const actualResponse = await augmentedHandler(request);
-    const [actualRequest] = handlerStub.calls[0].args;
+    const [actualRequest] = handlerStub.firstCall.args;
 
-    assertEquals(actualResponse, expectedResponse);
+    assertResponsesMatch(actualResponse, expectedResponse);
     assertEquals(actualRequest.body, expectedBody);
   }
 });

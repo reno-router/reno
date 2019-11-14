@@ -1,3 +1,5 @@
+// TODO: find a better name than "helpers"
+
 import { AugmentedRequest, RouteHandler, AugmentedResponse } from "./router.ts";
 
 const encoder = new TextEncoder();

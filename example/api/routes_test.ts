@@ -8,7 +8,7 @@ import { sinon } from '../../deps.ts';
 import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from './routes.ts';
 
-const createStubFetch = (response: string[]) =>
+const createFetchStub = (response: string[]) =>
   sinon.stub().resolves({
     json: sinon.stub().resolves(response),
   });
@@ -17,8 +17,8 @@ test({
   name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
   async fn() {
     const quotes = ["Some Ron Swanson Quote"];
-    const stubFetch = createStubFetch(quotes);
-    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(stubFetch);
+    const fetchStub = createFetchStub(quotes);
+    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
 
     const req = {
       routeParams: []
@@ -37,8 +37,8 @@ test({
   async fn() {
     const quotesCount = 5;
     const quotes = Array(quotesCount).fill("Some Ron Swanson Quote");
-    const stubFetch = createStubFetch(quotes);
-    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(stubFetch);
+    const fetchStub = createFetchStub(quotes);
+    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
 
     const req = {
       routeParams: [`${quotesCount}`]
@@ -50,10 +50,10 @@ test({
       "X-Foo": "bar"
     }));
 
-    sinon.assert.calledOnce(stubFetch);
+    sinon.assert.calledOnce(fetchStub);
 
     sinon.assert.calledWithExactly(
-      stubFetch,
+      fetchStub,
       `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
     );
   }
