@@ -13,7 +13,8 @@
     },
     "plugins": [{
       "name": "deno_ls_plugin"
-    }]
+    }],
+    "typeRoots": ["./types"]
   },
   "include": [
     "./**/*.ts"
