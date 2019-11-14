@@ -1,6 +1,6 @@
 import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
 import { createCookieWriter } from "./cookies.ts";
-import { createStub } from "../test_utils.ts";
+import { sinon } from "../deps.ts";
 
 test({
   name: "writeCookies should do nothing if there are no cookies to set",
@@ -9,12 +9,12 @@ test({
       body: new Uint8Array(0)
     };
 
-    const cookieSetter = createStub();
-    const writeCookies = createCookieWriter(cookieSetter.fn);
+    const cookieSetter = sinon.stub();
+    const writeCookies = createCookieWriter(cookieSetter);
 
     writeCookies(res);
 
-    cookieSetter.assertWasNotCalled();
+    sinon.assert.notCalled(cookieSetter);
   }
 });
 
@@ -27,14 +27,13 @@ test({
       body: new Uint8Array(0)
     };
 
-    const cookieSetter = createStub();
-    const writeCookies = createCookieWriter(cookieSetter.fn);
+    const cookieSetter = sinon.stub();
+    const writeCookies = createCookieWriter(cookieSetter);
 
     writeCookies(res);
 
-    cookieSetter.assertWasCalledWith([
-      [res, { name: "X-Foo", value: "bar" }],
-      [res, { name: "X-Bar", value: "baz" }]
-    ]);
+    sinon.assert.calledTwice(cookieSetter);
+    sinon.assert.calledWithExactly(cookieSetter, res, { name: "X-Foo", value: "bar" });
+    sinon.assert.calledWithExactly(cookieSetter, res, { name: "X-Bar", value: "baz" });
   }
 });
