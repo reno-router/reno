@@ -55,6 +55,8 @@ Once you've cloned the repository, you'll need to ensure you're running the vers
 $ curl -fsSL https://deno.land/x/install/install.sh | sh -s $(cat .deno-version)
 ```
 
+You should also run `./tools/install-types.sh` to install the TypeScript definitions for Deno and any other third-party dependencies.
+
 Then you can run:
 
 * `deno example/index.ts` - starts the example server
