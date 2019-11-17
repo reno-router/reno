@@ -35,9 +35,11 @@ export type RouteHandler<TRequest = AugmentedRequest> = (
 
 export type Router = (routes: RouteMap) => RouteParser;
 
-// TODO: write createRouteMap func for consistency
-export class RouteMap extends Map<RegExp | string, RouteHandler> {}
+export type RouteMap = Map<RegExp | string, RouteHandler>;
 export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
+
+export const createRouteMap = (routes: [RegExp | string, RouteHandler][]) =>
+  new Map(routes);
 
 export const createAugmentedRequest = (
   { body, bodyStream, ...rest }: ServerRequest | AugmentedRequest,

@@ -8,13 +8,13 @@ import { serve } from 'https://deno.land/std@v0.23.0/http/server.ts';
 import {
   createRouter,
   AugmentedRequest,
-  RouteMap,
+  createRouteMap,
   textResponse,
   jsonResponse,
   streamResponse,
 } from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.4.0/reno/mod.ts';
 
-export const routes = new RouteMap([
+export const routes = createRouteMap([
   ['/home', () => textResponse('Hello world!')],
 
   // Supports RegExp routes for further granularity

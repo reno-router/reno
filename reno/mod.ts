@@ -5,6 +5,7 @@ export {
   RouteHandler,
   Router,
   RouteMap,
+  createRouteMap,
   NotFoundError,
   createRouter
 } from "./router.ts";

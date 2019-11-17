@@ -1,4 +1,4 @@
-import { RouteMap, jsonResponse } from "../reno/mod.ts";
+import { createRouteMap, jsonResponse } from "../reno/mod.ts";
 import { apiRouter } from "./api/routes.ts";
 
 const home = () =>
@@ -7,4 +7,4 @@ const home = () =>
     isLol: true
   });
 
-export const routes = new RouteMap([["/", home], ["/api/*", apiRouter]]);
+export const routes = createRouteMap([["/", home], ["/api/*", apiRouter]]);

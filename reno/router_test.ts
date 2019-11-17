@@ -7,7 +7,7 @@ import {
 
 import {
   NotFoundError,
-  RouteMap,
+  createRouteMap,
   routerCreator
 } from "./router.ts";
 
@@ -28,7 +28,7 @@ test({
     const pathParser = sinon.stub();
     const cookieWriter = sinon.stub();
     const createRouter = routerCreator(pathParser, cookieWriter);
-    const router = createRouter(new RouteMap([[/\/foo$/, routeStub]]));
+    const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
     const request = await createServerRequest({ path: "/foo" });
 
     const actualResponse = await router(request);
@@ -58,12 +58,12 @@ test({
     const cookieWriter = sinon.stub();
     const createRouter = routerCreator(pathParser, cookieWriter);
 
-    const routes = new RouteMap([
+    const routes = createRouteMap([
       [
         "/foo/*",
         createRouter(
-          new RouteMap([
-            ["/bar/*", createRouter(new RouteMap([["/baz", routeStub]]))]
+          createRouteMap([
+            ["/bar/*", createRouter(createRouteMap([["/baz", routeStub]]))]
           ])
         )
       ]
@@ -102,7 +102,7 @@ test({
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
     const routeStub = sinon.stub();
     const createRouter = routerCreator(sinon.stub(), sinon.stub());
-    const router = createRouter(new RouteMap([[/\/foo$/, routeStub]]));
+    const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
     // TODO: doesn't seem to be catching. Why?!
     await router(mismatchedRequest).catch(e => {
@@ -119,7 +119,7 @@ test({
     const mismatchedRequest = await createServerRequest({ path: "/foo" });
     const routeStub = sinon.stub().rejects(new Error("Some error!"));
     const createRouter = routerCreator(sinon.stub(), sinon.stub());
-    const router = createRouter(new RouteMap([[/\/foo$/, routeStub]]));
+    const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
     await router(mismatchedRequest).catch(e => {
       assertStrictEq(e instanceof Error, true);

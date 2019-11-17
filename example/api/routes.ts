@@ -5,7 +5,7 @@ import colossalJson from "./colossal.json";
 import {
   AugmentedRequest,
   createRouter,
-  RouteMap,
+  createRouteMap,
   JsonRequest,
   jsonResponse,
   textResponse,
@@ -87,7 +87,7 @@ const streamedResponse = async () => streamResponse(
 );
 
 // TODO: add handler for form data
-const routes = new RouteMap([
+const routes = createRouteMap([
   ["/colossal", colossal],
   ["/json-body", jsonBody],
   ["/set-cookies", setCookies],
