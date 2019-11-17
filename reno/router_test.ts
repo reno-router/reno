@@ -108,7 +108,8 @@ test({
     await router(mismatchedRequest).catch(e => {
       assertStrictEq(e instanceof NotFoundError, true);
       assertStrictEq(e.message, "No match for /foo-bar");
-    });
+    })
+    .then(() => Promise.reject(new Error("Should have caught an error!")));
   }
 });
 
