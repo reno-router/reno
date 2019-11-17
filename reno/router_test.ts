@@ -14,6 +14,7 @@ import {
 import { assertResponsesMatch } from "./testing.ts";
 import { sinon } from "../deps.ts";
 import { createServerRequest } from "../test_utils.ts";
+import parsePath from "./pathparser.ts";
 
 test({
   name:
@@ -25,7 +26,7 @@ test({
     };
 
     const routeStub = sinon.stub().resolves(response);
-    const pathParser = sinon.stub();
+    const pathParser = sinon.spy(parsePath);
     const cookieWriter = sinon.stub();
     const createRouter = routerCreator(pathParser, cookieWriter);
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
@@ -54,7 +55,7 @@ test({
     };
 
     const routeStub = sinon.stub().resolves(response);
-    const pathParser = sinon.stub();
+    const pathParser = sinon.spy(parsePath);
     const cookieWriter = sinon.stub();
     const createRouter = routerCreator(pathParser, cookieWriter);
 
@@ -105,11 +106,12 @@ test({
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
     // TODO: doesn't seem to be catching. Why?!
-    await router(mismatchedRequest).catch(e => {
-      assertStrictEq(e instanceof NotFoundError, true);
-      assertStrictEq(e.message, "No match for /foo-bar");
-    })
-    .then(() => Promise.reject(new Error("Should have caught an error!")));
+    await router(mismatchedRequest)
+      .then(() => Promise.reject(new Error("Should have caught an error!")))
+      .catch(e => {
+        assertStrictEq(e instanceof NotFoundError, true);
+        assertStrictEq(e.message, "No match for /foo-bar");
+      });
   }
 });
 
@@ -122,9 +124,10 @@ test({
     const createRouter = routerCreator(sinon.stub(), sinon.stub());
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
-    await router(mismatchedRequest).catch(e => {
-      assertStrictEq(e instanceof Error, true);
-      assertStrictEq(e.message, "Some error!");
-    });
+    await router(mismatchedRequest)
+      .catch(e => {
+        assertStrictEq(e instanceof Error, true);
+        assertStrictEq(e.message, "Some error!");
+      });
   }
 });
