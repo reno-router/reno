@@ -58,8 +58,8 @@ export const jsonResponse = <TResponseBody = {}>(
   headers: domTypes.HeadersInit = {}
 ) => ({
   headers: new Headers({
-    ...headers,
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    ...headers
   }),
   body: encoder.encode(JSON.stringify(body))
 });
@@ -69,8 +69,8 @@ export const textResponse = (
   headers: domTypes.HeadersInit = {}
 ) => ({
   headers: new Headers({
-    ...headers,
-    "Content-Type": "text/plain"
+    "Content-Type": "text/plain",
+    ...headers
   }),
   body: encoder.encode(body)
 });
