@@ -1,11 +1,11 @@
 import { RouteHandler, AugmentedRequest, AugmentedResponse } from "./router.ts";
 
-type Homomorph = (
+type Transform = (
   req: AugmentedRequest,
   res: AugmentedResponse
 ) => AugmentedResponse;
 
-export const pipe = (...morphs: Homomorph[]) => (
+export const pipe = (...morphs: Transform[]) => (
   handler: RouteHandler
 ): RouteHandler => async req =>
   morphs.reduce((accRes, morph) => morph(req, accRes), await handler(req));
