@@ -1,5 +1,5 @@
 import { test } from "../deps.ts";
-import pipe from "./pipe.ts";
+import { pipe } from "./pipe.ts";
 import { textResponse } from "./helpers.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { assertResponsesMatch } from "./testing.ts";

@@ -1,10 +1,22 @@
-import { createRouteMap, jsonResponse } from "../reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "../reno/mod.ts";
 import { apiRouter } from "./api/routes.ts";
 
-const home = () =>
+const withCaching = pipe(
+  (req, res) => {
+    res.headers.append("Cache-Control", "max-age=86400");
+    return res;
+  },
+  (req, res) => ({
+    ...res,
+    cookies: new Map<string, string>([["requested_proto", req.proto]])
+  })
+);
+
+const home = withCaching(() =>
   jsonResponse({
     foo: "bar",
     isLol: true
-  });
+  })
+);
 
 export const routes = createRouteMap([["/", home], ["/api/*", apiRouter]]);
