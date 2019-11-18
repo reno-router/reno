@@ -45,6 +45,8 @@ const router = createRouter(routes);
 })();
 ```
 
+**TODO: replace/complement this with proper documentation**
+
 ## Responses Are Just Data Structures
 
 This, along with request handlers being [pure functions](), makes unit testing Reno services a breeze:
@@ -78,6 +80,34 @@ test({
 });
 ```
 
+## Pipe - An Alternative to Middleware
+
+Deno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
+
+```ts
+import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/jamesseanwright/reno/v0.5.1/reno/mod.ts";
+
+const withCaching = pipe(
+  (req, res) => {
+    res.headers.append("Cache-Control", "max-age=86400");
+    return res;
+  },
+  (req, res) => ({
+    ...res,
+    cookies: new Map<string, string>([["requested_proto", req.proto]])
+  })
+);
+
+const home = withCaching(() =>
+  jsonResponse({
+    foo: "bar",
+    isLol: true
+  })
+);
+
+export const routes = createRouteMap([["/", home]]);
+```
+
 ## Local Development
 
 Once you've cloned the repository, you'll need to ensure you're running the version of Deno against which this project is developed; this is stored in `.deno-version`. To install the correct version, run:
@@ -108,6 +138,3 @@ Then you can run:
 * [x] Streaming responses with [`Reader`](https://deno.land/typedoc/interfaces/_deno_.reader.html)
 * [ ] Streaming request bodies
 
-## Is middleware support planned?
-
-Not directly, but Reno will eventually export a `pipe` function to combine multiple route handlers.
