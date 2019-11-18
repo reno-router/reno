@@ -15,6 +15,7 @@ export type AugmentedRequest = Pick<
 };
 
 export type AugmentedResponse = Response & {
+  // TODO: make 2D tuple to abstract Map instantiation
   cookies?: Map<string, string>;
 };
 
