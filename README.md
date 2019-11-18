@@ -80,7 +80,7 @@ test({
 });
 ```
 
-## Pipe - An Alternative to Middleware
+## `pipe()` - An Alternative to Middleware
 
 Deno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
