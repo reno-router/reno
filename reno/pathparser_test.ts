@@ -1,9 +1,4 @@
-import {
-  test,
-  assertEquals,
-  assertStrictEq,
-  assertMatch
-} from "../deps.ts";
+import { test, assertEquals, assertStrictEq, assertMatch } from "../deps.ts";
 import parsePath from "./pathparser.ts";
 
 const assertNotMatch = (actual: string, regExp: RegExp) => {

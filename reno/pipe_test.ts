@@ -5,7 +5,8 @@ import { createAugmentedRequest } from "../test_utils.ts";
 import { assertResponsesMatch } from "./testing.ts";
 
 test({
-  name: "pipe takes a set in input morphs and returns a higher-order route handler",
+  name:
+    "pipe takes a set in input morphs and returns a higher-order route handler",
   async fn() {
     const handler = () => ({
       ...textResponse("Foo"),
@@ -19,10 +20,8 @@ test({
       },
       (req, res) => ({
         ...res,
-        cookies: new Map<string, string>([
-          ["requested_proto", req.proto]
-        ])
-      }),
+        cookies: new Map<string, string>([["requested_proto", req.proto]])
+      })
     );
 
     const req = await createAugmentedRequest({
@@ -39,9 +38,7 @@ test({
         "Content-Type": "text/plain",
         "Cache-Control": "max-age=86400"
       }),
-      cookies: new Map<string, string>([
-        ["requested_proto", "HTTP/1.1"]
-      ])
+      cookies: new Map<string, string>([["requested_proto", "HTTP/1.1"]])
     });
   }
-})
+});
