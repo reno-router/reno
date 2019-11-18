@@ -3,7 +3,7 @@
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 ```tsx
-import { serve } from 'https://deno.land/std@v0.23.0/http/server.ts';
+import { serve } from "https://deno.land/std@v0.23.0/http/server.ts";
 
 import {
   createRouter,
@@ -12,14 +12,14 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from 'https://raw.githubusercontent.com/jamesseanwright/reno/v0.5.1/reno/mod.ts';
+} from "https://raw.githubusercontent.com/jamesseanwright/reno/v0.5.1/reno/mod.ts";
 
 export const routes = createRouteMap([
-  ['/home', () => textResponse('Hello world!')],
+  ["/home", () => textResponse("Hello world!")],
 
   // Supports RegExp routes for further granularity
   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
-    const [quotesCount = '1'] = req.routeParams;
+    const [quotesCount = "1"] = req.routeParams;
 
     const res = await fetch(
       `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
@@ -29,7 +29,7 @@ export const routes = createRouteMap([
   }],
 
   // Supports Reader for streaming responses in chunks
-  ['/streamed-response', () => streamResponse(
+  ["/streamed-response", () => streamResponse(
     new ReactReader(<App />),
   )],
 ]);
@@ -37,15 +37,46 @@ export const routes = createRouteMap([
 const router = createRouter(routes);
 
 (async () => {
-  console.log('Listening for requests...');
+  console.log("Listening for requests...");
 
-  for await (const req of serve(':8001')) {
+  for await (const req of serve(":8001")) {
     req.respond(await router(req));
   }
 })();
 ```
 
-**TODO: ADD UNIT TESTING EXAMPLE!**
+## Responses Are Just Data Structures
+
+This, along with request handlers being [pure functions](), makes unit testing Reno services a breeze:
+
+```ts
+import { jsonResponse, assertResponsesMatch } from "https://raw.githubusercontent.com/jamesseanwright/reno/v0.5.1/reno/mod.ts";
+import { createRonSwansonQuoteHandler } from './routes.ts';
+
+const createFetchStub = (response: string[]) =>
+  sinon.stub().resolves({
+    json: sinon.stub().resolves(response),
+  });
+
+test({
+  name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
+  async fn() {
+    const quotes = ["Some Ron Swanson Quote"];
+    const fetchStub = createFetchStub(quotes);
+    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
+
+    const req = {
+      routeParams: []
+    };
+
+    const response = await ronSwansonQuoteHandler(req);
+
+    assertResponsesMatch(response, jsonResponse(quotes, {
+      "X-Foo": "bar"
+    }));
+  }
+});
+```
 
 ## Local Development
 
