@@ -3,7 +3,7 @@ import {
   assertEquals,
   assertStrictEq,
   assertMatch
-} from "https://deno.land/std@v0.23.0/testing/asserts.ts";
+} from "../deps.ts";
 import parsePath from "./pathparser.ts";
 
 const assertNotMatch = (actual: string, regExp: RegExp) => {

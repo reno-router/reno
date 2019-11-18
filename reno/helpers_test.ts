@@ -1,12 +1,6 @@
 import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
 
-import {
-  assertEquals,
-  assertStrictEq
-} from "https://deno.land/std@v0.23.0/testing/asserts.ts";
-
-import { Response } from "https://deno.land/std@v0.23.0/http/server.ts";
-import { sinon } from "../deps.ts";
+import { sinon, assertEquals, assertStrictEq } from "../deps.ts";
 
 import {
   JsonRequest,

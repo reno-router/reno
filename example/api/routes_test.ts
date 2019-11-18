@@ -1,8 +1,5 @@
 import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
-
-import { assertEquals } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
-
-import { sinon } from "../../deps.ts";
+import { sinon, assertEquals } from "../../deps.ts";
 import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 

@@ -1,5 +1,4 @@
-import { assertEquals } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
-
+import { assertEquals } from "../deps.ts";
 import { AugmentedResponse } from "./router.ts";
 
 const decoder = new TextDecoder();
