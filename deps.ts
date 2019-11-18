@@ -2,7 +2,7 @@
 
 // @deno-types="./types/sinon.d.ts"
 import __jsSinon from "https://cdn.pika.dev/-/sinon/7.5.0/dist-es2017/sinon.min.js";
-import Sinon from './types/sinon.d.ts';
+import Sinon from "./types/sinon.d.ts";
 
 /* TODO: write TS/VS Code plugin to infer
  * types from @deno-types directive */

@@ -6,7 +6,7 @@ import {
 } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 
 import { Response } from "https://deno.land/std@v0.23.0/http/server.ts";
-import { sinon } from '../deps.ts';
+import { sinon } from "../deps.ts";
 
 import {
   JsonRequest,
@@ -34,7 +34,7 @@ test({
         "Content-Type": "application/json"
       }),
       body: new TextEncoder().encode(JSON.stringify(body))
-    }
+    };
 
     const actualResponse = jsonResponse(body);
 
@@ -62,7 +62,7 @@ test({
         "Content-Type": "application/json"
       }),
       body: new TextEncoder().encode(JSON.stringify(body))
-    }
+    };
 
     const actualResponse = jsonResponse(body, headers);
 

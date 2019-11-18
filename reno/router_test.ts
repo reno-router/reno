@@ -5,11 +5,7 @@ import {
   assertStrictEq
 } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 
-import {
-  NotFoundError,
-  createRouteMap,
-  routerCreator
-} from "./router.ts";
+import { NotFoundError, createRouteMap, routerCreator } from "./router.ts";
 
 import { assertResponsesMatch } from "./testing.ts";
 import { sinon } from "../deps.ts";
@@ -124,10 +120,9 @@ test({
     const createRouter = routerCreator(sinon.stub(), sinon.stub());
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
-    await router(mismatchedRequest)
-      .catch(e => {
-        assertStrictEq(e instanceof Error, true);
-        assertStrictEq(e.message, "Some error!");
-      });
+    await router(mismatchedRequest).catch(e => {
+      assertStrictEq(e instanceof Error, true);
+      assertStrictEq(e.message, "Some error!");
+    });
   }
 });

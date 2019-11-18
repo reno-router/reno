@@ -1,4 +1,4 @@
-import { StringReader } from 'https://deno.land/std@v0.23.0/io/readers.ts';
+import { StringReader } from "https://deno.land/std@v0.23.0/io/readers.ts";
 
 import colossalJson from "./colossal.json";
 
@@ -59,20 +59,21 @@ const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
     : methodNotAllowed(url, method)
 );
 
-export const createRonSwansonQuoteHandler = (fetch: (url: string) => Promise<Pick<Response, 'json'>>) =>
-  async (req: Pick<AugmentedRequest, 'routeParams'>) => {
-    const [quotesCount = "1"] = req.routeParams;
+export const createRonSwansonQuoteHandler = (
+  fetch: (url: string) => Promise<Pick<Response, "json">>
+) => async (req: Pick<AugmentedRequest, "routeParams">) => {
+  const [quotesCount = "1"] = req.routeParams;
 
-    const res = await fetch(
-      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
-    );
+  const res = await fetch(
+    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
+  );
 
-    const quotes = await res.json();
+  const quotes = await res.json();
 
-    return jsonResponse(quotes, {
-      "X-Foo": "bar"
-    });
-  };
+  return jsonResponse(quotes, {
+    "X-Foo": "bar"
+  });
+};
 
 const setCookies = () => ({
   cookies: new Map([
@@ -82,9 +83,12 @@ const setCookies = () => ({
   ...textResponse("Cookies set!")
 });
 
-const streamedResponse = async () => streamResponse(
-  new StringReader("This was written directly to the request reference`s underlying socket!")
-);
+const streamedResponse = async () =>
+  streamResponse(
+    new StringReader(
+      "This was written directly to the request reference`s underlying socket!"
+    )
+  );
 
 // TODO: add handler for form data
 const routes = createRouteMap([
@@ -92,7 +96,10 @@ const routes = createRouteMap([
   ["/json-body", jsonBody],
   ["/set-cookies", setCookies],
   ["/streamed-response", streamedResponse],
-  [/^\/ron-swanson-quote\/?([0-9]?)$/, createRonSwansonQuoteHandler(window.fetch)]
+  [
+    /^\/ron-swanson-quote\/?([0-9]?)$/,
+    createRonSwansonQuoteHandler(window.fetch)
+  ]
 ]);
 
 export const apiRouter = createRouter(routes);

@@ -33,7 +33,13 @@ test({
     writeCookies(res);
 
     sinon.assert.calledTwice(cookieSetter);
-    sinon.assert.calledWithExactly(cookieSetter, res, { name: "X-Foo", value: "bar" });
-    sinon.assert.calledWithExactly(cookieSetter, res, { name: "X-Bar", value: "baz" });
+    sinon.assert.calledWithExactly(cookieSetter, res, {
+      name: "X-Foo",
+      value: "bar"
+    });
+    sinon.assert.calledWithExactly(cookieSetter, res, {
+      name: "X-Bar",
+      value: "baz"
+    });
   }
 });

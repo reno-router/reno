@@ -1,16 +1,14 @@
 import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
 
-import {
-  assertEquals
-} from "https://deno.land/std@v0.23.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@v0.23.0/testing/asserts.ts";
 
-import { sinon } from '../../deps.ts';
+import { sinon } from "../../deps.ts";
 import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
-import { createRonSwansonQuoteHandler } from './routes.ts';
+import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
   sinon.stub().resolves({
-    json: sinon.stub().resolves(response),
+    json: sinon.stub().resolves(response)
   });
 
 test({
@@ -26,14 +24,18 @@ test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertResponsesMatch(response, jsonResponse(quotes, {
-      "X-Foo": "bar"
-    }));
+    assertResponsesMatch(
+      response,
+      jsonResponse(quotes, {
+        "X-Foo": "bar"
+      })
+    );
   }
 });
 
 test({
-  name: "ronSwansonQuoteHandler should fetch the number of quotes specified in the route params if present",
+  name:
+    "ronSwansonQuoteHandler should fetch the number of quotes specified in the route params if present",
   async fn() {
     const quotesCount = 5;
     const quotes = Array(quotesCount).fill("Some Ron Swanson Quote");
@@ -46,9 +48,12 @@ test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertEquals(response, jsonResponse(quotes, {
-      "X-Foo": "bar"
-    }));
+    assertEquals(
+      response,
+      jsonResponse(quotes, {
+        "X-Foo": "bar"
+      })
+    );
 
     sinon.assert.calledOnce(fetchStub);
 
