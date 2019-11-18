@@ -7,7 +7,7 @@ import { assertResponsesMatch } from "./testing.ts";
 test({
   name: "pipe takes a set in input morphs and returns a higher-order route handler",
   async fn() {
-    const handler = () => Promise.resolve({
+    const handler = () => ({
       ...textResponse("Foo"),
       status: 200
     });
