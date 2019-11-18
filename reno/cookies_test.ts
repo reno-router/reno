@@ -1,6 +1,5 @@
-import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
 import { createCookieWriter } from "./cookies.ts";
-import { sinon } from "../deps.ts";
+import { test, sinon } from "../deps.ts";
 
 test({
   name: "writeCookies should do nothing if there are no cookies to set",

@@ -1,10 +1,7 @@
-import { test } from "https://deno.land/std@v0.23.0/testing/mod.ts";
-
-import { sinon, assertEquals, assertStrictEq } from "../deps.ts";
+import { test, sinon, assertEquals, assertStrictEq } from "../deps.ts";
 
 import {
   JsonRequest,
-  FormRequest,
   jsonResponse,
   textResponse,
   withJsonBody,
