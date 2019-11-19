@@ -16,7 +16,6 @@ test({
     const withCaching = pipe(
       (req, res) => {
         res.headers.append("Cache-Control", "max-age=86400");
-        return res;
       },
       (req, res) => ({
         ...res,

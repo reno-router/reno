@@ -1,6 +1,6 @@
 {
   "name": "reno",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "A thin routing library designed to sit on top of Deno's standard HTTP module",
   "main": "reno/mod.ts",
   "repository": {
