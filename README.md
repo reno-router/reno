@@ -47,9 +47,9 @@ const router = createRouter(routes);
 
 **TODO: replace/complement this with proper documentation**
 
-## Responses are Just Data Structures
+## Responses are just Data Structures
 
-This, along with request handlers being [pure functions](), makes unit testing Reno services a breeze:
+This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
 import { jsonResponse, assertResponsesMatch } from "https://raw.githubusercontent.com/jamesseanwright/reno/v0.6.1/reno/mod.ts";
