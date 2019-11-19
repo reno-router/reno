@@ -47,7 +47,7 @@ const router = createRouter(routes);
 
 **TODO: replace/complement this with proper documentation**
 
-## Responses Are Just Data Structures
+## Responses are Just Data Structures
 
 This, along with request handlers being [pure functions](), makes unit testing Reno services a breeze:
 
