@@ -91,13 +91,12 @@ test({
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
     const routeStub = sinon.stub();
     const createRouter = routerCreator(sinon.stub(), sinon.stub());
-    const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
+    const router = createRouter(createRouteMap([[/^\/foo$/, routeStub]]));
 
-    // TODO: doesn't seem to be catching. Why?!
     await router(mismatchedRequest)
       .then(() => Promise.reject(new Error("Should have caught an error!")))
       .catch(e => {
-        assertStrictEq(e instanceof NotFoundError, true);
+        assertStrictEq(e instanceof NotFoundError, true, "Expected error to be NotFoundError");
         assertStrictEq(e.message, "No match for /foo-bar");
       });
   }
@@ -109,7 +108,7 @@ test({
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo" });
     const routeStub = sinon.stub().rejects(new Error("Some error!"));
-    const createRouter = routerCreator(sinon.stub(), sinon.stub());
+    const createRouter = routerCreator(parsePath, sinon.stub());
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
     await router(mismatchedRequest).catch(e => {

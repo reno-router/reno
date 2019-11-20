@@ -68,14 +68,15 @@ export const routerCreator = (
   );
   const queryParams = rootQueryParams || url.searchParams;
 
+  // TODO: O(n) => O(1)
   for (let [path, handler] of routes) {
-    const matches = url.pathname.match(pathParser(path));
+    const [firstMatch, ...restMatches] = url.pathname.match(pathParser(path));
 
-    if (matches) {
+    if (firstMatch) {
       const res = await handler(
-        createAugmentedRequest(req, queryParams, matches.slice(1)),
+        createAugmentedRequest(req, queryParams, restMatches),
         queryParams,
-        matches.slice(1)
+        restMatches
       );
 
       cookieWriter(res);
