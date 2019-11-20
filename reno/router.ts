@@ -68,7 +68,6 @@ export const routerCreator = (
   );
   const queryParams = rootQueryParams || url.searchParams;
 
-  // TODO: O(n) => O(1)
   for (let [path, handler] of routes) {
     const [firstMatch, ...restMatches] = url.pathname.match(pathParser(path));
 
