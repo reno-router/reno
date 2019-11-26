@@ -90,7 +90,7 @@ test({
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
     const routeStub = sinon.stub();
-    const createRouter = routerCreator(sinon.stub(), sinon.stub());
+    const createRouter = routerCreator(parsePath, sinon.stub());
     const router = createRouter(createRouteMap([[/^\/foo$/, routeStub]]));
 
     await router(mismatchedRequest)

@@ -69,7 +69,7 @@ export const routerCreator = (
   const queryParams = rootQueryParams || url.searchParams;
 
   for (let [path, handler] of routes) {
-    const [firstMatch, ...restMatches] = url.pathname.match(pathParser(path));
+    const [firstMatch, ...restMatches] = url.pathname.match(pathParser(path)) || [];
 
     if (firstMatch) {
       const res = await handler(
