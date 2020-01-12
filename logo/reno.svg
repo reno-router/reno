@@ -57,19 +57,21 @@
        d="m -19.964824,93.522567 c 3.364782,2.067938 3.364782,7.045003 0,9.112933 -3.32972,1.99784 -7.640826,-0.63089 -7.640826,-4.626567 0,-3.85547 4.416252,-6.449158 7.640826,-4.486366 z"
        id="path81"
        style="fill:#ffffff;stroke:none;stroke-width:0.03504972" />
+    <text
+       id="text53"
+       y="240.42036"
+       x="-50.900177"
+       style="font-style:normal;font-weight:normal;font-size:26.95657349px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.67391437px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.67391437px"
+         id="tspan51"
+         y="240.42036"
+         x="-50.900177"><tspan
+           id="tspan49"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:129.39155579px;font-family:'Nimbus Sans L';-inkscape-font-specification:'Nimbus Sans L Bold';letter-spacing:-4.03247786px;word-spacing:0px;stroke-width:0.67391437px"
+           y="240.42036"
+           x="-50.900177">eno</tspan></tspan></text>
     <flowRoot
-       transform="matrix(0.67391436,0,0,0.67391436,-93.106697,-231.78486)"
-       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       id="flowRoot183"
-       xml:space="preserve"><flowRegion
-         id="flowRegion185"><rect
-           y="625.52466"
-           x="62.629459"
-           height="321.22852"
-           width="841.45709"
-           id="rect187" /></flowRegion><flowPara
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:192px;font-family:'Nimbus Sans L';-inkscape-font-specification:'Nimbus Sans L Bold';letter-spacing:-5.98366499px;word-spacing:0px"
-         id="flowPara189">eno</flowPara></flowRoot>    <flowRoot
        transform="matrix(0.26287334,0,0,0.26287334,-0.83511972,1.5733751)"
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="flowRoot191"
@@ -80,5 +82,5 @@
            height="45.456863"
            width="31.31473"
            id="rect195" /></flowRegion><flowPara
-         id="flowPara197"></flowPara></flowRoot>  </g>
+         id="flowPara197" /></flowRoot>  </g>
 </svg>
