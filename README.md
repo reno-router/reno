@@ -86,7 +86,7 @@ test({
 
 ## `pipe()` - An Alternative to Middleware
 
-Deno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
+Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
 import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/reno-router/reno/v0.6.4/reno/mod.ts";

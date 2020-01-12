@@ -1,6 +1,6 @@
 # Reno
 
-![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno.png)
+![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
@@ -84,7 +84,7 @@ test({
 
 ## `pipe()` - An Alternative to Middleware
 
-Deno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
+Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
 import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/reno-router/reno/v{{version}}/reno/mod.ts";
