@@ -12,7 +12,7 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from "https://raw.githubusercontent.com/jamesseanwright/reno/v{{version}}/reno/mod.ts";
+} from "https://raw.githubusercontent.com/reno-router/reno/v{{version}}/reno/mod.ts";
 
 export const routes = createRouteMap([
   ["/home", () => textResponse("Hello world!")],
@@ -52,8 +52,8 @@ const router = createRouter(routes);
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesMatch } from "https://raw.githubusercontent.com/jamesseanwright/reno/v{{version}}/reno/mod.ts";
-import { createRonSwansonQuoteHandler } from './routes.ts';
+import { jsonResponse, assertResponsesMatch } from "https://raw.githubusercontent.com/reno-router/reno/v{{version}}/reno/mod.ts";
+import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
   sinon.stub().resolves({
@@ -85,7 +85,7 @@ test({
 Deno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/jamesseanwright/reno/v{{version}}/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/reno-router/reno/v{{version}}/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
