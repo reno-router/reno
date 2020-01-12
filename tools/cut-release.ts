@@ -42,8 +42,7 @@ const readmeTemplate = readFileAsString("README.template.md");
 const logoSvg = readFileAsString("logo/reno.svg");
 
 const updatedReadme = readmeTemplate
-  .replace(/\{\{version\}\}/g, version)
-  .replace(/\{\{svg-logo\}\}/g, logoSvg);
+  .replace(/\{\{version\}\}/g, version);
 
 writeStringToFile("README.md", updatedReadme);
 // tagRelease(version);
