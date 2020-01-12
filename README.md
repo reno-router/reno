@@ -1,6 +1,8 @@
 # Reno
 
-![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
+<p style="text-align: center">
+  ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
+</p>
 
 Reno is a thin, testable routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
