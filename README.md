@@ -1,6 +1,8 @@
 # Reno
 
-Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
+![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
+
+Reno is a thin, testable routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 ```tsx
 import { serve } from "https://deno.land/std@v0.23.0/http/server.ts";
