@@ -39,7 +39,11 @@ const tagRelease = (version: string) => {
 
 const { version } = parseTOML<Metadata>(readFileAsString("Package.toml"));
 const readmeTemplate = readFileAsString("README.template.md");
-const updatedReadme = readmeTemplate.replace(/\{\{version\}\}/g, version);
+const logoSvg = readFileAsString("logo/reno.svg");
+
+const updatedReadme = readmeTemplate
+  .replace(/\{\{version\}\}/g, version)
+  .replace(/\{\{logo-svg\}\}/g, logoSvg);
 
 writeStringToFile("README.md", updatedReadme);
-tagRelease(version);
+// tagRelease(version);
