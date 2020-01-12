@@ -1,6 +1,6 @@
 # Reno
 
-<p style="text-align: center">
+<p style="text-align: center; width: 100%; max-width: 400px">
   <img alt="Reno logo" src="https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png" />
 </p>
 
