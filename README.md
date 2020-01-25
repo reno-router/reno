@@ -2,7 +2,7 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
-Reno is a thin, testable routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
+Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 ```tsx
 import { serve } from "https://deno.land/std@v0.23.0/http/server.ts";
@@ -14,7 +14,7 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from "https://raw.githubusercontent.com/reno-router/reno/v0.6.4/reno/mod.ts";
+} from "https://raw.githubusercontent.com/reno-router/reno/v0.7.0/reno/mod.ts";
 
 export const routes = createRouteMap([
   ["/home", () => textResponse("Hello world!")],
@@ -54,7 +54,7 @@ const router = createRouter(routes);
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesMatch } from "https://raw.githubusercontent.com/reno-router/reno/v0.6.4/reno/mod.ts";
+import { jsonResponse, assertResponsesMatch } from "https://raw.githubusercontent.com/reno-router/reno/v0.7.0/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -87,7 +87,7 @@ test({
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/reno-router/reno/v0.6.4/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://raw.githubusercontent.com/reno-router/reno/v0.7.0/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
