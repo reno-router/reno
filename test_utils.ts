@@ -6,29 +6,22 @@ import {
 import { StringReader } from "https://deno.land/std@v0.23.0/io/readers.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
-class StubConn implements Deno.Conn {
-  constructor() {
-    this.localAddr = "";
-    this.remoteAddr = "";
-    this.rid = 1;
-  }
+const createStubAddr = (): Deno.Addr => ({
+  transport: 'tcp',
+  hostname: '',
+  port: 0,
+});
 
-  localAddr: string;
-  remoteAddr: string;
-  rid: number;
-
-  closeRead(): void {}
-  closeWrite(): void {}
-  close(): void {}
-
-  read(p: Uint8Array): Promise<number> {
-    return Promise.resolve(p.length);
-  }
-
-  write(p: Uint8Array): Promise<number> {
-    return Promise.resolve(p.length);
-  }
-}
+const createStubConn = (): Deno.Conn => ({
+  localAddr: createStubAddr(),
+  remoteAddr: createStubAddr(),
+  rid: 1,
+  closeRead: () => undefined,
+  closeWrite: () => undefined,
+  close: () => undefined,
+  read: (p: Uint8Array) => Promise.resolve(p.length),
+  write: (p: Uint8Array) => Promise.resolve(p.length),
+});
 
 interface CreateServerRequestOptions {
   path: string;
@@ -55,7 +48,7 @@ ${body}`;
 
   /* readRequest can also return EOF,
    * thus we need to type assert here */
-  return (await readRequest(new StubConn(), bufReader)) as ServerRequest;
+  return (await readRequest(createStubConn(), bufReader)) as ServerRequest;
 };
 
 /* Helper to create router-compatible

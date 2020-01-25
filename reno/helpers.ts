@@ -55,7 +55,7 @@ export const withJsonBody = <TBody>(
 
 export const jsonResponse = <TResponseBody = {}>(
   body: TResponseBody,
-  headers: domTypes.HeadersInit = {}
+  headers = {}
 ) => ({
   headers: new Headers({
     "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export const jsonResponse = <TResponseBody = {}>(
 
 export const textResponse = (
   body: string,
-  headers: domTypes.HeadersInit = {}
+  headers = {}
 ) => ({
   headers: new Headers({
     "Content-Type": "text/plain",
@@ -77,7 +77,7 @@ export const textResponse = (
 
 export const streamResponse = (
   body: Deno.Reader,
-  headers: domTypes.HeadersInit = {}
+  headers = {}
 ) => ({
   headers: new Headers(headers),
   body
