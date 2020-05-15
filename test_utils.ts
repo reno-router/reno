@@ -1,9 +1,9 @@
 import { BufReader } from "https://deno.land/std@v0.51.0/io/bufio.ts";
 import {
-  readRequest,
   ServerRequest
 } from "https://deno.land/std@v0.51.0/http/server.ts";
 import { StringReader } from "https://deno.land/std@v0.51.0/io/readers.ts";
+import { readRequest } from "https://deno.land/std@v0.51.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 const createStubAddr = (): Deno.Addr => ({
@@ -16,7 +16,6 @@ const createStubConn = (): Deno.Conn => ({
   localAddr: createStubAddr(),
   remoteAddr: createStubAddr(),
   rid: 1,
-  closeRead: () => undefined,
   closeWrite: () => undefined,
   close: () => undefined,
   read: (p: Uint8Array) => Promise.resolve(p.length),
@@ -54,24 +53,14 @@ ${body}`;
 /* Helper to create router-compatible
  * request from raw options */
 export const createAugmentedRequest = async ({
-  path,
+  path = '/',
   method = "GET",
   headers = new Headers(),
   body = "",
   queryParams = new URLSearchParams(),
   routeParams = [] as string[] // TODO: avoid type assertion with opts interface
 }) => {
-  /* We have to explicitly destruture methods
-   * here as they aren't enumerable by default.
-   * This is bad as we're doing it in multiple
-   * places and are aware of implementation
-   * details. Instead, we should write an
-   * abstraction that hides this. TODO: abstract! */
-  const {
-    body: sBody,
-    respond,
-    ...rest
-  } = await createServerRequest({
+  const req = await createServerRequest({
     path,
     method,
     headers,
@@ -79,7 +68,7 @@ export const createAugmentedRequest = async ({
   });
 
   return createAugmentedRouterRequest(
-    { body: sBody, respond, ...rest },
+    req,
     queryParams,
     routeParams
   );
