@@ -69,7 +69,6 @@ export const createAugmentedRequest = async ({
    * abstraction that hides this. TODO: abstract! */
   const {
     body: sBody,
-,
     respond,
     ...rest
   } = await createServerRequest({

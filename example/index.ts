@@ -1,6 +1,6 @@
 import {
   ServerRequest,
-  serve
+  listenAndServe,
 } from "https://deno.land/std@v0.51.0/http/server.ts";
 
 import { createRouter, NotFoundError, textResponse } from "../reno/mod.ts";
@@ -40,11 +40,12 @@ const router = createRouter(routes);
 (async () => {
   console.log(`Listening for requests on ${BINDING}...`);
 
-  for await (const req of serve(BINDING)) {
-    logRequest(req);
-
-    const response = await router(req).catch(mapToErrorResponse);
-
-    await req.respond(response);
-  }
+  await listenAndServe(
+    BINDING,
+    async req => {
+      logRequest(req);
+      const res = await router(req).catch(mapToErrorResponse);
+      await req.respond(res);
+    }
+  );
 })();

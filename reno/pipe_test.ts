@@ -14,6 +14,7 @@ Deno.test({
 
     const withCaching = pipe(
       (req, res) => {
+        res.headers = res.headers || new Headers();
         res.headers.append("Cache-Control", "max-age=86400");
       },
       (req, res) => ({

@@ -21,7 +21,7 @@ Deno.test({
 
     assertEquals(
       ["lol", "qux", "kek"],
-      "/api/foo/lol/bar/qux/kek/baz/".match(regExp).slice(1)
+      ("/api/foo/lol/bar/qux/kek/baz/".match(regExp) || []).slice(1)
     );
   }
 });
