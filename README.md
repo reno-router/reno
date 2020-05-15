@@ -5,7 +5,7 @@
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 ```tsx
-import { serve } from "https://deno.land/std@v0.51.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@v0.51.0/http/server.ts";
 
 import {
   createRouter,
@@ -14,7 +14,7 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from "https://deno.land/x/reno@v0.7.0/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.0.0-alpha.1/reno/mod.ts";
 
 export const routes = createRouteMap([
   ["/home", () => textResponse("Hello world!")],
@@ -36,14 +36,28 @@ export const routes = createRouteMap([
   )],
 ]);
 
+const notFound = (e: NotFoundError) => createErrorResponse(404, e);
+const serverError = (e: Error) => createErrorResponse(500, e);
+
+const mapToErrorResponse = (e: Error) =>
+  e instanceof NotFoundError ? notFound(e) : serverError(e);
+
 const router = createRouter(routes);
 
 (async () => {
   console.log("Listening for requests...");
 
-  for await (const req of serve(":8001")) {
-    req.respond(await router(req));
-  }
+  await listenAndServe(
+    ":8001",
+    async (req: ServerRequest) => {
+      try {
+        const res = await router(req);
+        return req.respond(res);
+      } catch (e) {
+        return req.respond(mapToErrorResponse(e));
+      }
+    },
+  );
 })();
 ```
 
@@ -54,7 +68,7 @@ const router = createRouter(routes);
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v0.7.0/reno/mod.ts";
+import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v1.0.0-alpha.1/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -87,13 +101,12 @@ test({
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v0.7.0/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.0.0-alpha.1/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
     /* Mutate the response returned by
      * the inner route handler... */
-    res.headers = res.headers || new Headers();
     res.headers.append("Cache-Control", "max-age=86400");
   },
 

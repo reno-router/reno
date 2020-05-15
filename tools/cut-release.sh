@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-deno --allow-read --allow-write --allow-run tools/cut-release.ts
+deno run --allow-read --allow-write tools/cut-release.ts

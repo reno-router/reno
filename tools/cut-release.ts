@@ -46,4 +46,4 @@ const updatedReadme = readmeTemplate
 
 writeStringToFile("README.md", updatedReadme);
 // TODO: commit post-README
-// tagRelease(version);
+tagRelease(version);
