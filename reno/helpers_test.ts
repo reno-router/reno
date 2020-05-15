@@ -146,7 +146,7 @@ Deno.test({
 
 Deno.test({
   name:
-    "withJsonBody should silently delegate to the wrapped handler if there`s no request body",
+    "withJsonBody reject if there`s no request body",
   async fn() {
     const expectedResponse = {
       headers: new Headers(),
@@ -160,17 +160,12 @@ Deno.test({
       path: "/"
     });
 
-    const parsedRequest: JsonRequest = {
-      ...request,
-      body: {}
-    };
-
-    const actualResponse = await augmentedHandler(request);
-
-    assertEquals(actualResponse, expectedResponse);
-
-    sinon.assert.calledOnce(handlerStub);
-    sinon.assert.alwaysCalledWithExactly(handlerStub, parsedRequest);
+    // TODO: use assertThrowsAsync
+    await augmentedHandler(request).catch(e => {
+      sinon.assert.notCalled(handlerStub);
+      assertStrictEq(e instanceof Error, true);
+      assertStrictEq(e.message, "Content-Length header was not set!");
+    });
   }
 });
 
@@ -222,14 +217,13 @@ Deno.test({
 
 Deno.test({
   name:
-    "withFormBody should silently delegate to the wrapped handler if there's no req body",
+    "withFormBody reject if there's no req body",
   async fn() {
     const expectedResponse = {
       headers: new Headers(),
       body: new Uint8Array(0)
     };
 
-    const expectedBody = new URLSearchParams();
     const handlerStub = sinon.stub().returns(expectedResponse);
     const augmentedHandler = withFormBody(handlerStub);
 
@@ -237,10 +231,11 @@ Deno.test({
       path: "/"
     });
 
-    const actualResponse = await augmentedHandler(request);
-    const [actualRequest] = handlerStub.firstCall.args;
-
-    assertResponsesMatch(actualResponse, expectedResponse);
-    assertEquals(actualRequest.body, expectedBody);
+    // TODO: use assertThrowsAsync
+    await augmentedHandler(request).catch(e => {
+      sinon.assert.notCalled(handlerStub);
+      assertStrictEq(e instanceof Error, true);
+      assertStrictEq(e.message, "Content-Length header was not set!");
+    });
   }
 });

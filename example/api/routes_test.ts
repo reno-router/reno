@@ -44,7 +44,7 @@ Deno.test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertEquals(
+    assertResponsesMatch(
       response,
       jsonResponse(quotes, {
         "X-Foo": "bar"
