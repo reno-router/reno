@@ -93,6 +93,7 @@ const withCaching = pipe(
   (req, res) => {
     /* Mutate the response returned by
      * the inner route handler... */
+    res.headers = res.headers || new Headers();
     res.headers.append("Cache-Control", "max-age=86400");
   },
 
@@ -126,7 +127,7 @@ You should also run `./tools/install-types.sh` to install the TypeScript definit
 
 Then you can run:
 
-* `deno run example/index.ts` - starts the example server
+* `deno run --allow-net example/index.ts` - starts the example server
 * `deno test` - runs the unit tests
 
 ## Functionality Checklist

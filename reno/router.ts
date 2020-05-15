@@ -65,7 +65,7 @@ export const routerCreator = (
 ) => {
   const url = new URL(
     childPathParts ? childPathParts.join("/") : req.url,
-    "https://"
+    "https://undefined" // real value not required for relative path parsing
   );
   const queryParams = rootQueryParams || url.searchParams;
 

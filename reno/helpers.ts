@@ -43,7 +43,7 @@ const getReqBodyAsString = async (req: AugmentedRequest) => {
 };
 
 export const withJsonBody = <TBody = {}>(
-  handler: RouteHandler<JsonRequest<TBody | unknown>>
+  handler: RouteHandler<JsonRequest<TBody>>
 ) => async (req: AugmentedRequest) => {
   /* There are some instances in which an
    * empty body can have whitespace, so
