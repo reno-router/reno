@@ -5,7 +5,7 @@ import {
   jsonResponse,
   textResponse,
   withJsonBody,
-  withFormBody
+  withFormBody,
 } from "./helpers.ts";
 
 import { assertResponsesMatch } from "./testing.ts";
@@ -17,20 +17,20 @@ Deno.test({
   fn() {
     const body = {
       foo: "bar",
-      bar: 1
+      bar: 1,
     };
 
     const expectedResponse = {
       headers: new Headers({
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }),
-      body: new TextEncoder().encode(JSON.stringify(body))
+      body: new TextEncoder().encode(JSON.stringify(body)),
     };
 
     const actualResponse = jsonResponse(body);
 
     assertResponsesMatch(actualResponse, expectedResponse);
-  }
+  },
 });
 
 Deno.test({
@@ -38,27 +38,27 @@ Deno.test({
   fn() {
     const body = {
       foo: "bar",
-      bar: 1
+      bar: 1,
     };
 
     const headers = {
       "X-Foo": "bar",
-      "X-Bar": "baz"
+      "X-Bar": "baz",
     };
 
     const expectedResponse = {
       headers: new Headers({
         "X-Foo": "bar",
         "X-Bar": "baz",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }),
-      body: new TextEncoder().encode(JSON.stringify(body))
+      body: new TextEncoder().encode(JSON.stringify(body)),
     };
 
     const actualResponse = jsonResponse(body, headers);
 
     assertResponsesMatch(actualResponse, expectedResponse);
-  }
+  },
 });
 
 Deno.test({
@@ -70,14 +70,14 @@ Deno.test({
     const expectedResponse = {
       body: new TextEncoder().encode(body),
       headers: new Headers({
-        "Content-Type": "text/plain"
-      })
+        "Content-Type": "text/plain",
+      }),
     };
 
     const actualResponse = textResponse(body);
 
     assertResponsesMatch(actualResponse, expectedResponse);
-  }
+  },
 });
 
 Deno.test({
@@ -87,7 +87,7 @@ Deno.test({
 
     const headers = {
       "X-Foo": "bar",
-      "X-Bar": "baz"
+      "X-Bar": "baz",
     };
 
     const expectedResponse = {
@@ -95,14 +95,14 @@ Deno.test({
       headers: new Headers({
         "X-Foo": "bar",
         "X-Bar": "baz",
-        "Content-Type": "text/plain"
-      })
+        "Content-Type": "text/plain",
+      }),
     };
 
     const actualResponse = textResponse(body, headers);
 
     assertResponsesMatch(actualResponse, expectedResponse);
-  }
+  },
 });
 
 Deno.test({
@@ -118,14 +118,14 @@ Deno.test({
     const parsedBody = {
       foo: "bar",
       bar: 42,
-      baz: true
+      baz: true,
     };
 
     const serialisedBody = JSON.stringify(parsedBody);
 
     const expectedResponse = {
       headers: new Headers(),
-      body: new Uint8Array(0)
+      body: new Uint8Array(0),
     };
 
     const handlerStub = sinon.stub().returns(expectedResponse);
@@ -133,7 +133,7 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
-      body: serialisedBody
+      body: serialisedBody,
     });
 
     const actualResponse = await augmentedHandler(request);
@@ -141,32 +141,31 @@ Deno.test({
 
     assertResponsesMatch(actualResponse, expectedResponse);
     assertEquals(actualRequest.body, parsedBody);
-  }
+  },
 });
 
 Deno.test({
-  name:
-    "withJsonBody reject if there`s no request body",
+  name: "withJsonBody reject if there`s no request body",
   async fn() {
     const expectedResponse = {
       headers: new Headers(),
-      body: new Uint8Array(0)
+      body: new Uint8Array(0),
     };
 
     const handlerStub = sinon.stub().returns(expectedResponse);
     const augmentedHandler = withJsonBody<{}>(handlerStub);
 
     const request = await createAugmentedRequest({
-      path: "/"
+      path: "/",
     });
 
     // TODO: use assertThrowsAsync
-    await augmentedHandler(request).catch(e => {
+    await augmentedHandler(request).catch((e) => {
       sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof Error, true);
       assertStrictEq(e.message, "Content-Length header was not set!");
     });
-  }
+  },
 });
 
 Deno.test({
@@ -178,15 +177,15 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
-      body
+      body,
     });
 
-    await augmentedHandler(request).catch(e => {
+    await augmentedHandler(request).catch((e) => {
       sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof SyntaxError, true);
       assertStrictEq(e.message, "Unexpected token n in JSON at position 2");
     });
-  }
+  },
 });
 
 Deno.test({
@@ -194,7 +193,7 @@ Deno.test({
   async fn() {
     const expectedResponse = {
       headers: new Headers(),
-      body: new Uint8Array(0)
+      body: new Uint8Array(0),
     };
 
     const body = "foo=bar&bar=baz&baz=rofl";
@@ -204,7 +203,7 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
-      body
+      body,
     });
 
     const actualResponse = await augmentedHandler(request);
@@ -212,30 +211,29 @@ Deno.test({
 
     assertResponsesMatch(actualResponse, expectedResponse);
     assertEquals(actualRequest.body, expectedBody);
-  }
+  },
 });
 
 Deno.test({
-  name:
-    "withFormBody reject if there's no req body",
+  name: "withFormBody reject if there's no req body",
   async fn() {
     const expectedResponse = {
       headers: new Headers(),
-      body: new Uint8Array(0)
+      body: new Uint8Array(0),
     };
 
     const handlerStub = sinon.stub().returns(expectedResponse);
     const augmentedHandler = withFormBody(handlerStub);
 
     const request = await createAugmentedRequest({
-      path: "/"
+      path: "/",
     });
 
     // TODO: use assertThrowsAsync
-    await augmentedHandler(request).catch(e => {
+    await augmentedHandler(request).catch((e) => {
       sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof Error, true);
       assertStrictEq(e.message, "Content-Length header was not set!");
     });
-  }
+  },
 });

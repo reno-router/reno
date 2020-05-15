@@ -7,7 +7,7 @@ export {
   RouteMap,
   createRouteMap,
   NotFoundError,
-  createRouter
+  createRouter,
 } from "./router.ts";
 
 export * from "./helpers.ts";

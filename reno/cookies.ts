@@ -13,16 +13,17 @@ import { AugmentedResponse } from "./router.ts";
  * TODO: keep an eye on the above issue to see
  * if and when a fix will land in Deno. Raise
  * this as known in this repo's GitHub issues */
-export const createCookieWriter = (cookieSetter: typeof setCookie) => (
-  res: AugmentedResponse
-) => {
-  if (!res.cookies) {
-    return;
-  }
+export const createCookieWriter = (cookieSetter: typeof setCookie) =>
+  (
+    res: AugmentedResponse,
+  ) => {
+    if (!res.cookies) {
+      return;
+    }
 
-  [...res.cookies.entries()].forEach(([name, value]) => {
-    cookieSetter(res, { name, value });
-  });
-};
+    [...res.cookies.entries()].forEach(([name, value]) => {
+      cookieSetter(res, { name, value });
+    });
+  };
 
 export const writeCookies = createCookieWriter(setCookie);

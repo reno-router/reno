@@ -1,14 +1,14 @@
 import { BufReader } from "https://deno.land/std@v0.51.0/io/bufio.ts";
 import {
-  ServerRequest
+  ServerRequest,
 } from "https://deno.land/std@v0.51.0/http/server.ts";
 import { StringReader } from "https://deno.land/std@v0.51.0/io/readers.ts";
 import { readRequest } from "https://deno.land/std@v0.51.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 const createStubAddr = (): Deno.Addr => ({
-  transport: 'tcp',
-  hostname: '',
+  transport: "tcp",
+  hostname: "",
   port: 0,
 });
 
@@ -33,14 +33,16 @@ export const createServerRequest = async ({
   path,
   method = "GET",
   headers = new Headers(),
-  body = ""
+  body = "",
 }: CreateServerRequestOptions) => {
   const request = `${method} ${path} HTTP/1.1
 Content-Length: ${body.length}
-${[...headers.entries()].reduce(
-  (acc, [name, val]) => `${acc}\n${name}: ${val}`,
-  ""
-)}
+${
+    [...headers.entries()].reduce(
+      (acc, [name, val]) => `${acc}\n${name}: ${val}`,
+      "",
+    )
+  }
 ${body}`;
 
   const bufReader = BufReader.create(new StringReader(request));
@@ -53,23 +55,23 @@ ${body}`;
 /* Helper to create router-compatible
  * request from raw options */
 export const createAugmentedRequest = async ({
-  path = '/',
+  path = "/",
   method = "GET",
   headers = new Headers(),
   body = "",
   queryParams = new URLSearchParams(),
-  routeParams = [] as string[] // TODO: avoid type assertion with opts interface
+  routeParams = [] as string[], // TODO: avoid type assertion with opts interface
 }) => {
   const req = await createServerRequest({
     path,
     method,
     headers,
-    body
+    body,
   });
 
   return createAugmentedRouterRequest(
     req,
     queryParams,
-    routeParams
+    routeParams,
   );
 };

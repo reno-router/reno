@@ -4,7 +4,7 @@ import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
   sinon.stub().resolves({
-    json: sinon.stub().resolves(response)
+    json: sinon.stub().resolves(response),
   });
 
 Deno.test({
@@ -15,7 +15,7 @@ Deno.test({
     const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
 
     const req = {
-      routeParams: []
+      routeParams: [],
     };
 
     const response = await ronSwansonQuoteHandler(req);
@@ -23,10 +23,10 @@ Deno.test({
     assertResponsesMatch(
       response,
       jsonResponse(quotes, {
-        "X-Foo": "bar"
-      })
+        "X-Foo": "bar",
+      }),
     );
-  }
+  },
 });
 
 Deno.test({
@@ -39,7 +39,7 @@ Deno.test({
     const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
 
     const req = {
-      routeParams: [`${quotesCount}`]
+      routeParams: [`${quotesCount}`],
     };
 
     const response = await ronSwansonQuoteHandler(req);
@@ -47,15 +47,15 @@ Deno.test({
     assertResponsesMatch(
       response,
       jsonResponse(quotes, {
-        "X-Foo": "bar"
-      })
+        "X-Foo": "bar",
+      }),
     );
 
     sinon.assert.calledOnce(fetchStub);
 
     sinon.assert.calledWithExactly(
       fetchStub,
-      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
+      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
     );
-  }
+  },
 });

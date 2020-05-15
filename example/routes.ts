@@ -9,14 +9,14 @@ const withCaching = pipe(
   },
   (req, res) => ({
     ...res,
-    cookies: new Map<string, string>([["requested_proto", req.proto]])
-  })
+    cookies: new Map<string, string>([["requested_proto", req.proto]]),
+  }),
 );
 
 const home = withCaching(() =>
   jsonResponse({
     foo: "bar",
-    isLol: true
+    isLol: true,
   })
 );
 

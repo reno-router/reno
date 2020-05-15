@@ -5,7 +5,7 @@ Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
   fn() {
     const res = {
-      body: new Uint8Array(0)
+      body: new Uint8Array(0),
     };
 
     const cookieSetter = sinon.stub();
@@ -14,7 +14,7 @@ Deno.test({
     writeCookies(res);
 
     sinon.assert.notCalled(cookieSetter);
-  }
+  },
 });
 
 Deno.test({
@@ -23,7 +23,7 @@ Deno.test({
   fn() {
     const res = {
       cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"]]),
-      body: new Uint8Array(0)
+      body: new Uint8Array(0),
     };
 
     const cookieSetter = sinon.stub();
@@ -34,11 +34,11 @@ Deno.test({
     sinon.assert.calledTwice(cookieSetter);
     sinon.assert.calledWithExactly(cookieSetter, res, {
       name: "X-Foo",
-      value: "bar"
+      value: "bar",
     });
     sinon.assert.calledWithExactly(cookieSetter, res, {
       name: "X-Bar",
-      value: "baz"
+      value: "baz",
     });
-  }
+  },
 });

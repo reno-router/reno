@@ -1,18 +1,20 @@
 import {
   ServerRequest,
-  Response
+  Response,
 } from "https://deno.land/std@v0.51.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";
 import parsePath from "./pathparser.ts";
 
-export type AugmentedRequest = Pick<
-  ServerRequest,
-  Exclude<keyof ServerRequest, "respond">
-> & {
-  queryParams: URLSearchParams;
-  routeParams: string[];
-};
+export type AugmentedRequest =
+  & Pick<
+    ServerRequest,
+    Exclude<keyof ServerRequest, "respond">
+  >
+  & {
+    queryParams: URLSearchParams;
+    routeParams: string[];
+  };
 
 export type AugmentedResponse = Response & {
   // TODO: make 2D tuple to abstract Map instantiation
@@ -23,7 +25,7 @@ export type AugmentedResponse = Response & {
  * createRouter that performs
  * route lookups. Better name? */
 export type RouteParser = (
-  req: ServerRequest
+  req: ServerRequest,
 ) => AugmentedResponse | Promise<AugmentedResponse>;
 
 /* A user-defined handler for
@@ -31,7 +33,7 @@ export type RouteParser = (
 export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
   rootQueryParams?: URLSearchParams,
-  childPathParts?: string[]
+  childPathParts?: string[],
 ) => Response | Promise<Response>;
 
 export type Router = (routes: RouteMap) => RouteParser;
@@ -45,7 +47,7 @@ export const createRouteMap = (routes: [RegExp | string, RouteHandler][]) =>
 export const createAugmentedRequest = (
   { body, contentLength, finalize, ...rest }: ServerRequest | AugmentedRequest,
   queryParams: URLSearchParams,
-  routeParams: string[]
+  routeParams: string[],
 ): AugmentedRequest => ({
   ...rest,
   body,
@@ -57,35 +59,38 @@ export const createAugmentedRequest = (
 
 export const routerCreator = (
   pathParser: typeof parsePath,
-  cookieWriter: typeof writeCookies
-) => (routes: RouteMap) => async (
-  req: ServerRequest | AugmentedRequest,
-  rootQueryParams?: URLSearchParams,
-  childPathParts?: string[]
-) => {
-  const url = new URL(
-    childPathParts ? childPathParts.join("/") : req.url,
-    "https://undefined" // real value not required for relative path parsing
-  );
-  const queryParams = rootQueryParams || url.searchParams;
-
-  for (let [path, handler] of routes) {
-    const [firstMatch, ...restMatches] = url.pathname.match(pathParser(path)) || [];
-
-    if (firstMatch) {
-      const res = await handler(
-        createAugmentedRequest(req, queryParams, restMatches),
-        queryParams,
-        restMatches
+  cookieWriter: typeof writeCookies,
+) =>
+  (routes: RouteMap) =>
+    async (
+      req: ServerRequest | AugmentedRequest,
+      rootQueryParams?: URLSearchParams,
+      childPathParts?: string[],
+    ) => {
+      const url = new URL(
+        childPathParts ? childPathParts.join("/") : req.url,
+        "https://undefined", // real value not required for relative path parsing
       );
+      const queryParams = rootQueryParams || url.searchParams;
 
-      cookieWriter(res);
+      for (let [path, handler] of routes) {
+        const [firstMatch, ...restMatches] =
+          url.pathname.match(pathParser(path)) || [];
 
-      return res;
-    }
-  }
+        if (firstMatch) {
+          const res = await handler(
+            createAugmentedRequest(req, queryParams, restMatches),
+            queryParams,
+            restMatches,
+          );
 
-  return Promise.reject(new NotFoundError(`No match for ${req.url}`));
-};
+          cookieWriter(res);
+
+          return res;
+        }
+      }
+
+      return Promise.reject(new NotFoundError(`No match for ${req.url}`));
+    };
 
 export const createRouter = routerCreator(parsePath, writeCookies);

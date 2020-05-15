@@ -10,7 +10,7 @@ Deno.test({
   async fn() {
     const response = {
       headers: new Headers(),
-      body: new Uint8Array()
+      body: new Uint8Array(),
     };
 
     const routeStub = sinon.stub().resolves(response);
@@ -31,7 +31,7 @@ Deno.test({
 
     sinon.assert.calledWithExactly(pathParser, /\/foo$/);
     sinon.assert.calledWithExactly(cookieWriter, actualResponse);
-  }
+  },
 });
 
 Deno.test({
@@ -39,7 +39,7 @@ Deno.test({
   async fn() {
     const response = {
       headers: new Headers(),
-      body: new Uint8Array()
+      body: new Uint8Array(),
     };
 
     const routeStub = sinon.stub().resolves(response);
@@ -52,15 +52,15 @@ Deno.test({
         "/foo/*",
         createRouter(
           createRouteMap([
-            ["/bar/*", createRouter(createRouteMap([["/baz", routeStub]]))]
-          ])
-        )
-      ]
+            ["/bar/*", createRouter(createRouteMap([["/baz", routeStub]]))],
+          ]),
+        ),
+      ],
     ]);
 
     const router = createRouter(routes);
     const request = await createServerRequest({
-      path: "/foo/bar/baz?lol=rofl&rofl=lmao"
+      path: "/foo/bar/baz?lol=rofl&rofl=lmao",
     });
 
     const actualResponse = await router(request);
@@ -74,14 +74,14 @@ Deno.test({
 
     assertEquals(
       [...augmentedRequest.queryParams.entries()],
-      [["lol", "rofl"], ["rofl", "lmao"]]
+      [["lol", "rofl"], ["rofl", "lmao"]],
     );
 
     sinon.assert.calledThrice(pathParser);
     sinon.assert.calledWithExactly(pathParser, "/foo/*");
     sinon.assert.calledWithExactly(pathParser, "/bar/*");
     sinon.assert.calledWithExactly(pathParser, "/baz");
-  }
+  },
 });
 
 Deno.test({
@@ -95,11 +95,15 @@ Deno.test({
 
     await router(mismatchedRequest)
       .then(() => Promise.reject(new Error("Should have caught an error!")))
-      .catch(e => {
-        assertStrictEq(e instanceof NotFoundError, true, "Expected error to be NotFoundError");
+      .catch((e) => {
+        assertStrictEq(
+          e instanceof NotFoundError,
+          true,
+          "Expected error to be NotFoundError",
+        );
         assertStrictEq(e.message, "No match for /foo-bar");
       });
-  }
+  },
 });
 
 Deno.test({
@@ -111,9 +115,9 @@ Deno.test({
     const createRouter = routerCreator(parsePath, sinon.stub());
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
-    await router(mismatchedRequest).catch(e => {
+    await router(mismatchedRequest).catch((e) => {
       assertStrictEq(e instanceof Error, true);
       assertStrictEq(e.message, "Some error!");
     });
-  }
+  },
 });

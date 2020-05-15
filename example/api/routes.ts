@@ -10,7 +10,7 @@ import {
   jsonResponse,
   textResponse,
   withJsonBody,
-  streamResponse
+  streamResponse,
 } from "../../reno/mod.ts";
 
 interface JsonBody {
@@ -25,7 +25,7 @@ type JsonBodyResponse = JsonBody & {
 
 const methodNotAllowed = (url: string, method: string) => ({
   status: 405,
-  ...textResponse(`Method ${method} not allowed for ${url}`)
+  ...textResponse(`Method ${method} not allowed for ${url}`),
 });
 
 const serialised = JSON.stringify(colossalData);
@@ -41,7 +41,7 @@ const serialised = JSON.stringify(colossalData);
  */
 const colossal = () =>
   textResponse(serialised, {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   });
 
 /* Handler to demonstrate request
@@ -53,41 +53,42 @@ const colossal = () =>
 const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
   method === "POST"
     ? jsonResponse<JsonBodyResponse>({
-        message: "Here's the body you posted to this endpoint",
-        ...body
-      })
+      message: "Here's the body you posted to this endpoint",
+      ...body,
+    })
     : methodNotAllowed(url, method)
 );
 
 export const createRonSwansonQuoteHandler = (
-  fetch: (url: string) => Promise<Pick<Response, "json">>
-) => async (req: Pick<AugmentedRequest, "routeParams">) => {
-  const [quotesCount = "1"] = req.routeParams;
+  fetch: (url: string) => Promise<Pick<Response, "json">>,
+) =>
+  async (req: Pick<AugmentedRequest, "routeParams">) => {
+    const [quotesCount = "1"] = req.routeParams;
 
-  const res = await fetch(
-    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`
-  );
+    const res = await fetch(
+      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
+    );
 
-  const quotes = await res.json();
+    const quotes = await res.json();
 
-  return jsonResponse(quotes, {
-    "X-Foo": "bar"
-  });
-};
+    return jsonResponse(quotes, {
+      "X-Foo": "bar",
+    });
+  };
 
 const setCookies = () => ({
   cookies: new Map([
     ["deno-playground-foo", "bar"],
-    ["deno-playground-bar", "baz"]
+    ["deno-playground-bar", "baz"],
   ]),
-  ...textResponse("Cookies set!")
+  ...textResponse("Cookies set!"),
 });
 
 const streamedResponse = async () =>
   streamResponse(
     new StringReader(
-      "This was written directly to the request reference`s underlying socket!"
-    )
+      "This was written directly to the request reference`s underlying socket!",
+    ),
   );
 
 // TODO: add handler for form data
@@ -98,8 +99,8 @@ const routes = createRouteMap([
   ["/streamed-response", streamedResponse],
   [
     /^\/ron-swanson-quote\/?([0-9]?)$/,
-    createRonSwansonQuoteHandler(window.fetch)
-  ]
+    createRonSwansonQuoteHandler(window.fetch),
+  ],
 ]);
 
 export const apiRouter = createRouter(routes);

@@ -6,12 +6,14 @@ import { BufReader } from "../deps.ts";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
-export type ProcessedRequest<TBody> = Pick<
-  AugmentedRequest,
-  Exclude<keyof AugmentedRequest, "body">
-> & {
-  body: TBody;
-};
+export type ProcessedRequest<TBody> =
+  & Pick<
+    AugmentedRequest,
+    Exclude<keyof AugmentedRequest, "body">
+  >
+  & {
+    body: TBody;
+  };
 
 export type JsonRequest<TBody = {}> = ProcessedRequest<TBody>;
 export type FormRequest = ProcessedRequest<URLSearchParams>;
@@ -19,7 +21,7 @@ export type FormRequest = ProcessedRequest<URLSearchParams>;
 // TODO: find a better way?!
 const createProcessedRequest = <TBody>(
   req: AugmentedRequest,
-  body: TBody
+  body: TBody,
 ) => ({
   ...req,
   body,
@@ -43,63 +45,65 @@ const getReqBodyAsString = async (req: AugmentedRequest) => {
 };
 
 export const withJsonBody = <TBody = {}>(
-  handler: RouteHandler<JsonRequest<TBody>>
-) => async (req: AugmentedRequest) => {
-  /* There are some instances in which an
+  handler: RouteHandler<JsonRequest<TBody>>,
+) =>
+  async (req: AugmentedRequest) => {
+    /* There are some instances in which an
    * empty body can have whitespace, so
    * we decode early and trim the resultant
    * string to determine the body's presence */
-  const bodyText = (await getReqBodyAsString(req)).trim();
+    const bodyText = (await getReqBodyAsString(req)).trim();
 
-  if (!bodyText.length) {
-    return handler(
-      createProcessedRequest(
-        req,
-        {} as TBody // TODO: runtime safety! Use Map?!
-      )
-    );
-  }
+    if (!bodyText.length) {
+      return handler(
+        createProcessedRequest(
+          req,
+          {} as TBody, // TODO: runtime safety! Use Map?!
+        ),
+      );
+    }
 
-  const body = JSON.parse(bodyText) as TBody;
+    const body = JSON.parse(bodyText) as TBody;
 
-  return await handler(createProcessedRequest(req, body));
-};
+    return await handler(createProcessedRequest(req, body));
+  };
 
 export const jsonResponse = <TResponseBody = {}>(
   body: TResponseBody,
-  headers = {}
+  headers = {},
 ) => ({
   headers: new Headers({
     "Content-Type": "application/json",
-    ...headers
+    ...headers,
   }),
-  body: encoder.encode(JSON.stringify(body))
+  body: encoder.encode(JSON.stringify(body)),
 });
 
 export const textResponse = (
   body: string,
-  headers = {}
+  headers = {},
 ) => ({
   headers: new Headers({
     "Content-Type": "text/plain",
-    ...headers
+    ...headers,
   }),
-  body: encoder.encode(body)
+  body: encoder.encode(body),
 });
 
 export const streamResponse = (
   body: Deno.Reader,
-  headers = {}
+  headers = {},
 ) => ({
   headers: new Headers(headers),
-  body
+  body,
 });
 
-export const withFormBody = (handler: RouteHandler<FormRequest>) => async (
-  req: AugmentedRequest
-) => {
-  const bodyText = await getReqBodyAsString(req);
-  const body = parseFormBody(bodyText);
+export const withFormBody = (handler: RouteHandler<FormRequest>) =>
+  async (
+    req: AugmentedRequest,
+  ) => {
+    const bodyText = await getReqBodyAsString(req);
+    const body = parseFormBody(bodyText);
 
-  return await handler(createProcessedRequest(req, body));
-};
+    return await handler(createProcessedRequest(req, body));
+  };

@@ -5,7 +5,7 @@ const assertNotMatch = (actual: string, regExp: RegExp) => {
   assertStrictEq(
     regExp.test(actual),
     false,
-    `actual: "${actual}" expected not to match: "${regExp}"`
+    `actual: "${actual}" expected not to match: "${regExp}"`,
   );
 };
 
@@ -21,9 +21,9 @@ Deno.test({
 
     assertEquals(
       ["lol", "qux", "kek"],
-      ("/api/foo/lol/bar/qux/kek/baz/".match(regExp) || []).slice(1)
+      ("/api/foo/lol/bar/qux/kek/baz/".match(regExp) || []).slice(1),
     );
-  }
+  },
 });
 
 Deno.test({
@@ -36,7 +36,7 @@ Deno.test({
     assertMatch("/api/foo/", regExp);
     assertMatch("/api/foo", regExp);
     assertMatch("/api/foo/lol/rofl", regExp);
-  }
+  },
 });
 
 Deno.test({
@@ -46,5 +46,5 @@ Deno.test({
     const regExp = parsePath(path);
 
     assertStrictEq(regExp, path);
-  }
+  },
 });

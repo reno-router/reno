@@ -16,7 +16,7 @@ const formatDate = (date: Date) =>
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
-    timeZoneName: "short"
+    timeZoneName: "short",
   });
 
 const logRequest = (req: ServerRequest) => {
@@ -25,7 +25,7 @@ const logRequest = (req: ServerRequest) => {
 
 const createErrorResponse = (status: number, { message }: Error) => ({
   status,
-  ...textResponse(message)
+  ...textResponse(message),
 });
 
 // TODO: use HTTP's Status enum
@@ -44,8 +44,13 @@ const router = createRouter(routes);
     BINDING,
     async (req: ServerRequest) => {
       logRequest(req);
-      const res = await router(req).catch(mapToErrorResponse);
-      await req.respond(res);
-    }
+
+      try {
+        const res = await router(req);
+        return req.respond(res);
+      } catch (e) {
+        return req.respond(mapToErrorResponse(e))
+      }
+    },
   );
 })();

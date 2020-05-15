@@ -26,10 +26,10 @@ const sanitiseTOMLToken = (token: string) => token.trim().replace(/"/g, "");
 const parseTOML = <TResult>(toml: string) =>
   Object.fromEntries(
     toml.split("\n")
-      .map(entry =>
+      .map((entry) =>
         entry.split("=")
-          .map(token => sanitiseTOMLToken(token))
-        )
+          .map((token) => sanitiseTOMLToken(token))
+      ),
   ) as TResult;
 
 const tagRelease = (version: string) => {

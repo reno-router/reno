@@ -9,7 +9,7 @@ Deno.test({
   async fn() {
     const handler = () => ({
       ...textResponse("Foo"),
-      status: 200
+      status: 200,
     });
 
     const withCaching = pipe(
@@ -19,12 +19,12 @@ Deno.test({
       },
       (req, res) => ({
         ...res,
-        cookies: new Map<string, string>([["requested_proto", req.proto]])
-      })
+        cookies: new Map<string, string>([["requested_proto", req.proto]]),
+      }),
     );
 
     const req = await createAugmentedRequest({
-      path: "/foo"
+      path: "/foo",
     });
 
     const cachingHandler = withCaching(handler);
@@ -35,9 +35,9 @@ Deno.test({
       status: 200,
       headers: new Headers({
         "Content-Type": "text/plain",
-        "Cache-Control": "max-age=86400"
+        "Cache-Control": "max-age=86400",
       }),
-      cookies: new Map<string, string>([["requested_proto", "HTTP/1.1"]])
+      cookies: new Map<string, string>([["requested_proto", "HTTP/1.1"]]),
     });
-  }
+  },
 });
