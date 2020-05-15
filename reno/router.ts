@@ -43,15 +43,16 @@ export const createRouteMap = (routes: [RegExp | string, RouteHandler][]) =>
   new Map(routes);
 
 export const createAugmentedRequest = (
-  { body, bodyStream, ...rest }: ServerRequest | AugmentedRequest,
+  { body, contentLength, finalize, ...rest }: ServerRequest | AugmentedRequest,
   queryParams: URLSearchParams,
   routeParams: string[]
 ): AugmentedRequest => ({
   ...rest,
   body,
-  bodyStream,
   queryParams,
-  routeParams
+  routeParams,
+  contentLength,
+  finalize,
 });
 
 export const routerCreator = (

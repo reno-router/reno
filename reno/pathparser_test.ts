@@ -1,4 +1,4 @@
-import { test, assertEquals, assertStrictEq, assertMatch } from "../deps.ts";
+import { assertEquals, assertStrictEq, assertMatch } from "../deps.ts";
 import parsePath from "./pathparser.ts";
 
 const assertNotMatch = (actual: string, regExp: RegExp) => {
@@ -9,7 +9,7 @@ const assertNotMatch = (actual: string, regExp: RegExp) => {
   );
 };
 
-test({
+Deno.test({
   name: "parsePath should convert a human-friendly path spec into a RegExp",
   async fn() {
     const path = "/api/foo/*/bar/*/*/baz";
@@ -26,7 +26,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "parsePath should treat the last wildcard as optional",
   async fn() {
     const path = "/api/foo/*";
@@ -39,7 +39,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "parsePath should return the input parameter if it`s a RegExp",
   async fn() {
     const path = /\/api\/foo\/.*/;

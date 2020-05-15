@@ -1,7 +1,7 @@
 import { createCookieWriter } from "./cookies.ts";
-import { test, sinon } from "../deps.ts";
+import { sinon } from "../deps.ts";
 
-test({
+Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
   fn() {
     const res = {
@@ -17,7 +17,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "writeCookies should use Deno`s setCookie binding to set each cookie against the response when the map is present",
   fn() {

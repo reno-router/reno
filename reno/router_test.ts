@@ -1,10 +1,10 @@
-import { sinon, test, assertEquals, assertStrictEq } from "../deps.ts";
+import { sinon, assertEquals, assertStrictEq } from "../deps.ts";
 import { NotFoundError, createRouteMap, routerCreator } from "./router.ts";
 import { assertResponsesMatch } from "./testing.ts";
 import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
 
-test({
+Deno.test({
   name:
     "createRouter`s routing function should invoke a handler for a given path from the provided map, and call the cookie writer and path parser",
   async fn() {
@@ -34,7 +34,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "createRouter`s routing function should support nested routers",
   async fn() {
     const response = {
@@ -84,7 +84,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "createRouter`s routing function should reject with a NotFoundError when no routes match",
   async fn() {
@@ -102,7 +102,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "createRouter`s routing function should forward route handler rejections",
   async fn() {

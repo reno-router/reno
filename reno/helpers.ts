@@ -1,6 +1,7 @@
 // TODO: find a better name than "helpers"
 
 import { AugmentedRequest, RouteHandler, AugmentedResponse } from "./router.ts";
+import { BufReader } from "../deps.ts";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
@@ -17,27 +18,38 @@ export type FormRequest = ProcessedRequest<URLSearchParams>;
 
 // TODO: find a better way?!
 const createProcessedRequest = <TBody>(
-  { bodyStream, ...rest }: AugmentedRequest,
+  req: AugmentedRequest,
   body: TBody
 ) => ({
-  ...rest,
+  ...req,
   body,
-  bodyStream
 });
 
 /* Maybe we'll need to write a
  * dedicated impl at some point */
 const parseFormBody = (body: string) => new URLSearchParams(body);
 
-export const withJsonBody = <TBody>(
+const getReqBodyAsString = async (req: AugmentedRequest) => {
+  if (!req.contentLength) {
+    throw new Error("Content-Length header was not set!");
+  }
+
+  const bufReader = BufReader.create(req.body);
+  const bytes = new Uint8Array(req.contentLength);
+
+  await bufReader.readFull(bytes);
+
+  return decoder.decode(bytes);
+};
+
+export const withJsonBody = <TBody = {}>(
   handler: RouteHandler<JsonRequest<TBody | unknown>>
 ) => async (req: AugmentedRequest) => {
   /* There are some instances in which an
    * empty body can have whitespace, so
    * we decode early and trim the resultant
    * string to determine the body's presence */
-  const rawBody = await req.body();
-  const bodyText = decoder.decode(rawBody).trim();
+  const bodyText = (await getReqBodyAsString(req)).trim();
 
   if (!bodyText.length) {
     return handler(
@@ -86,8 +98,7 @@ export const streamResponse = (
 export const withFormBody = (handler: RouteHandler<FormRequest>) => async (
   req: AugmentedRequest
 ) => {
-  const rawBody = await req.body();
-  const bodyText = decoder.decode(rawBody);
+  const bodyText = await getReqBodyAsString(req);
   const body = parseFormBody(bodyText);
 
   return await handler(createProcessedRequest(req, body));

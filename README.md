@@ -126,7 +126,7 @@ You should also run `./tools/install-types.sh` to install the TypeScript definit
 
 Then you can run:
 
-* `deno example/index.ts` - starts the example server
+* `deno run example/index.ts` - starts the example server
 * `deno test` - runs the unit tests
 
 ## Functionality Checklist

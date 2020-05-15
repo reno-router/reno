@@ -1,4 +1,4 @@
-import { test, sinon, assertEquals } from "../../deps.ts";
+import { sinon, assertEquals } from "../../deps.ts";
 import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
@@ -7,7 +7,7 @@ const createFetchStub = (response: string[]) =>
     json: sinon.stub().resolves(response)
   });
 
-test({
+Deno.test({
   name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
   async fn() {
     const quotes = ["Some Ron Swanson Quote"];
@@ -29,7 +29,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "ronSwansonQuoteHandler should fetch the number of quotes specified in the route params if present",
   async fn() {

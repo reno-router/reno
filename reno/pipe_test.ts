@@ -1,10 +1,9 @@
-import { test } from "../deps.ts";
 import { pipe } from "./pipe.ts";
 import { textResponse } from "./helpers.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { assertResponsesMatch } from "./testing.ts";
 
-test({
+Deno.test({
   name:
     "pipe takes a set in input morphs and returns a higher-order route handler",
   async fn() {

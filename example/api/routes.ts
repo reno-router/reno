@@ -53,7 +53,7 @@ const colossal = () =>
 const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
   method === "POST"
     ? jsonResponse<JsonBodyResponse>({
-        message: "Here`s the body you posted to this endpoint",
+        message: "Here's the body you posted to this endpoint",
         ...body
       })
     : methodNotAllowed(url, method)

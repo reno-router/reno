@@ -1,4 +1,4 @@
-import { test, sinon, assertEquals, assertStrictEq } from "../deps.ts";
+import { sinon, assertEquals, assertStrictEq } from "../deps.ts";
 
 import {
   JsonRequest,
@@ -11,7 +11,7 @@ import {
 import { assertResponsesMatch } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 
-test({
+Deno.test({
   name:
     "jsonResponse builds an response object with the correct Content-Type header and an encoded body",
   fn() {
@@ -33,7 +33,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "jsonResponse accepts custom headers",
   fn() {
     const body = {
@@ -61,7 +61,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "textResponse builds an response object with the correct Content-Type header and an encoded body",
   fn() {
@@ -80,7 +80,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "textResponse accepts custom headers",
   fn() {
     const body = "Hello, world!";
@@ -105,7 +105,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "withJsonBody should return a higher-order route handler that parses req.body into JS object",
   async fn() {
@@ -144,7 +144,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "withJsonBody should silently delegate to the wrapped handler if there`s no request body",
   async fn() {
@@ -174,7 +174,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "withJsonBody should reject if the body can`t be parsed",
   async fn() {
     const handlerStub = sinon.stub();
@@ -194,7 +194,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name: "withFormBody should parse form data and expose the values as a Map",
   async fn() {
     const expectedResponse = {
@@ -220,7 +220,7 @@ test({
   }
 });
 
-test({
+Deno.test({
   name:
     "withFormBody should silently delegate to the wrapped handler if there's no req body",
   async fn() {

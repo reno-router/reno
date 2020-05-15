@@ -69,7 +69,7 @@ export const createAugmentedRequest = async ({
    * abstraction that hides this. TODO: abstract! */
   const {
     body: sBody,
-    bodyStream,
+,
     respond,
     ...rest
   } = await createServerRequest({
@@ -80,7 +80,7 @@ export const createAugmentedRequest = async ({
   });
 
   return createAugmentedRouterRequest(
-    { body: sBody, bodyStream, respond, ...rest },
+    { body: sBody, respond, ...rest },
     queryParams,
     routeParams
   );

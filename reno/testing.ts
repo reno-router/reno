@@ -3,9 +3,6 @@ import { AugmentedResponse } from "./router.ts";
 
 const decoder = new TextDecoder();
 
-const bodyToString = (body: Uint8Array | Deno.Reader): string =>
-  body instanceof Uint8Array ? decoder.decode(body) : Deno.inspect(body);
-
 export const assertResponsesMatch = (
   actual: AugmentedResponse,
   expected: AugmentedResponse
@@ -13,8 +10,8 @@ export const assertResponsesMatch = (
   assertEquals(
     ...([actual, expected].map(res => ({
       ...res,
-      body: res.body && bodyToString(res.body),
-      headers: new Map(res.headers) // So that headers are deeply compared
+      body: res.body,
+      headers: res.headers && new Map(res.headers) // So that headers are deeply compared
     })) as [unknown, unknown])
   );
 };
