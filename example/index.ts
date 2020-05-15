@@ -49,7 +49,7 @@ const router = createRouter(routes);
         const res = await router(req);
         return req.respond(res);
       } catch (e) {
-        return req.respond(mapToErrorResponse(e))
+        return req.respond(mapToErrorResponse(e));
       }
     },
   );
