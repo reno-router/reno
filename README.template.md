@@ -5,7 +5,7 @@
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 ```tsx
-import { serve } from "https://deno.land/std@v0.51.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@v0.51.0/http/server.ts";
 
 import {
   createRouter,
@@ -36,14 +36,28 @@ export const routes = createRouteMap([
   )],
 ]);
 
+const notFound = (e: NotFoundError) => createErrorResponse(404, e);
+const serverError = (e: Error) => createErrorResponse(500, e);
+
+const mapToErrorResponse = (e: Error) =>
+  e instanceof NotFoundError ? notFound(e) : serverError(e);
+
 const router = createRouter(routes);
 
 (async () => {
   console.log("Listening for requests...");
 
-  for await (const req of serve(":8001")) {
-    req.respond(await router(req));
-  }
+  await listenAndServe(
+    ":8001",
+    async (req: ServerRequest) => {
+      try {
+        const res = await router(req);
+        return req.respond(res);
+      } catch (e) {
+        return req.respond(mapToErrorResponse(e));
+      }
+    },
+  );
 })();
 ```
 
