@@ -42,7 +42,7 @@ const router = createRouter(routes);
 
   await listenAndServe(
     BINDING,
-    async req => {
+    async (req: ServerRequest) => {
       logRequest(req);
       const res = await router(req).catch(mapToErrorResponse);
       await req.respond(res);
