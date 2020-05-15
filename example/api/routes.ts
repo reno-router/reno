@@ -1,6 +1,6 @@
-import { StringReader } from "https://deno.land/std@v0.23.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@v0.51.0/io/readers.ts";
 
-import colossalJson from "./colossal.json";
+import colossalData from "./colossal.ts";
 
 import {
   AugmentedRequest,
@@ -28,7 +28,7 @@ const methodNotAllowed = (url: string, method: string) => ({
   ...textResponse(`Method ${method} not allowed for ${url}`)
 });
 
-const serialised = JSON.stringify(colossalJson);
+const serialised = JSON.stringify(colossalData);
 
 /* Returns a huge JSON response for timing
  * TTFB with different transfer methods

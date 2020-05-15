@@ -1,9 +1,9 @@
-import { BufReader } from "https://deno.land/std@v0.23.0/io/bufio.ts";
+import { BufReader } from "https://deno.land/std@v0.51.0/io/bufio.ts";
 import {
   readRequest,
   ServerRequest
-} from "https://deno.land/std@v0.23.0/http/server.ts";
-import { StringReader } from "https://deno.land/std@v0.23.0/io/readers.ts";
+} from "https://deno.land/std@v0.51.0/http/server.ts";
+import { StringReader } from "https://deno.land/std@v0.51.0/io/readers.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 const createStubAddr = (): Deno.Addr => ({
