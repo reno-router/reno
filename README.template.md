@@ -61,9 +61,9 @@ const router = createRouter(routes);
 })();
 ```
 
-**TODO: replace/complement this with proper documentation**
+## Key Features
 
-## Responses are just Data Structures
+### Responses are just Data Structures
 
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
@@ -96,7 +96,7 @@ test({
 });
 ```
 
-## `pipe()` - An Alternative to Middleware
+### `pipe()` - An Alternative to Middleware
 
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
@@ -127,6 +127,10 @@ const home = withCaching(() =>
 
 export const routes = createRouteMap([["/", home]]);
 ```
+
+## API Documentation
+
+Consult [docs/API.md](https://github.com/reno-router/reno/blob/master/docs/API.md) for comprehensive documentation on Reno's API.
 
 ## Local Development
 
