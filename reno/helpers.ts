@@ -65,6 +65,7 @@ export const withJsonBody = <TBody = {}>(
 
     const body = JSON.parse(bodyText) as TBody;
 
+    // TODO: remove redundant `return await`s!
     return await handler(createProcessedRequest(req, body));
   };
 
