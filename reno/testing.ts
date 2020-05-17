@@ -7,8 +7,8 @@ export const assertResponsesMatch = (
 ) => {
   assertEquals(
     ...([actual, expected].map((res) => ({
-      // body: res.body,
-      // headers: res.headers && new Map(res.headers) // So that headers are deeply compared
+      body: res.body,
+      headers: res.headers && new Map(res.headers) // So that headers are deeply compared
     })) as [unknown, unknown]),
   );
 };
