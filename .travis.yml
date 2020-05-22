@@ -6,4 +6,4 @@ before_install:
 jobs:
   include:
     - stage: test
-      script: deno test
+      script: "$DENO_INSTALL/bin/deno test"
