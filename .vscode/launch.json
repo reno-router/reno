@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Deno - Debug tests",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "/home/james/.deno/bin/deno",
+      "runtimeArgs": ["test", "--inspect-brk", "-A", "example/api/routes_test.ts"],
+      "port": 9229
+    }
+  ]
+}
