@@ -11,9 +11,6 @@
     "paths": {
       "https://*": ["../../.cache/deno/deps/https/*"]
     },
-    "plugins": [{
-      "name": "deno_ls_plugin"
-    }],
     "typeRoots": ["./types"]
   },
   "include": [
