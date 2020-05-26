@@ -73,6 +73,7 @@ export const routerCreator = (
       );
       const queryParams = rootQueryParams || url.searchParams;
 
+      // TODO: restructure this lookup to support O(1) retrieval
       for (let [path, handler] of routes) {
         const [firstMatch, ...restMatches] =
           url.pathname.match(pathParser(path)) || [];
