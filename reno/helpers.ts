@@ -65,8 +65,7 @@ export const withJsonBody = <TBody = {}>(
 
     const body = JSON.parse(bodyText) as TBody;
 
-    // TODO: remove redundant `return await`s!
-    return await handler(createProcessedRequest(req, body));
+    return handler(createProcessedRequest(req, body));
   };
 
 export const jsonResponse = <TResponseBody = {}>(
@@ -106,5 +105,5 @@ export const withFormBody = (handler: RouteHandler<FormRequest>) =>
     const bodyText = await getReqBodyAsString(req);
     const body = parseFormBody(bodyText);
 
-    return await handler(createProcessedRequest(req, body));
+    return handler(createProcessedRequest(req, body));
   };
