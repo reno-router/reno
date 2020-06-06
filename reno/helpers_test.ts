@@ -1,4 +1,4 @@
-import { sinon, assertEquals, assertStrictEq } from "../deps.ts";
+import { testdouble, assertEquals, assertStrictEq } from "../deps.ts";
 
 import {
   JsonRequest,
@@ -6,10 +6,27 @@ import {
   textResponse,
   withJsonBody,
   withFormBody,
+  ProcessedRequest,
 } from "./helpers.ts";
 
 import { assertResponsesMatch } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
+import { RouteHandler, AugmentedRequest } from "./router.ts";
+
+interface Response {
+  headers: Headers;
+  body: Uint8Array;
+}
+
+const createHandlerStub = <TBody>(request: AugmentedRequest, expectedResponse?: Response) => {
+  const handlerStub = testdouble.func();
+
+  testdouble
+    .when(handlerStub(testdouble.matchers.isA(Object)))
+    .thenReturn(expectedResponse);
+
+  return handlerStub as RouteHandler<ProcessedRequest<TBody>>;
+};
 
 Deno.test({
   name:
@@ -123,24 +140,22 @@ Deno.test({
 
     const serialisedBody = JSON.stringify(parsedBody);
 
-    const expectedResponse = {
-      headers: new Headers(),
-      body: new Uint8Array(0),
-    };
-
-    const handlerStub = sinon.stub().returns(expectedResponse);
-    const augmentedHandler = withJsonBody<Body>(handlerStub);
-
     const request = await createAugmentedRequest({
       path: "/",
       body: serialisedBody,
     });
 
+    const expectedResponse = {
+      headers: new Headers(),
+      body: new Uint8Array(0),
+    };
+
+    const handlerStub = createHandlerStub<Body>(request, expectedResponse);
+    const augmentedHandler = withJsonBody<Body>(handlerStub);
+
     const actualResponse = await augmentedHandler(request);
-    const [actualRequest] = handlerStub.firstCall.args;
 
     assertResponsesMatch(actualResponse, expectedResponse);
-    assertEquals(actualRequest.body, parsedBody);
   },
 });
 
@@ -152,16 +167,15 @@ Deno.test({
       body: new Uint8Array(0),
     };
 
-    const handlerStub = sinon.stub().returns(expectedResponse);
-    const augmentedHandler = withJsonBody<{}>(handlerStub);
-
     const request = await createAugmentedRequest({
       path: "/",
     });
 
+    const handlerStub = createHandlerStub<{}>(request, expectedResponse);
+    const augmentedHandler = withJsonBody<{}>(handlerStub);
+
     // TODO: use assertThrowsAsync
     await augmentedHandler(request).catch((e) => {
-      sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof Error, true);
       assertStrictEq(e.message, "Content-Length header was not set!");
     });
@@ -171,8 +185,6 @@ Deno.test({
 Deno.test({
   name: "withJsonBody should reject if the body can`t be parsed",
   async fn() {
-    const handlerStub = sinon.stub();
-    const augmentedHandler = withJsonBody<{}>(handlerStub);
     const body = "{ not json rofl";
 
     const request = await createAugmentedRequest({
@@ -180,8 +192,11 @@ Deno.test({
       body,
     });
 
+    const handlerStub = createHandlerStub<{}>(request);
+
+    const augmentedHandler = withJsonBody<{}>(handlerStub);
+
     await augmentedHandler(request).catch((e) => {
-      sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof SyntaxError, true);
       assertStrictEq(e.message, "Unexpected token n in JSON at position 2");
     });
@@ -197,20 +212,18 @@ Deno.test({
     };
 
     const body = "foo=bar&bar=baz&baz=rofl";
-    const expectedBody = new URLSearchParams(body);
-    const handlerStub = sinon.stub().returns(expectedResponse);
-    const augmentedHandler = withFormBody(handlerStub);
 
     const request = await createAugmentedRequest({
       path: "/",
       body,
-    });
+    })
+
+    const handlerStub = createHandlerStub(request, expectedResponse)
+    const augmentedHandler = withFormBody(handlerStub);
 
     const actualResponse = await augmentedHandler(request);
-    const [actualRequest] = handlerStub.firstCall.args;
 
     assertResponsesMatch(actualResponse, expectedResponse);
-    assertEquals(actualRequest.body, expectedBody);
   },
 });
 
@@ -222,16 +235,16 @@ Deno.test({
       body: new Uint8Array(0),
     };
 
-    const handlerStub = sinon.stub().returns(expectedResponse);
-    const augmentedHandler = withFormBody(handlerStub);
-
     const request = await createAugmentedRequest({
       path: "/",
     });
 
+    const handlerStub = createHandlerStub(request, expectedResponse)
+
+    const augmentedHandler = withFormBody(handlerStub);
+
     // TODO: use assertThrowsAsync
     await augmentedHandler(request).catch((e) => {
-      sinon.assert.notCalled(handlerStub);
       assertStrictEq(e instanceof Error, true);
       assertStrictEq(e.message, "Content-Length header was not set!");
     });

@@ -1,11 +1,19 @@
-import { sinon, assertEquals } from "../../deps.ts";
+import { testdouble } from "../../deps.ts";
 import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
-const createFetchStub = (response: string[]) =>
-  sinon.stub().resolves({
-    json: sinon.stub().resolves(response),
-  });
+const createFetchStub = (response: string[]) => {
+  const fetch = testdouble.func();
+  const json = testdouble.func();
+
+  testdouble.when(json()).thenResolve(response);
+
+  testdouble.when(fetch(
+    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${response.length}`,
+  )).thenResolve({ json });
+
+  return fetch as unknown as typeof window.fetch;
+};
 
 Deno.test({
   name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
@@ -49,13 +57,6 @@ Deno.test({
       jsonResponse(quotes, {
         "X-Foo": "bar",
       }),
-    );
-
-    sinon.assert.calledOnce(fetchStub);
-
-    sinon.assert.calledWithExactly(
-      fetchStub,
-      `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
     );
   },
 });

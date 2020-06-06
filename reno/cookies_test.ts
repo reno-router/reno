@@ -1,5 +1,9 @@
 import { createCookieWriter } from "./cookies.ts";
-import { sinon } from "../deps.ts";
+import { testdouble } from "../deps.ts";
+import { Cookie } from "https://deno.land/std@v0.51.0/http/cookie.ts";
+import { Response } from "https://deno.land/std@v0.51.0/http/server.ts";
+
+type CookieSetter = (res: Response, cookie: Cookie) => void;
 
 Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
@@ -8,12 +12,14 @@ Deno.test({
       body: new Uint8Array(0),
     };
 
-    const cookieSetter = sinon.stub();
-    const writeCookies = createCookieWriter(cookieSetter);
+    const cookieSetter = testdouble.func();
+    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
 
     writeCookies(res);
 
-    sinon.assert.notCalled(cookieSetter);
+    testdouble.verify(cookieSetter(), {
+      times: 0,
+    });
   },
 });
 
@@ -26,19 +32,19 @@ Deno.test({
       body: new Uint8Array(0),
     };
 
-    const cookieSetter = sinon.stub();
-    const writeCookies = createCookieWriter(cookieSetter);
+    const cookieSetter = testdouble.func();
+    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
 
     writeCookies(res);
 
-    sinon.assert.calledTwice(cookieSetter);
-    sinon.assert.calledWithExactly(cookieSetter, res, {
+    testdouble.verify(cookieSetter(res, {
       name: "X-Foo",
       value: "bar",
-    });
-    sinon.assert.calledWithExactly(cookieSetter, res, {
+    }), { times: 1 });
+
+    testdouble.verify(cookieSetter(res, {
       name: "X-Bar",
       value: "baz",
-    });
+    }), { times: 1 });
   },
 });
