@@ -1,4 +1,5 @@
-import { testdouble, assertEquals, assertStrictEq } from "../deps.ts";
+
+import { testdouble, assertStrictEq, Response } from "../deps.ts";
 
 import {
   JsonRequest,
@@ -12,11 +13,6 @@ import {
 import { assertResponsesMatch } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { RouteHandler, AugmentedRequest } from "./router.ts";
-
-interface Response {
-  headers: Headers;
-  body: Uint8Array;
-}
 
 const createHandlerStub = <TBody>(request: AugmentedRequest, expectedResponse?: Response) => {
   const handlerStub = testdouble.func();
