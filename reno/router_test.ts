@@ -5,11 +5,15 @@ import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
 import { writeCookies } from "./cookies.ts";
 
-const createRouteStub = (response: Response, expectedRouteParams: string[]) => {
+const isOneOf = <TItem>(items: TItem[]) =>
+  testdouble.matchers.argThat((arg: TItem) => items.includes(arg));
+
+const createRouteStub = (response: Response, expectedPath: string, expectedRouteParams: string[]) => {
   const route = testdouble.func() as RouteHandler<AugmentedRequest>;
 
   testdouble
     .when(route(testdouble.matchers.contains({
+      url: expectedPath,
       routeParams: expectedRouteParams,
     }), testdouble.matchers.anything(), testdouble.matchers.anything()))
     .thenResolve(response);
@@ -17,11 +21,11 @@ const createRouteStub = (response: Response, expectedRouteParams: string[]) => {
   return route;
 };
 
-const createPathParserSpy = (path: RegExp) => {
+const createPathParserSpy = (...paths: (RegExp | string)[]) => {
   const pathParser = testdouble.func() as typeof parsePath;
 
   testdouble
-    .when(pathParser(path))
+    .when(pathParser(isOneOf<RegExp | string>(paths)))
     .thenDo(parsePath);
 
   return pathParser;
@@ -57,55 +61,41 @@ Deno.test({
   },
 });
 
-// Deno.test({
-//   name: "createRouter`s routing function should support nested routers",
-//   async fn() {
-//     const response = {
-//       headers: new Headers(),
-//       body: new Uint8Array(),
-//     };
+Deno.test({
+  name: "createRouter`s routing function should support nested routers",
+  async fn() {
+    const response = {
+      headers: new Headers(),
+      body: new Uint8Array(),
+    };
 
-//     const routeStub = sinon.stub().resolves(response);
-//     const pathParser = sinon.spy(parsePath);
-//     const cookieWriter = sinon.stub();
-//     const createRouter = routerCreator(pathParser, cookieWriter);
+    const path = "/foo/bar/baz?lol=rofl&rofl=lmao";
+    const routeStub = createRouteStub(response, path, []);
+    const pathParser = createPathParserSpy("/foo/*", "/bar/*", "/baz");
+    const cookieWriter = createCookieWriterStub();
+    const createRouter = routerCreator(pathParser, cookieWriter);
 
-//     const routes = createRouteMap([
-//       [
-//         "/foo/*",
-//         createRouter(
-//           createRouteMap([
-//             ["/bar/*", createRouter(createRouteMap([["/baz", routeStub]]))],
-//           ]),
-//         ),
-//       ],
-//     ]);
+    const routes = createRouteMap([
+      [
+        "/foo/*",
+        createRouter(
+          createRouteMap([
+            ["/bar/*", createRouter(createRouteMap([["/baz", routeStub]]))],
+          ]),
+        ),
+      ],
+    ]);
 
-//     const router = createRouter(routes);
-//     const request = await createServerRequest({
-//       path: "/foo/bar/baz?lol=rofl&rofl=lmao",
-//     });
+    const router = createRouter(routes);
+    const request = await createServerRequest({
+      path,
+    });
 
-//     const actualResponse = await router(request);
+    const actualResponse = await router(request);
 
-//     assertResponsesMatch(actualResponse, response);
-
-//     const [augmentedRequest] = routeStub.firstCall.args;
-
-//     assertEquals(augmentedRequest.url, "/foo/bar/baz?lol=rofl&rofl=lmao");
-//     assertEquals(augmentedRequest.routeParams, []);
-
-//     assertEquals(
-//       [...augmentedRequest.queryParams.entries()],
-//       [["lol", "rofl"], ["rofl", "lmao"]],
-//     );
-
-//     sinon.assert.calledThrice(pathParser);
-//     sinon.assert.calledWithExactly(pathParser, "/foo/*");
-//     sinon.assert.calledWithExactly(pathParser, "/bar/*");
-//     sinon.assert.calledWithExactly(pathParser, "/baz");
-//   },
-// });
+    assertResponsesMatch(actualResponse, response);
+  },
+});
 
 // Deno.test({
 //   name:
