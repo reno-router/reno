@@ -1,8 +1,8 @@
-import { assertEquals, assertStrictEq, assertMatch } from "../deps.ts";
+import { assertEquals, assertStrictEquals, assertMatch } from "../deps.ts";
 import parsePath from "./pathparser.ts";
 
 const assertNotMatch = (actual: string, regExp: RegExp) => {
-  assertStrictEq(
+  assertStrictEquals(
     regExp.test(actual),
     false,
     `actual: "${actual}" expected not to match: "${regExp}"`,
@@ -45,6 +45,6 @@ Deno.test({
     const path = /\/api\/foo\/.*/;
     const regExp = parsePath(path);
 
-    assertStrictEq(regExp, path);
+    assertStrictEquals(regExp, path);
   },
 });

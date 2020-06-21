@@ -1,7 +1,7 @@
 import {
   ServerRequest,
   Response,
-} from "https://deno.land/std@v0.51.0/http/server.ts";
+} from "https://deno.land/std@v0.58.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";
 import parsePath from "./pathparser.ts";

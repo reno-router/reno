@@ -1,4 +1,4 @@
-import { Response, testdouble, assertEquals, assertStrictEq } from "../deps.ts";
+import { Response, testdouble, assertEquals, assertStrictEquals } from "../deps.ts";
 import {
   NotFoundError,
   createRouteMap,
@@ -130,12 +130,12 @@ Deno.test({
     await router(mismatchedRequest)
       .then(() => Promise.reject(new Error("Should have caught an error!")))
       .catch((e) => {
-        assertStrictEq(
+        assertStrictEquals(
           e instanceof NotFoundError,
           true,
           "Expected error to be NotFoundError",
         );
-        assertStrictEq(e.message, "No match for /foo-bar");
+        assertStrictEquals(e.message, "No match for /foo-bar");
       });
   },
 });
@@ -153,8 +153,8 @@ Deno.test({
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
     await router(mismatchedRequest).catch((e) => {
-      assertStrictEq(e instanceof Error, true);
-      assertStrictEq(e.message, "Some error!");
+      assertStrictEquals(e instanceof Error, true);
+      assertStrictEquals(e.message, "Some error!");
     });
   },
 });

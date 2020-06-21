@@ -1,4 +1,4 @@
-import { testdouble, assertStrictEq, Response } from "../deps.ts";
+import { testdouble, assertStrictEquals, Response } from "../deps.ts";
 
 import {
   JsonRequest,
@@ -174,8 +174,8 @@ Deno.test({
 
     // TODO: use assertThrowsAsync
     await augmentedHandler(request).catch((e) => {
-      assertStrictEq(e instanceof Error, true);
-      assertStrictEq(e.message, "Content-Length header was not set!");
+      assertStrictEquals(e instanceof Error, true);
+      assertStrictEquals(e.message, "Content-Length header was not set!");
     });
   },
 });
@@ -195,8 +195,8 @@ Deno.test({
     const augmentedHandler = withJsonBody<{}>(handlerStub);
 
     await augmentedHandler(request).catch((e) => {
-      assertStrictEq(e instanceof SyntaxError, true);
-      assertStrictEq(e.message, "Unexpected token n in JSON at position 2");
+      assertStrictEquals(e instanceof SyntaxError, true);
+      assertStrictEquals(e.message, "Unexpected token n in JSON at position 2");
     });
   },
 });
@@ -243,8 +243,8 @@ Deno.test({
 
     // TODO: use assertThrowsAsync
     await augmentedHandler(request).catch((e) => {
-      assertStrictEq(e instanceof Error, true);
-      assertStrictEq(e.message, "Content-Length header was not set!");
+      assertStrictEquals(e instanceof Error, true);
+      assertStrictEquals(e.message, "Content-Length header was not set!");
     });
   },
 });
