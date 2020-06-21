@@ -5,18 +5,26 @@ import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
 import { writeCookies } from "./cookies.ts";
 
-const isOneOf = <TItem>(items: TItem[]) =>
-  testdouble.matchers.argThat((arg: TItem) => items.includes(arg));
+const isOneOf = (items: (RegExp | string)[]) =>
+  testdouble.matchers.argThat((arg: (RegExp | string)) =>
+    items.some(item => item.toString() === arg.toString()));
 
-const createRouteStub = (response: Response, expectedPath: string, expectedRouteParams: string[]) => {
+const createRouteStub = (
+  response: Response | Error,
+  expectedPath: string,
+  expectedRouteParams: string[],
+) => {
   const route = testdouble.func() as RouteHandler<AugmentedRequest>;
 
-  testdouble
+  const stubber = testdouble
     .when(route(testdouble.matchers.contains({
       url: expectedPath,
       routeParams: expectedRouteParams,
-    }), testdouble.matchers.anything(), testdouble.matchers.anything()))
-    .thenResolve(response);
+    }), testdouble.matchers.anything(), testdouble.matchers.anything()));
+
+  response instanceof Error
+    ? stubber.thenReject(response)
+    : stubber.thenResolve(response);
 
   return route;
 };
@@ -25,7 +33,7 @@ const createPathParserSpy = (...paths: (RegExp | string)[]) => {
   const pathParser = testdouble.func() as typeof parsePath;
 
   testdouble
-    .when(pathParser(isOneOf<RegExp | string>(paths)))
+    .when(pathParser(isOneOf(paths)))
     .thenDo(parsePath);
 
   return pathParser;
@@ -97,40 +105,46 @@ Deno.test({
   },
 });
 
-// Deno.test({
-//   name:
-//     "createRouter`s routing function should reject with a NotFoundError when no routes match",
-//   async fn() {
-//     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
-//     const routeStub = sinon.stub();
-//     const createRouter = routerCreator(parsePath, sinon.stub());
-//     const router = createRouter(createRouteMap([[/^\/foo$/, routeStub]]));
+Deno.test({
+  name:
+    "createRouter`s routing function should reject with a NotFoundError when no routes match",
+  async fn() {
+    const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
+    const routeStub = testdouble.func() as RouteHandler<AugmentedRequest>;
+    const pathParser = createPathParserSpy();
+    const cookieWriter = createCookieWriterStub();
+    const createRouter = routerCreator(pathParser, cookieWriter);
+    const router = createRouter(createRouteMap([[/^\/foo$/, routeStub]]));
 
-//     await router(mismatchedRequest)
-//       .then(() => Promise.reject(new Error("Should have caught an error!")))
-//       .catch((e) => {
-//         assertStrictEq(
-//           e instanceof NotFoundError,
-//           true,
-//           "Expected error to be NotFoundError",
-//         );
-//         assertStrictEq(e.message, "No match for /foo-bar");
-//       });
-//   },
-// });
+    // TODO: migrate all of this to async/await
+    await router(mismatchedRequest)
+      .then(() => Promise.reject(new Error("Should have caught an error!")))
+      .catch((e) => {
+        assertStrictEq(
+          e instanceof NotFoundError,
+          true,
+          "Expected error to be NotFoundError",
+        );
+        assertStrictEq(e.message, "No match for /foo-bar");
+      });
+  },
+});
 
-// Deno.test({
-//   name:
-//     "createRouter`s routing function should forward route handler rejections",
-//   async fn() {
-//     const mismatchedRequest = await createServerRequest({ path: "/foo" });
-//     const routeStub = sinon.stub().rejects(new Error("Some error!"));
-//     const createRouter = routerCreator(parsePath, sinon.stub());
-//     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
+Deno.test({
+  name:
+    "createRouter`s routing function should forward route handler rejections",
+  async fn() {
+    const path = "/foo";
+    const mismatchedRequest = await createServerRequest({ path });
+    const routeStub = createRouteStub(new Error("Some error!"), path, []);
+    const pathParser = createPathParserSpy(/\/foo$/);
+    const cookieWriter = createCookieWriterStub();
+    const createRouter = routerCreator(pathParser, cookieWriter);
+    const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
-//     await router(mismatchedRequest).catch((e) => {
-//       assertStrictEq(e instanceof Error, true);
-//       assertStrictEq(e.message, "Some error!");
-//     });
-//   },
-// });
+    await router(mismatchedRequest).catch((e) => {
+      assertStrictEq(e instanceof Error, true);
+      assertStrictEq(e.message, "Some error!");
+    });
+  },
+});
