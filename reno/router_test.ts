@@ -1,5 +1,11 @@
 import { Response, testdouble, assertEquals, assertStrictEq } from "../deps.ts";
-import { NotFoundError, createRouteMap, routerCreator, RouteHandler, AugmentedRequest } from "./router.ts";
+import {
+  NotFoundError,
+  createRouteMap,
+  routerCreator,
+  RouteHandler,
+  AugmentedRequest,
+} from "./router.ts";
 import { assertResponsesMatch } from "./testing.ts";
 import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
@@ -7,7 +13,8 @@ import { writeCookies } from "./cookies.ts";
 
 const isOneOf = (items: (RegExp | string)[]) =>
   testdouble.matchers.argThat((arg: (RegExp | string)) =>
-    items.some(item => item.toString() === arg.toString()));
+    items.some((item) => item.toString() === arg.toString())
+  );
 
 const createRouteStub = (
   response: Response | Error,
@@ -17,10 +24,14 @@ const createRouteStub = (
   const route = testdouble.func() as RouteHandler<AugmentedRequest>;
 
   const stubber = testdouble
-    .when(route(testdouble.matchers.contains({
-      url: expectedPath,
-      routeParams: expectedRouteParams,
-    }), testdouble.matchers.anything(), testdouble.matchers.anything()));
+    .when(route(
+      testdouble.matchers.contains({
+        url: expectedPath,
+        routeParams: expectedRouteParams,
+      }),
+      testdouble.matchers.anything(),
+      testdouble.matchers.anything(),
+    ));
 
   response instanceof Error
     ? stubber.thenReject(response)
@@ -39,8 +50,7 @@ const createPathParserSpy = (...paths: (RegExp | string)[]) => {
   return pathParser;
 };
 
-const createCookieWriterStub = () =>
-  testdouble.func() as typeof writeCookies;
+const createCookieWriterStub = () => testdouble.func() as typeof writeCookies;
 
 Deno.test({
   name:

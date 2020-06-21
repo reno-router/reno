@@ -1,4 +1,3 @@
-
 import { testdouble, assertStrictEq, Response } from "../deps.ts";
 
 import {
@@ -14,7 +13,10 @@ import { assertResponsesMatch } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { RouteHandler, AugmentedRequest } from "./router.ts";
 
-const createHandlerStub = <TBody>(request: AugmentedRequest, expectedResponse?: Response) => {
+const createHandlerStub = <TBody>(
+  request: AugmentedRequest,
+  expectedResponse?: Response,
+) => {
   const handlerStub = testdouble.func();
 
   testdouble
@@ -212,9 +214,9 @@ Deno.test({
     const request = await createAugmentedRequest({
       path: "/",
       body,
-    })
+    });
 
-    const handlerStub = createHandlerStub(request, expectedResponse)
+    const handlerStub = createHandlerStub(request, expectedResponse);
     const augmentedHandler = withFormBody(handlerStub);
 
     const actualResponse = await augmentedHandler(request);
@@ -235,7 +237,7 @@ Deno.test({
       path: "/",
     });
 
-    const handlerStub = createHandlerStub(request, expectedResponse)
+    const handlerStub = createHandlerStub(request, expectedResponse);
 
     const augmentedHandler = withFormBody(handlerStub);
 

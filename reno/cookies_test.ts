@@ -37,14 +37,20 @@ Deno.test({
 
     writeCookies(res);
 
-    testdouble.verify(cookieSetter(res, {
-      name: "X-Foo",
-      value: "bar",
-    }), { times: 1 });
+    testdouble.verify(
+      cookieSetter(res, {
+        name: "X-Foo",
+        value: "bar",
+      }),
+      { times: 1 },
+    );
 
-    testdouble.verify(cookieSetter(res, {
-      name: "X-Bar",
-      value: "baz",
-    }), { times: 1 });
+    testdouble.verify(
+      cookieSetter(res, {
+        name: "X-Bar",
+        value: "baz",
+      }),
+      { times: 1 },
+    );
   },
 });
