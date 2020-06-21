@@ -1,4 +1,9 @@
-import { Response, testdouble, assertEquals, assertStrictEquals } from "../deps.ts";
+import {
+  Response,
+  testdouble,
+  assertEquals,
+  assertStrictEquals,
+} from "../deps.ts";
 import {
   NotFoundError,
   createRouteMap,
