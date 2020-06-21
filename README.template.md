@@ -108,7 +108,7 @@ test({
 
 ### Nested Routers
 
-Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcard suffixes (`"*"`) to group routers by a common path segment:
+Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcards (`"*"`) as suffixes to group routers by a common path segment:
 
 ```ts
 const routes = createRouteMap([
