@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.org/reno-router/reno.svg?branch=master)](https://travis-ci.org/reno-router/reno)
 
-Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
+Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
 * [Overview](#overview)
 * [Key Features](#key-features)
