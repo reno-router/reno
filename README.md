@@ -2,6 +2,8 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
+[![Build Status](https://travis-ci.org/reno-router/reno.svg?branch=master)](https://travis-ci.org/reno-router/reno)
+
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno_std/tree/master/http).
 
 * [Overview](#overview)
@@ -22,7 +24,7 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from "https://deno.land/x/reno@v1.0.0-alpha.2/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.0.0-alpha.3/reno/mod.ts";
 
 export const routes = createRouteMap([
   ["/home", () => textResponse("Hello world!")],
@@ -76,7 +78,7 @@ const router = createRouter(routes);
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v1.0.0-alpha.2/reno/mod.ts";
+import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v1.0.0-alpha.3/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -104,12 +106,35 @@ test({
 });
 ```
 
+### Nested Routers
+
+Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcard suffixes (`"*"`) to group routers by a common path segment:
+
+```ts
+const routes = createRouteMap([
+  [
+    "/foo/*",
+    createRouter(
+      createRouteMap([
+        [
+          "/bar/*",
+          createRouter(createRouteMap([["/baz", () =>
+            textResponse("Hello from a nested route!")]])),
+        ],
+      ]),
+    ),
+  ],
+]);
+
+const router = createRouter(routes);
+```
+
 ### `pipe()` - An Alternative to Middleware
 
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.0.0-alpha.2/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.0.0-alpha.3/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
