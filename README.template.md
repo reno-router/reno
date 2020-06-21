@@ -106,6 +106,29 @@ test({
 });
 ```
 
+### Nested Routers
+
+Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcard suffixes (`"*"`) to group routers by a common path segment:
+
+```ts
+const routes = createRouteMap([
+  [
+    "/foo/*",
+    createRouter(
+      createRouteMap([
+        [
+          "/bar/*",
+          createRouter(createRouteMap([["/baz", () =>
+            textResponse("Hello from a nested route!")]])),
+        ],
+      ]),
+    ),
+  ],
+]);
+
+const router = createRouter(routes);
+```
+
 ### `pipe()` - An Alternative to Middleware
 
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
