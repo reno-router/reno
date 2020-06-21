@@ -7,3 +7,8 @@ jobs:
   include:
     - stage: test
       script: "$HOME/.deno/bin/deno test"
+    - stage: lint
+      script: "$HOME/.deno/bin/deno lint --unstable reno"
+    - stage: check formatting
+      script: "$HOME/.deno/bin/deno fmt --check reno"
+
