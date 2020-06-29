@@ -1,12 +1,14 @@
 import { assertEquals } from "../deps.ts";
 import { AugmentedResponse } from "./router.ts";
 
-/* Asserts that the `body` and `headers`
- * properties of `actual` and `expected`
- * are deeply equal. In the future, the
- * bodies will be serialised into strings
- * prior to comparison to clarify body
- * mismatches when an assertion fails. */
+/**
+ * A unit testing utility to Assert that
+ * the `body` and `headers` properties of
+ * `actual` and `expected` are deeply equal.
+ * In the future, the bodies will be serialised
+ * into strings prior to comparison to clarify
+ * body mismatches when an assertion fails.
+ */
 export const assertResponsesMatch = (
   actual: AugmentedResponse,
   expected: AugmentedResponse,
