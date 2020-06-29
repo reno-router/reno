@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/reno-router/reno.svg?branch=master)](https://travis-ci.org/reno-router/reno)
 
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.0.0-alpha.3/reno/mod.ts)
+
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
 * [Overview](#overview)
@@ -163,7 +165,7 @@ export const routes = createRouteMap([["/", home]]);
 
 ## API Documentation
 
-Consult [docs/API.md](https://github.com/reno-router/reno/blob/master/docs/API.md) for comprehensive documentation on Reno's API.
+Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.0.0-alpha.3/reno/mod.ts) for comprehensive documentation on Reno's API.
 
 ## Local Development
 
