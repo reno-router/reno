@@ -2,7 +2,7 @@ import { assertEquals } from "../deps.ts";
 import { AugmentedResponse } from "./router.ts";
 
 /**
- * A unit testing utility to Assert that
+ * A unit testing utility to assert that
  * the `body` and `headers` properties of
  * `actual` and `expected` are deeply equal.
  * In the future, the bodies will be serialised
