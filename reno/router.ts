@@ -41,27 +41,27 @@ export type Router = (routes: RouteMap) => RouteParser;
 export type RouteMap = Map<RegExp | string, RouteHandler>;
 export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
 
-export const createRouteMap = (routes: [RegExp | string, RouteHandler][]) =>
-  new Map(routes);
+export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
+  return new Map(routes);
+}
 
-export const createAugmentedRequest = (
+export function createAugmentedRequest(
   { body, contentLength, finalize, ...rest }: ServerRequest | AugmentedRequest,
   queryParams: URLSearchParams,
-  routeParams: string[],
-): AugmentedRequest => ({
-  ...rest,
-  body,
-  queryParams,
-  routeParams,
-  contentLength,
-  finalize,
-});
+  routeParams: string[]
+) {
+  return {
+    ...rest,
+    body,
+    queryParams,
+    routeParams,
+    contentLength,
+    finalize,
+  };
+}
 
-export const routerCreator = (
-  pathParser: typeof parsePath,
-  cookieWriter: typeof writeCookies,
-) =>
-  (routes: RouteMap) =>
+export function routerCreator(pathParser: typeof parsePath, cookieWriter: typeof writeCookies) {
+  return (routes: RouteMap) =>
     async (
       req: ServerRequest | AugmentedRequest,
       rootQueryParams?: URLSearchParams,
@@ -93,5 +93,6 @@ export const routerCreator = (
 
       return Promise.reject(new NotFoundError(`No match for ${req.url}`));
     };
+}
 
 export const createRouter = routerCreator(parsePath, writeCookies);

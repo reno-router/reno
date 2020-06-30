@@ -6,21 +6,25 @@ import { StringReader } from "https://deno.land/std@v0.58.0/io/readers.ts";
 import { readRequest } from "https://deno.land/std@v0.58.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
-const createStubAddr = (): Deno.Addr => ({
-  transport: "tcp",
-  hostname: "",
-  port: 0,
-});
+function createStubAddr() {
+  return {
+    transport: "tcp",
+    hostname: "",
+    port: 0,
+  } as const;
+}
 
-const createStubConn = (): Deno.Conn => ({
-  localAddr: createStubAddr(),
-  remoteAddr: createStubAddr(),
-  rid: 1,
-  closeWrite: () => undefined,
-  close: () => undefined,
-  read: (p: Uint8Array) => Promise.resolve(p.length),
-  write: (p: Uint8Array) => Promise.resolve(p.length),
-});
+function createStubConn() {
+  return {
+    localAddr: createStubAddr(),
+    remoteAddr: createStubAddr(),
+    rid: 1,
+    closeWrite: () => undefined,
+    close: () => undefined,
+    read: (p: Uint8Array) => Promise.resolve(p.length),
+    write: (p: Uint8Array) => Promise.resolve(p.length),
+  };
+}
 
 interface CreateServerRequestOptions {
   path: string;
@@ -29,12 +33,14 @@ interface CreateServerRequestOptions {
   body?: string;
 }
 
-export const createServerRequest = async ({
-  path,
-  method = "GET",
-  headers = new Headers(),
-  body = "",
-}: CreateServerRequestOptions) => {
+export async function createServerRequest(
+  {
+    path,
+    method = "GET",
+    headers = new Headers(),
+    body = "",
+  }: CreateServerRequestOptions
+) {
   const request = `${method} ${path} HTTP/1.1
 Content-Length: ${body.length}
 ${
@@ -50,18 +56,20 @@ ${body}`;
   /* readRequest can also return EOF,
    * thus we need to type assert here */
   return (await readRequest(createStubConn(), bufReader)) as ServerRequest;
-};
+}
 
 /* Helper to create router-compatible
  * request from raw options */
-export const createAugmentedRequest = async ({
-  path = "/",
-  method = "GET",
-  headers = new Headers(),
-  body = "",
-  queryParams = new URLSearchParams(),
-  routeParams = [] as string[], // TODO: avoid type assertion with opts interface
-}) => {
+export async function createAugmentedRequest(
+  {
+    path = "/",
+    method = "GET",
+    headers = new Headers(),
+    body = "",
+    queryParams = new URLSearchParams(),
+    routeParams = [] as string[], // TODO: avoid type assertion with opts interface
+  }
+) {
   const req = await createServerRequest({
     path,
     method,
@@ -74,4 +82,4 @@ export const createAugmentedRequest = async ({
     queryParams,
     routeParams,
   );
-};
+}

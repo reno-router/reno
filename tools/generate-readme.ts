@@ -9,23 +9,27 @@ interface Metadata {
 const decoder = new TextDecoder();
 const encoder = new TextEncoder();
 
-const readFileAsString = (filename: string) =>
-  decoder.decode(Deno.readFileSync(filename));
+function readFileAsString(filename: string) {
+  return decoder.decode(Deno.readFileSync(filename));
+}
 
-const writeStringToFile = (filename: string, contents: string) =>
-  Deno.writeFileSync(filename, encoder.encode(contents));
+function writeStringToFile(filename: string, contents: string) {
+  return Deno.writeFileSync(filename, encoder.encode(contents));
+}
 
-const sanitiseTOMLToken = (token: string) => token.trim().replace(/"/g, "");
+function sanitiseTOMLToken(token: string) {
+  return token.trim().replace(/"/g, "");
+}
 
-// TODO: use an actual TOML parser!
-const parseTOML = <TResult>(toml: string) =>
-  Object.fromEntries(
+function parseTOML<TResult>(toml: string) {
+  return Object.fromEntries(
     toml.split("\n")
       .map((entry) =>
         entry.split("=")
           .map((token) => sanitiseTOMLToken(token))
       ),
   ) as TResult;
+}
 
 const { version } = parseTOML<Metadata>(readFileAsString("Package.toml"));
 const readmeTemplate = readFileAsString("README.template.md");

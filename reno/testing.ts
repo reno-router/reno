@@ -9,7 +9,7 @@ import { AugmentedResponse } from "./router.ts";
  * into strings prior to comparison to clarify
  * body mismatches when an assertion fails.
  */
-export const assertResponsesMatch = (
+export function assertResponsesMatch(
   /**
    * The actual response returned
    * by the unit under test
@@ -20,12 +20,12 @@ export const assertResponsesMatch = (
    * The expected response, typically
    * hard-coded in the test suite
    */
-  expected: AugmentedResponse,
-) => {
+  expected: AugmentedResponse
+) {
   assertEquals(
     ...([actual, expected].map((res) => ({
       body: res.body,
       headers: res.headers && new Map(res.headers), // So that headers are deeply compared
     })) as [unknown, unknown]),
   );
-};
+}

@@ -8,8 +8,8 @@ import { routes } from "./routes.ts";
 
 const BINDING = ":8000";
 
-const formatDate = (date: Date) =>
-  date.toLocaleDateString("en-GB", {
+function formatDate(date: Date) {
+  return date.toLocaleDateString("en-GB", {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -18,22 +18,30 @@ const formatDate = (date: Date) =>
     second: "2-digit",
     timeZoneName: "short",
   });
+}
 
-const logRequest = (req: ServerRequest) => {
+function logRequest(req: ServerRequest) {
   console.log(`[${formatDate(new Date())}] Request for ${req.url}`);
-};
+}
 
-const createErrorResponse = (status: number, { message }: Error) => ({
-  status,
-  ...textResponse(message),
-});
+function createErrorResponse(status: number, { message }: Error) {
+  return {
+    status,
+    ...textResponse(message),
+  };
+}
 
-// TODO: use HTTP's Status enum
-const notFound = (e: NotFoundError) => createErrorResponse(404, e);
-const serverError = (e: Error) => createErrorResponse(500, e);
+function notFound(e: NotFoundError) {
+  return createErrorResponse(404, e);
+}
 
-const mapToErrorResponse = (e: Error) =>
-  e instanceof NotFoundError ? notFound(e) : serverError(e);
+function serverError(e: Error) {
+  return createErrorResponse(500, e);
+}
+
+function mapToErrorResponse(e: Error) {
+  return e instanceof NotFoundError ? notFound(e) : serverError(e);
+}
 
 const router = createRouter(routes);
 

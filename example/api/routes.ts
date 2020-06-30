@@ -23,26 +23,20 @@ type JsonBodyResponse = JsonBody & {
   message: string;
 };
 
-const methodNotAllowed = (url: string, method: string) => ({
-  status: 405,
-  ...textResponse(`Method ${method} not allowed for ${url}`),
-});
+function methodNotAllowed(url: string, method: string) {
+  return {
+    status: 405,
+    ...textResponse(`Method ${method} not allowed for ${url}`),
+  };
+}
 
 const serialised = JSON.stringify(colossalData);
 
-/* Returns a huge JSON response for timing
- * TTFB with different transfer methods
- *
- * Current TTFB timings (secs, averages
- * of 3 respective attempts) against
- * local MacBook Pro:
- * new StringReader(): 8 secs
- * TextEncoder#encode: 0.7 secs
- */
-const colossal = () =>
-  textResponse(serialised, {
+function colossal() {
+  return textResponse(serialised, {
     "Content-Type": "application/json",
   });
+}
 
 /* Handler to demonstrate request
  * body parsing with withJsonBody
@@ -59,10 +53,8 @@ const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
     : methodNotAllowed(url, method)
 );
 
-export const createRonSwansonQuoteHandler = (
-  fetch: (url: string) => Promise<Pick<Response, "json">>,
-) =>
-  async (req: Pick<AugmentedRequest, "routeParams">) => {
+export function createRonSwansonQuoteHandler(fetch: (url: string) => Promise<Pick<Response, "json">>) {
+  return async (req: Pick<AugmentedRequest, "routeParams">) => {
     const [quotesCount = "1"] = req.routeParams;
 
     const res = await fetch(
@@ -75,21 +67,25 @@ export const createRonSwansonQuoteHandler = (
       "X-Foo": "bar",
     });
   };
+}
 
-const setCookies = () => ({
-  cookies: new Map([
-    ["deno-playground-foo", "bar"],
-    ["deno-playground-bar", "baz"],
-  ]),
-  ...textResponse("Cookies set!"),
-});
+function setCookies() {
+  return {
+    cookies: new Map([
+      ["deno-playground-foo", "bar"],
+      ["deno-playground-bar", "baz"],
+    ]),
+    ...textResponse("Cookies set!"),
+  };
+}
 
-const streamedResponse = async () =>
-  streamResponse(
+async function streamedResponse() {
+  return streamResponse(
     new StringReader(
       "This was written directly to the request reference`s underlying socket!",
     ),
   );
+}
 
 // TODO: add handler for form data
 const routes = createRouteMap([

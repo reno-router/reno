@@ -1,13 +1,13 @@
 import { assertEquals, assertStrictEquals, assertMatch } from "../deps.ts";
 import parsePath from "./pathparser.ts";
 
-const assertNotMatch = (actual: string, regExp: RegExp) => {
+function assertNotMatch(actual: string, regExp: RegExp) {
   assertStrictEquals(
     regExp.test(actual),
     false,
     `actual: "${actual}" expected not to match: "${regExp}"`,
   );
-};
+}
 
 Deno.test({
   name: "parsePath should convert a human-friendly path spec into a RegExp",

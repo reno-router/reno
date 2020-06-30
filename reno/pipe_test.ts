@@ -7,10 +7,12 @@ Deno.test({
   name:
     "pipe takes a set in input morphs and returns a higher-order route handler",
   async fn() {
-    const handler = () => ({
-      ...textResponse("Foo"),
-      status: 200,
-    });
+    function handler() {
+      return {
+        ...textResponse("Foo"),
+        status: 200,
+      };
+    }
 
     const withCaching = pipe(
       (req, res) => {

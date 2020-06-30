@@ -5,8 +5,8 @@ type Transform = (
   res: AugmentedResponse,
 ) => AugmentedResponse | void;
 
-export const pipe = (...morphs: Transform[]) =>
-  (
+export function pipe(...morphs: Transform[]) {
+  return (
     handler: RouteHandler,
   ): RouteHandler =>
     async (req) =>
@@ -14,3 +14,4 @@ export const pipe = (...morphs: Transform[]) =>
         (accRes, morph) => morph(req, accRes) || accRes,
         await handler(req),
       );
+}

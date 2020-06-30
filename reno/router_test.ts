@@ -16,16 +16,17 @@ import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
 import { writeCookies } from "./cookies.ts";
 
-const isOneOf = (items: (RegExp | string)[]) =>
-  testdouble.matchers.argThat((arg: (RegExp | string)) =>
+function isOneOf(items: (RegExp | string)[]) {
+  return testdouble.matchers.argThat((arg: (RegExp | string)) =>
     items.some((item) => item.toString() === arg.toString())
   );
+}
 
-const createRouteStub = (
+function createRouteStub(
   response: Response | Error,
   expectedPath: string,
-  expectedRouteParams: string[],
-) => {
+  expectedRouteParams: string[]
+) {
   const route = testdouble.func() as RouteHandler<AugmentedRequest>;
 
   const stubber = testdouble
@@ -43,9 +44,9 @@ const createRouteStub = (
     : stubber.thenResolve(response);
 
   return route;
-};
+}
 
-const createPathParserSpy = (...paths: (RegExp | string)[]) => {
+function createPathParserSpy(...paths: (RegExp | string)[]) {
   const pathParser = testdouble.func() as typeof parsePath;
 
   testdouble
@@ -53,9 +54,11 @@ const createPathParserSpy = (...paths: (RegExp | string)[]) => {
     .thenDo(parsePath);
 
   return pathParser;
-};
+}
 
-const createCookieWriterStub = () => testdouble.func() as typeof writeCookies;
+function createCookieWriterStub() {
+  return testdouble.func() as typeof writeCookies;
+}
 
 Deno.test({
   name:

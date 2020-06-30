@@ -13,10 +13,7 @@ import { assertResponsesMatch } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { RouteHandler, AugmentedRequest } from "./router.ts";
 
-const createHandlerStub = <TBody>(
-  request: AugmentedRequest,
-  expectedResponse?: Response,
-) => {
+function createHandlerStub<TBody>(request: AugmentedRequest, expectedResponse?: Response) {
   const handlerStub = testdouble.func();
 
   testdouble
@@ -24,7 +21,7 @@ const createHandlerStub = <TBody>(
     .thenReturn(expectedResponse);
 
   return handlerStub as RouteHandler<ProcessedRequest<TBody>>;
-};
+}
 
 Deno.test({
   name:

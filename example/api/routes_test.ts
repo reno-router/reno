@@ -2,7 +2,7 @@ import { testdouble } from "../../deps.ts";
 import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
-const createFetchStub = (response: string[]) => {
+function createFetchStub(response: string[]) {
   const fetch = testdouble.func();
   const json = testdouble.func();
 
@@ -13,7 +13,7 @@ const createFetchStub = (response: string[]) => {
   )).thenResolve({ json });
 
   return fetch as unknown as typeof window.fetch;
-};
+}
 
 Deno.test({
   name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
