@@ -86,6 +86,11 @@ export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
   };
 }
 
+/**
+ * A response creator function for building JSON responses, that:
+ * * defaults the Content-Type header to "application/json"
+ * * serialises the JSON body to a string that's then encoded as a Uint8Array
+ */
 export function jsonResponse<TResponseBody>(body: TResponseBody, headers = {}) {
   return {
     headers: new Headers({
@@ -96,6 +101,11 @@ export function jsonResponse<TResponseBody>(body: TResponseBody, headers = {}) {
   };
 }
 
+/**
+ * A response creator function for building text responses, that:
+ * * defaults the Content-Type header to "text/plain"
+ * * encodes the body as a Uint8Array
+ */
 export function textResponse(body: string, headers = {}) {
   return {
     headers: new Headers({
@@ -106,6 +116,12 @@ export function textResponse(body: string, headers = {}) {
   };
 }
 
+/**
+ * A response creator function for building stream responses. This
+ * one currently doesn't do anything special, but it at least saves
+ * the effort of having to create response objects manually, and
+ * in the future may contain some sort of enhancing behaviour
+ */
 export function streamResponse(body: Deno.Reader, headers = {}) {
   return {
     headers: new Headers(headers),
