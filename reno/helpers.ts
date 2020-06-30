@@ -42,9 +42,30 @@ async function getReqBodyAsString(req: AugmentedRequest) {
   return decoder.decode(bytes);
 }
 
+/**
+ * A higher-order function that takes a route handler function and
+ * returns another route handler that parses JSON bodies before
+ * invoking the inner handler:
+ *
+ * ```ts
+ * interface PersonRequestBody {
+ *   name: string;
+ * }
+ *
+ * interface NameLengthResponseBody {
+ *   length: number;
+ * }
+ *
+ * const getNameLength = withJsonBody<PersonRequestBody>(({ body }) =>
+ *   jsonResponse<NameLengthResponseBody>({
+ *     length: body.name.length,
+ *   })
+ * );
+ * ```
+ */
 export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
   return async (req: AugmentedRequest) => {
-    /* There are some instances in which an
+  /* There are some instances in which an
    * empty body can have whitespace, so
    * we decode early and trim the resultant
    * string to determine the body's presence */
@@ -92,6 +113,19 @@ export function streamResponse(body: Deno.Reader, headers = {}) {
   };
 }
 
+/**
+ * A higher-order function that takes a route handler function and
+ * returns another route handler that parses form data bodies before
+ * invoking the inner handler. The data is parsed internally by
+ * creating a `URLSearchParams` instance, which is then passed to
+ * the inner handler via the `body` prop of the first argument:
+ *
+ * ```ts
+ * const getNameLength = withFormBody(({ body }) =>
+ *   textResponse(`?name is ${(body.get('name') || '0').length} bytes`)
+ * );
+ * ```
+ */
 export function withFormBody(handler: RouteHandler<FormRequest>) {
   return async (
     req: AugmentedRequest,
