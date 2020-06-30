@@ -1,9 +1,9 @@
 export {
   AugmentedRequest,
   AugmentedResponse,
-  Router as RouteParser,
+  Router,
   RouteHandler,
-  RouterCreator as Router,
+  RouterCreator,
   RouteMap,
   createRouteMap,
   NotFoundError,
