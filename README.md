@@ -180,7 +180,11 @@ You should also run `./tools/install-types.sh` to install the TypeScript definit
 Then you can run:
 
 * `deno run --allow-net example/index.ts` - starts the example server
-* `deno test` - runs the unit tests
+* `deno test reno example` - runs the unit tests
+
+### End-To-End Tests
+
+There's an [end-to-end test suite](https://github.com/reno-router/reno/tree/master/e2e-tests) written in Node.js, TypeScript, and [Frisby](https://github.com/vlucas/frisby). You can run this by consulting the directory's [README](https://github.com/reno-router/reno/blob/master/e2e-tests/README.md).
 
 ## Functionality Checklist
 
