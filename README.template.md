@@ -180,7 +180,7 @@ You should also run `./tools/install-types.sh` to install the TypeScript definit
 Then you can run:
 
 * `deno run --allow-net example/index.ts` - starts the example server
-* `deno test` - runs the unit tests
+* `deno test reno example` - runs the unit tests
 
 ### End-To-End Tests
 

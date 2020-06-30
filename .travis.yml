@@ -10,7 +10,7 @@ jobs:
     - stage: check formatting
       script: "$HOME/.deno/bin/deno fmt --check reno"
     - stage: unit tests
-      script: "$HOME/.deno/bin/deno test"
+      script: "$HOME/.deno/bin/deno test reno example"
     - stage: end-to-end tests
       script: "cd e2e-tests && ./ci.sh"
 
