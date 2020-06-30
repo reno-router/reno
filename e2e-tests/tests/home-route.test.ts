@@ -11,4 +11,13 @@ describe("/", () => {
         isLol: true,
       })
   );
+
+  describe("/does-not-exist", () => {
+    it("should return a HTTP 404", () =>
+      frisby.get("http://localhost:8000/does-not-exist")
+        .expect("status", 404)
+        .expect("header", "Content-Type", "text/plain")
+        .expect("bodyContains", "No match for /does-not-exist")
+    );
+  });
 });
