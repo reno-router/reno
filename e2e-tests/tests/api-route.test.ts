@@ -58,4 +58,12 @@ describe("/api", () => {
         .expect("header", "Content-Type", "application/json")
         .expect("jsonTypes", Joi.array().items(Joi.string()).length(8)));
   });
+
+  describe("/wildcard-route-params", () => {
+    it("should return a single quote by default", () =>
+      frisby.get("http://localhost:8000/api/wildcard-route-params/authors/bob/posts/post-1")
+        .expect("status", 200)
+        .expect("header", "Content-Type", "text/plain")
+        .expect("bodyContains", "You requested post-1 by bob"));
+  });
 });

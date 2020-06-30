@@ -89,12 +89,19 @@ async function streamedResponse() {
   );
 }
 
+async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
+  const [authorId, postId] = req.routeParams;
+
+  return textResponse(`You requested ${postId} by ${authorId}`);
+}
+
 // TODO: add handler for form data
 const routes = createRouteMap([
   ["/colossal", colossal],
   ["/json-body", jsonBody],
   ["/set-cookies", setCookies],
   ["/streamed-response", streamedResponse],
+  ["/wildcard-route-params/authors/*/posts/*", wildcardRouteParams],
   [
     /^\/ron-swanson-quote\/?([0-9]?)$/,
     createRonSwansonQuoteHandler(window.fetch),

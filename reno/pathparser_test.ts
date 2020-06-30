@@ -35,7 +35,6 @@ Deno.test({
     assertMatch("/api/foo/lol", regExp);
     assertMatch("/api/foo/", regExp);
     assertMatch("/api/foo", regExp);
-    assertMatch("/api/foo/lol/rofl", regExp);
   },
 });
 

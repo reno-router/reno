@@ -36,7 +36,7 @@ function createRouteStub(
         routeParams: expectedRouteParams,
       }),
       testdouble.matchers.anything(),
-      testdouble.matchers.anything(),
+      expectedRouteParams,
     ));
 
   response instanceof Error
@@ -78,6 +78,33 @@ Deno.test({
     const createRouter = routerCreator(pathParser, cookieWriter);
     const router = createRouter(createRouteMap([[routeRegExp, routeStub]]));
     const request = await createServerRequest({ path: routePath });
+
+    const actualResponse = await router(request);
+
+    assertResponsesMatch(actualResponse, response);
+
+    testdouble.verify(cookieWriter(actualResponse));
+  },
+});
+
+Deno.test({
+  name:
+    "createRouter`s routing function should expose wildcards as path params",
+  async fn() {
+    const response = {
+      headers: new Headers(),
+      body: new Uint8Array(),
+    };
+
+    const routePath = "/foo/*/bar/*/baz";
+    const requestPath = "/foo/one/bar/two/baz";
+
+    const routeStub = createRouteStub(response, requestPath, ["one", "two"]);
+    const pathParser = createPathParserSpy(routePath);
+    const cookieWriter = createCookieWriterStub();
+    const createRouter = routerCreator(pathParser, cookieWriter);
+    const router = createRouter(createRouteMap([[routePath, routeStub]]));
+    const request = await createServerRequest({ path: requestPath });
 
     const actualResponse = await router(request);
 
