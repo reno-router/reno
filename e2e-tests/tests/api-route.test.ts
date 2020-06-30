@@ -32,16 +32,17 @@ describe("/api", () => {
         .expect("header", "Content-Type", "text/plain")
         .expect("header", "Set-Cookie", "deno-playground-foo=bar")
         .expect("header", "Set-Cookie", "deno-playground-bar=baz")
-        .expect("bodyContains", "Cookies set!")
-    );
+        .expect("bodyContains", "Cookies set!"));
   });
 
   describe("/streamed-response", () => {
     it("should return the expected response", () =>
       frisby.get("http://localhost:8000/api/streamed-response")
         .expect("status", 200)
-        .expect("bodyContains", "This was written directly to the request reference`s underlying socket!")
-    );
+        .expect(
+          "bodyContains",
+          "This was written directly to the request reference`s underlying socket!",
+        ));
   });
 
   describe("/ron-swanson-quote", () => {
@@ -49,14 +50,12 @@ describe("/api", () => {
       frisby.get("http://localhost:8000/api/ron-swanson-quote")
         .expect("status", 200)
         .expect("header", "Content-Type", "application/json")
-        .expect("jsonTypes", Joi.array().items(Joi.string()).length(1))
-    );
+        .expect("jsonTypes", Joi.array().items(Joi.string()).length(1)));
 
     it("should return the number of quotes specified in the route param if provided", () =>
       frisby.get("http://localhost:8000/api/ron-swanson-quote/8")
         .expect("status", 200)
         .expect("header", "Content-Type", "application/json")
-        .expect("jsonTypes", Joi.array().items(Joi.string()).length(8))
-    );
+        .expect("jsonTypes", Joi.array().items(Joi.string()).length(8)));
   });
 });
