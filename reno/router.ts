@@ -6,6 +6,13 @@ import {
 import { writeCookies } from "./cookies.ts";
 import parsePath from "./pathparser.ts";
 
+/**
+ * The standard request type used througout Reno, which
+ * is passed to user-defined route handler functions.
+ * Mostly identical to std/http's ServerRequest, except:
+ * - the `respond` method is excluded as it shouldn't be invoked within Reno apps
+ * - Reno-specific props for query params and route params are exposed
+ */
 export type AugmentedRequest =
   & Pick<
     ServerRequest,
@@ -16,29 +23,60 @@ export type AugmentedRequest =
     routeParams: string[];
   };
 
+/**
+ * The standard response type returned by route handler functions.
+ * Essentially the same as std/http's Response, but also exposes
+ * cookies as a `Map`
+ */
 export type AugmentedResponse = Response & {
   // TODO: make 2D tuple to abstract Map instantiation
   cookies?: Map<string, string>;
 };
 
-/* The function returned by
- * createRouter that performs
- * route lookups. Better name? */
-export type RouteParser = (
+/**
+ * The router function returned by `createRouter`
+ * that is intended to be invoked when a HTTP
+ * server receives a request. */
+export type Router = (
   req: ServerRequest,
 ) => AugmentedResponse | Promise<AugmentedResponse>;
 
-/* A user-defined handler for
- * a particular route. */
+/**
+ * A user-defined route handler for a particular route.
+ */
 export type RouteHandler<TRequest = AugmentedRequest> = (
   req: TRequest,
   rootQueryParams?: URLSearchParams,
   childPathParts?: string[],
 ) => Response | Promise<Response>;
 
-export type Router = (routes: RouteMap) => RouteParser;
+/**
+ * A function that takes a routes map and
+ * returns an invocable router function.
+ */
+export type RouterCreator = (routes: RouteMap) => Router;
 
+/**
+ * A standard ECMAScript `Map` that holds route handler
+ * functions that are keyed by either RegExps or strings.
+ */
 export type RouteMap = Map<RegExp | string, RouteHandler>;
+
+/**
+ * An error that's thrown by Reno when a route
+ * for a particular request's path cannot be found in the
+ * router's route map. You won't need to instantiate and
+ * throw this directly, but it's exported to support
+ * `instanceof` checks in error handling logic:
+ *
+ * ```ts
+ * const notFound = (e: NotFoundError) => createErrorResponse(404, e);
+ * const serverError = (e: Error) => createErrorResponse(500, e);
+ *
+ * const mapToErrorResponse = (e: Error) =>
+ *   e instanceof NotFoundError ? notFound(e) : serverError(e);
+ * ```
+ */
 export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
 
 /**
