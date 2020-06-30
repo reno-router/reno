@@ -6,6 +6,14 @@ import { BufReader } from "../deps.ts";
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+/**
+ * An AugmentedRequest whose body property has
+ * been overriden to be other a different type.
+ * Reno uses this internally to create typed
+ * bodies for its provided higher-order route
+ * handlers, but can potentially be useful when
+ * defining your own higher-order functions.
+ */
 export type ProcessedRequest<TBody> =
   & Pick<
     AugmentedRequest,
@@ -15,7 +23,17 @@ export type ProcessedRequest<TBody> =
     body: TBody;
   };
 
+/**
+ * A ProcessedRequest that allows the body
+ * type to be configured via the sole type
+ * parameter. Defaults to an empty object.
+ */
 export type JsonRequest<TBody = {}> = ProcessedRequest<TBody>;
+
+/**
+ * A ProcessedRequest with a body type
+ * reflecting a URLSearchParams instance.
+ */
 export type FormRequest = ProcessedRequest<URLSearchParams>;
 
 function createProcessedRequest<TBody>(req: AugmentedRequest, body: TBody) {
