@@ -1,7 +1,7 @@
 language: generic
 
 before_install:
-  - curl -fsSL https://deno.land/x/install/install.sh | sh -s $(cat .deno-version)
+  - curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno-version)
 
 jobs:
   include:

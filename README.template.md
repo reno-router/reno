@@ -17,7 +17,7 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@v0.58.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@v0.59.0/http/server.ts";
 
 import {
   createRouter,
@@ -172,7 +172,11 @@ Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.
 Once you've cloned the repository, you'll need to ensure you're running the version of Deno against which this project is developed; this is stored in `.deno-version`. To install the correct version, run:
 
 ```sh
-$ curl -fsSL https://deno.land/x/install/install.sh | sh -s $(cat .deno-version)
+# If Deno isn't currently installed...
+$ curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno-version)
+
+# ...or it it's already present on your system
+deno upgrade --version $(cat .deno-version)
 ```
 
 You should also run `./tools/install-types.sh` to install the TypeScript definitions for Deno and any other third-party dependencies.

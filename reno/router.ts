@@ -1,7 +1,7 @@
 import {
   ServerRequest,
   Response,
-} from "https://deno.land/std@v0.58.0/http/server.ts";
+} from "https://deno.land/std@v0.59.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";
 import parsePath from "./pathparser.ts";
@@ -166,7 +166,7 @@ export function routerCreator(
  * import {
  *   ServerRequest,
  *   listenAndServe,
- * } from "https://deno.land/std@v0.58.0/http/server.ts";
+ * } from "https://deno.land/std@v0.59.0/http/server.ts";
 
  * import { createRouter } from "https://deno.land/x/reno@<VERSION>/reno/mod.ts";
  * import { routes } from "./routes.ts";
