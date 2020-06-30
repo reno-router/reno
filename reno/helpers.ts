@@ -106,8 +106,8 @@ export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
 
 /**
  * A response creator function for building JSON responses, that:
- * - defaults the Content-Type header to "application/json"
- * - serialises the JSON body to a string that's then encoded as a Uint8Array
+ * defaults the Content-Type header to "application/json"; and
+ * serialises the JSON body to a string that's then encoded as a Uint8Array
  */
 export function jsonResponse<TResponseBody>(body: TResponseBody, headers = {}) {
   return {
@@ -121,8 +121,8 @@ export function jsonResponse<TResponseBody>(body: TResponseBody, headers = {}) {
 
 /**
  * A response creator function for building text responses, that:
- * - defaults the Content-Type header to "text/plain"
- * - encodes the body as a Uint8Array
+ * defaults the Content-Type header to "text/plain";
+ * and encodes the body as a Uint8Array
  */
 export function textResponse(body: string, headers = {}) {
   return {
