@@ -65,7 +65,7 @@ async function getReqBodyAsString(req: AugmentedRequest) {
  */
 export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
   return async (req: AugmentedRequest) => {
-  /* There are some instances in which an
+    /* There are some instances in which an
    * empty body can have whitespace, so
    * we decode early and trim the resultant
    * string to determine the body's presence */
