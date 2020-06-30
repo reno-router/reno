@@ -26,11 +26,7 @@ export function runServer() {
         }
       });
 
-      testSuiteGlobal.serverProc.stderr.on("data", (data: Buffer) => {
-        reject(new Error(data.toString()));
-        killServer();
-      });
-
+      testSuiteGlobal.serverProc.stderr.pipe(process.stderr);
       testSuiteGlobal.serverProc.on("error", reject);
 
       return;
