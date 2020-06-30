@@ -44,7 +44,7 @@ function colossal() {
  * this would validate, but I feel
  * this should be handled by a
  * third-party dependency */
-const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
+const jsonBody = withJsonBody<JsonBody>(({ url, method, body }) =>
   method === "POST"
     ? jsonResponse<JsonBodyResponse>({
       message: "Here's the body you posted to this endpoint",
