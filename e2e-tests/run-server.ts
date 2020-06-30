@@ -10,9 +10,13 @@ const testSuiteGlobal = global as unknown as TestSuiteGlobal;
 export function runServer() {
   return new Promise((resolve, reject) => {
     if (!testSuiteGlobal.serverProc) {
-      testSuiteGlobal.serverProc = cp.spawn("deno", ["run", "--allow-net", "example/index.ts"], {
-        cwd: path.resolve(__dirname, '..'),
-      });
+      testSuiteGlobal.serverProc = cp.spawn(
+        "deno",
+        ["run", "--allow-net", "example/index.ts"],
+        {
+          cwd: path.resolve(__dirname, ".."),
+        },
+      );
 
       testSuiteGlobal.serverProc.stdout.on("data", (data: Buffer) => {
         if (data.toString().includes("Listening for requests on :8000...")) {
@@ -20,7 +24,7 @@ export function runServer() {
         }
       });
 
-      testSuiteGlobal.serverProc.on('error', reject);
+      testSuiteGlobal.serverProc.on("error", reject);
 
       return;
     }

@@ -1,4 +1,4 @@
-import { killServer } from './run-server';
+import { killServer } from "./run-server";
 
 export default function () {
   killServer();

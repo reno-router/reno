@@ -13,8 +13,7 @@ describe("/api", () => {
           message: "Here's the body you posted to this endpoint",
           name: "James",
           age: 30,
-        })
-    );
+        }));
 
     it("should return HTTP 405 when a non-POST method is used", () =>
       frisby.put("http://localhost:8000/api/json-body", {
@@ -23,7 +22,6 @@ describe("/api", () => {
       })
         .expect("status", 405)
         .expect("header", "Content-Type", "text/plain")
-        .expect("bodyContains", "Method PUT not allowed for /api/json-body")
-    );
+        .expect("bodyContains", "Method PUT not allowed for /api/json-body"));
   });
 });
