@@ -108,9 +108,27 @@ test({
 });
 ```
 
+### Wildcard Path Segments
+
+Despite the power of regular expressions for matching and capturing paths when their route parameters conform to an expected format or type, they can often prove verbose and unwieldy for simpler applications. Reno thus provides an alternative wildcard syntax (`"*"`) for string paths to achieve route param extraction:
+
+```ts
+async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
+  const [authorId, postId] = req.routeParams;
+
+  return textResponse(`You requested ${postId} by ${authorId}`);
+}
+
+const routes = createRouteMap([
+  ["/wildcard-route-params/authors/*/posts/*", wildcardRouteParams],
+]);
+
+const router = createRouter(routes);
+```
+
 ### Nested Routers
 
-Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcards (`"*"`) as suffixes to group routers by a common path segment:
+Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcards as suffixes to group routers by a common path segment:
 
 ```ts
 const routes = createRouteMap([
