@@ -39,7 +39,7 @@ export async function createServerRequest(
     method = "GET",
     headers = new Headers(),
     body = "",
-  }: CreateServerRequestOptions
+  }: CreateServerRequestOptions,
 ) {
   const request = `${method} ${path} HTTP/1.1
 Content-Length: ${body.length}
@@ -68,7 +68,7 @@ export async function createAugmentedRequest(
     body = "",
     queryParams = new URLSearchParams(),
     routeParams = [] as string[], // TODO: avoid type assertion with opts interface
-  }
+  },
 ) {
   const req = await createServerRequest({
     path,

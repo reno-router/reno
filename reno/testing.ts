@@ -15,12 +15,11 @@ export function assertResponsesMatch(
    * by the unit under test
    */
   actual: AugmentedResponse,
-
   /**
    * The expected response, typically
    * hard-coded in the test suite
    */
-  expected: AugmentedResponse
+  expected: AugmentedResponse,
 ) {
   assertEquals(
     ...([actual, expected].map((res) => ({

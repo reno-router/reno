@@ -48,7 +48,7 @@ export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
 export function createAugmentedRequest(
   { body, contentLength, finalize, ...rest }: ServerRequest | AugmentedRequest,
   queryParams: URLSearchParams,
-  routeParams: string[]
+  routeParams: string[],
 ) {
   return {
     ...rest,
@@ -60,7 +60,10 @@ export function createAugmentedRequest(
   };
 }
 
-export function routerCreator(pathParser: typeof parsePath, cookieWriter: typeof writeCookies) {
+export function routerCreator(
+  pathParser: typeof parsePath,
+  cookieWriter: typeof writeCookies,
+) {
   return (routes: RouteMap) =>
     async (
       req: ServerRequest | AugmentedRequest,
@@ -95,4 +98,8 @@ export function routerCreator(pathParser: typeof parsePath, cookieWriter: typeof
     };
 }
 
-export const createRouter = routerCreator(parsePath, writeCookies);
+/* We could just do `const createRouter = routerCreator(parsePath, writeCookies)`
+ * here, but sadly deno doc isn't able to surface it as a function :( */
+export function createRouter(routes: RouteMap) {
+  return routerCreator(parsePath, writeCookies)(routes);
+}

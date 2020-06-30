@@ -25,7 +25,7 @@ function isOneOf(items: (RegExp | string)[]) {
 function createRouteStub(
   response: Response | Error,
   expectedPath: string,
-  expectedRouteParams: string[]
+  expectedRouteParams: string[],
 ) {
   const route = testdouble.func() as RouteHandler<AugmentedRequest>;
 

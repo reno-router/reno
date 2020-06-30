@@ -13,7 +13,10 @@ import { assertResponsesMatch } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { RouteHandler, AugmentedRequest } from "./router.ts";
 
-function createHandlerStub<TBody>(request: AugmentedRequest, expectedResponse?: Response) {
+function createHandlerStub<TBody>(
+  request: AugmentedRequest,
+  expectedResponse?: Response,
+) {
   const handlerStub = testdouble.func();
 
   testdouble

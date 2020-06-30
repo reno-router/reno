@@ -53,7 +53,9 @@ const jsonBody = withJsonBody(({ url, method, body }: JsonRequest<JsonBody>) =>
     : methodNotAllowed(url, method)
 );
 
-export function createRonSwansonQuoteHandler(fetch: (url: string) => Promise<Pick<Response, "json">>) {
+export function createRonSwansonQuoteHandler(
+  fetch: (url: string) => Promise<Pick<Response, "json">>,
+) {
   return async (req: Pick<AugmentedRequest, "routeParams">) => {
     const [quotesCount = "1"] = req.routeParams;
 
