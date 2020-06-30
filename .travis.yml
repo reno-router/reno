@@ -5,10 +5,12 @@ before_install:
 
 jobs:
   include:
-    - stage: test
-      script: "$HOME/.deno/bin/deno test"
     - stage: lint
       script: "$HOME/.deno/bin/deno lint --unstable reno"
     - stage: check formatting
       script: "$HOME/.deno/bin/deno fmt --check reno"
+    - stage: unit tests
+      script: "$HOME/.deno/bin/deno test"
+    - stage: end-to-end tests
+      script: "cd e2e-tests && ./ci.sh"
 
