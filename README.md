@@ -10,7 +10,7 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 
 * [Overview](#overview)
 * [Key Features](#key-features)
-* [Example app](#example-app)
+* [Example App](#example-app)
 * [API Documentation](#api-documentation)
 * [Local Development](#local-development)
 * [Functionality Checklist](#functionality-checklist)
@@ -182,7 +182,7 @@ const home = withCaching(() =>
 export const routes = createRouteMap([["/", home]]);
 ```
 
-## Example app
+## Example App
 
 This repository contains an [example app](https://github.com/reno-router/reno/tree/master/e2e-tests) that demonstrates how to build services with Reno. See the _Local Development_ section for instructions on running it on your machine.
 
