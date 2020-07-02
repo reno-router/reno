@@ -10,6 +10,7 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 
 * [Overview](#overview)
 * [Key Features](#key-features)
+* [Example app](#example-app)
 * [API Documentation](#api-documentation)
 * [Local Development](#local-development)
 * [Functionality Checklist](#functionality-checklist)
@@ -181,6 +182,10 @@ const home = withCaching(() =>
 export const routes = createRouteMap([["/", home]]);
 ```
 
+## Example app
+
+This repository contains an [example app](https://github.com/reno-router/reno/tree/master/e2e-tests) that demonstrates how to build services with Reno. See the _Local Development_ section for instructions on running it on your machine.
+
 ## API Documentation
 
 Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.0.1/reno/mod.ts) for comprehensive documentation on Reno's API.
@@ -204,7 +209,7 @@ Then you can run:
 * `deno run --allow-net example/index.ts` - starts the example server
 * `deno test reno example` - runs the unit tests
 
-### End-To-End Tests
+### End-to-End Tests
 
 There's an [end-to-end test suite](https://github.com/reno-router/reno/tree/master/e2e-tests) written in Node.js, TypeScript, and [Frisby](https://github.com/vlucas/frisby). You can run this by consulting the directory's [README](https://github.com/reno-router/reno/blob/master/e2e-tests/README.md).
 
