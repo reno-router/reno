@@ -6,15 +6,15 @@ import { textResponse } from "./helpers.ts";
  * methods, as uppercase strings, since
  * deno/std doesn't provide one. */
 export type HttpMethod =
- | "GET"
- | "HEAD"
- | "PATCH"
- | "POST"
- | "PUT"
- | "DELETE"
- | "CONNECT"
- | "OPTIONS"
- | "TRACE";
+  | "GET"
+  | "HEAD"
+  | "PATCH"
+  | "POST"
+  | "PUT"
+  | "DELETE"
+  | "CONNECT"
+  | "OPTIONS"
+  | "TRACE";
 
 /**
  * Takes mappings of HTTP methods and route handler functions, and
@@ -34,14 +34,16 @@ export type HttpMethod =
  * export const methodsRouter = createRouter(routes);
  * ```
  */
-export function forMethod(mappings: [HttpMethod, RouteHandler][]): RouteHandler {
+export function forMethod(
+  mappings: [HttpMethod, RouteHandler][],
+): RouteHandler {
   const handlers = new Map(mappings);
 
   return (req, ...restArgs) =>
     handlers.has(req.method as HttpMethod) // TODO: perform type assertion in AugmentedRequest creation?
       ? handlers.get(req.method as HttpMethod)!(req, ...restArgs)
       : {
-          ...textResponse(`Method ${req.method} not allowed for ${req.url}`),
-          status: 405,
+        ...textResponse(`Method ${req.method} not allowed for ${req.url}`),
+        status: 405,
       };
 }

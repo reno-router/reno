@@ -2,15 +2,16 @@ language: generic
 
 before_install:
   - curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno-version)
+  - alias deno="$HOME/.deno/bin/deno"
 
 jobs:
   include:
     - stage: lint
-      script: "$HOME/.deno/bin/deno lint --unstable reno"
+      script: "./scripts/lint.sh"
     - stage: check formatting
-      script: "$HOME/.deno/bin/deno fmt --check reno"
+      script: "./scripts/format-check.sh"
     - stage: unit tests
-      script: "$HOME/.deno/bin/deno test reno example"
+      script: "./scripts/test.sh"
     - stage: end-to-end tests
       script: "cd e2e-tests && ./ci.sh"
 

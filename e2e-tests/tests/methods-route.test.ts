@@ -1,7 +1,7 @@
 import frisby from "frisby";
 
 describe("/methods/endpoint", () => {
-  ["GET", "POST"].forEach(method => {
+  ["GET", "POST"].forEach((method) => {
     it(`should allow HTTP ${method}`, () =>
       frisby[method.toLowerCase()]("http://localhost:8000/methods/endpoint")
         .expect("status", 200)
@@ -9,11 +9,14 @@ describe("/methods/endpoint", () => {
         .expect("bodyContains", `You performed a HTTP ${method}!`));
   });
 
-  ["PATCH", "PUT", "DELETE", "OPTIONS"].forEach(method => {
+  ["PATCH", "PUT", "DELETE", "OPTIONS"].forEach((method) => {
     it(`should not allow HTTP ${method}`, () =>
       frisby[method.toLowerCase()]("http://localhost:8000/methods/endpoint")
         .expect("status", 405)
         .expect("header", "Content-Type", "text/plain")
-        .expect("bodyContains", `Method ${method} not allowed for /methods/endpoint`));
+        .expect(
+          "bodyContains",
+          `Method ${method} not allowed for /methods/endpoint`,
+        ));
   });
 });

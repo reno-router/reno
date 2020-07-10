@@ -28,9 +28,9 @@ function createRouteStub(
 const getResponse = textResponse("Response for HTTP GET");
 const putResponse = textResponse("Response for HTTP PUT");
 const postResponse = textResponse("Response for HTTP POST");
-const getHandler = createRouteStub(getResponse, 'GET');
-const putHandler = createRouteStub(putResponse, 'PUT');
-const postHandler = createRouteStub(postResponse, 'POST');
+const getHandler = createRouteStub(getResponse, "GET");
+const putHandler = createRouteStub(putResponse, "PUT");
+const postHandler = createRouteStub(postResponse, "POST");
 
 const methodRouter = forMethod([
   ["GET", getHandler],
@@ -39,18 +39,19 @@ const methodRouter = forMethod([
 ]);
 
 Deno.test({
-  name: "forMethod should forward a request to a handler function based upon its HTTP method",
+  name:
+    "forMethod should forward a request to a handler function based upon its HTTP method",
   async fn() {
     const req = await createAugmentedRequest({
       path: "/foo",
-      method: 'POST',
+      method: "POST",
     });
 
     const res = await methodRouter(req);
 
     assertResponsesMatch(res, postResponse);
 
-    [getHandler, putHandler].forEach(handler => {
+    [getHandler, putHandler].forEach((handler) => {
       testdouble.verify(handler(req), {
         times: 0,
       });
@@ -59,23 +60,24 @@ Deno.test({
 });
 
 Deno.test({
-  name: "forMethod should response with HTTP 405 if a request's method isn't present in the mappings",
+  name:
+    "forMethod should response with HTTP 405 if a request's method isn't present in the mappings",
   async fn() {
     const req = await createAugmentedRequest({
       path: "/foo",
-      method: 'PATCH',
+      method: "PATCH",
     });
 
     const expectedRes = {
       ...textResponse(`Method PATCH not allowed for /foo`),
       status: 405,
-    }
+    };
 
     const res = await methodRouter(req);
 
     assertResponsesMatch(res, expectedRes);
 
-    [getHandler, putHandler, postHandler].forEach(handler => {
+    [getHandler, putHandler, postHandler].forEach((handler) => {
       testdouble.verify(handler(req), {
         times: 0,
       });

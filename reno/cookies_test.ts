@@ -1,7 +1,7 @@
 import { createCookieWriter } from "./cookies.ts";
 import { testdouble } from "../deps.ts";
-import { Cookie } from "https://deno.land/std@v0.59.0/http/cookie.ts";
-import { Response } from "https://deno.land/std@v0.59.0/http/server.ts";
+import { Cookie } from "https://deno.land/std@v0.60.0/http/cookie.ts";
+import { Response } from "https://deno.land/std@v0.60.0/http/server.ts";
 
 type CookieSetter = (res: Response, cookie: Cookie) => void;
 

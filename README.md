@@ -18,7 +18,7 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@v0.59.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@v0.60.0/http/server.ts";
 
 import {
   createRouter,

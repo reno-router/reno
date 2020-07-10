@@ -61,7 +61,9 @@ describe("/api", () => {
 
   describe("/wildcard-route-params", () => {
     it("should successfully parse the route params", () =>
-      frisby.get("http://localhost:8000/api/wildcard-route-params/authors/bob/posts/post-1")
+      frisby.get(
+        "http://localhost:8000/api/wildcard-route-params/authors/bob/posts/post-1",
+      )
         .expect("status", 200)
         .expect("header", "Content-Type", "text/plain")
         .expect("bodyContains", "You requested post-1 by bob"));
