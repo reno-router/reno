@@ -25,6 +25,19 @@ function createRouteStub(
   return route;
 }
 
+const getResponse = textResponse("Response for HTTP GET");
+const putResponse = textResponse("Response for HTTP PUT");
+const postResponse = textResponse("Response for HTTP POST");
+const getHandler = createRouteStub(getResponse, 'GET');
+const putHandler = createRouteStub(putResponse, 'PUT');
+const postHandler = createRouteStub(postResponse, 'POST');
+
+const methodRouter = forMethod([
+  ["GET", getHandler],
+  ["PUT", putHandler],
+  ["POST", postHandler],
+]);
+
 Deno.test({
   name: "forMethod should forward a request to a handler function based upon its HTTP method",
   async fn() {
@@ -33,29 +46,39 @@ Deno.test({
       method: 'POST',
     });
 
-    const getResponse = textResponse("Response for HTTP GET");
-    const putResponse = textResponse("Response for HTTP PUT");
-    const postResponse = textResponse("Response for HTTP POST");
-    const getHandler = createRouteStub(getResponse, 'GET');
-    const putHandler = createRouteStub(putResponse, 'PUT');
-    const postHandler = createRouteStub(postResponse, 'POST');
-
-    const methodRouter = forMethod([
-      ["GET", getHandler],
-      ["PUT", putHandler],
-      ["POST", postHandler],
-    ]);
-
     const res = await methodRouter(req);
 
     assertResponsesMatch(res, postResponse);
 
-    testdouble.verify(getHandler(req), {
-      times: 0,
+    [getHandler, putHandler].forEach(handler => {
+      testdouble.verify(handler(req), {
+        times: 0,
+      });
+    });
+  },
+});
+
+Deno.test({
+  name: "forMethod should response with HTTP 405 if a request's method isn't present in the mappings",
+  async fn() {
+    const req = await createAugmentedRequest({
+      path: "/foo",
+      method: 'PATCH',
     });
 
-    testdouble.verify(putHandler(req), {
-      times: 0,
+    const expectedRes = {
+      ...textResponse(`Method PATCH not allowed for /foo`),
+      status: 405,
+    }
+
+    const res = await methodRouter(req);
+
+    assertResponsesMatch(res, expectedRes);
+
+    [getHandler, putHandler, postHandler].forEach(handler => {
+      testdouble.verify(handler(req), {
+        times: 0,
+      });
     });
   },
 });

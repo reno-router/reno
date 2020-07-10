@@ -16,7 +16,7 @@ export function forMethod(mappings: [HttpMethod, RouteHandler][]): RouteHandler 
   const handlers = new Map(mappings);
 
   return (req, ...restArgs) =>
-    handlers.has(req.method as HttpMethod) // perform type assertion in AugmentedRequest creation?
+    handlers.has(req.method as HttpMethod) // TODO: perform type assertion in AugmentedRequest creation?
       ? handlers.get(req.method as HttpMethod)!(req, ...restArgs)
       : {
           ...textResponse(`Method ${req.method} not allowed for ${req.url}`),
