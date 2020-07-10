@@ -4,13 +4,12 @@
 
 [![Build Status](https://travis-ci.org/reno-router/reno.svg?branch=master)](https://travis-ci.org/reno-router/reno)
 
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.0.1/reno/mod.ts)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.1.0/reno/mod.ts)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
 * [Overview](#overview)
 * [Key Features](#key-features)
-* [Example App](#example-app)
 * [API Documentation](#api-documentation)
 * [Local Development](#local-development)
 * [Functionality Checklist](#functionality-checklist)
@@ -27,7 +26,7 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
-} from "https://deno.land/x/reno@v1.0.1/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.1.0/reno/mod.ts";
 
 export const routes = createRouteMap([
   ["/home", () => textResponse("Hello world!")],
@@ -81,7 +80,7 @@ const router = createRouter(routes);
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v1.0.1/reno/mod.ts";
+import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v1.1.0/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -155,7 +154,7 @@ const router = createRouter(routes);
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.0.1/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.1.0/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
@@ -182,13 +181,9 @@ const home = withCaching(() =>
 export const routes = createRouteMap([["/", home]]);
 ```
 
-## Example App
-
-This repository contains an [example app](https://github.com/reno-router/reno/tree/master/e2e-tests) that demonstrates how to build services with Reno. See the _Local Development_ section for instructions on running it on your machine.
-
 ## API Documentation
 
-Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.0.1/reno/mod.ts) for comprehensive documentation on Reno's API.
+Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.1.0/reno/mod.ts) for comprehensive documentation on Reno's API.
 
 ## Local Development
 
@@ -206,8 +201,11 @@ You should also run `./tools/install-types.sh` to install the TypeScript definit
 
 Then you can run:
 
-* `deno run --allow-net example/index.ts` - starts the example server
-* `deno test reno example` - runs the unit tests
+* `./scripts/example.sh` - starts the example server
+* `./scripts/format.sh` - formats the source code
+* `./scripts/format-check.sh` - checks the formatting of the source code
+* `./scripts/lint.sh` - lints the source code
+* `./scripts/test.sh` - runs the unit tests
 
 ### End-to-End Tests
 
