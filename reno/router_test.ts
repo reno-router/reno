@@ -1,7 +1,6 @@
 import {
   Response,
   testdouble,
-  assertEquals,
   assertStrictEquals,
 } from "../deps.ts";
 import {
