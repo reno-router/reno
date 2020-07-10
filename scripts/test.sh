@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-deno test reno example
+$HOME/.deno/bin/deno test reno example

@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-deno fmt reno example e2e-tests/tests
+$HOME/.deno/bin/deno fmt reno example e2e-tests/tests
