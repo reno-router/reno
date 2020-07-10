@@ -19,7 +19,8 @@ export type HttpMethod =
 /**
  * Takes mappings of HTTP methods and route handler functions, and
  * returns a higher-order route handler that will forward requests to
- * the correct handler by their method:
+ * the correct handler by their method. Any requests whose method
+ * does not have an associated handler will result in a HTTP 405:
  * ```ts
  * const get = () => textResponse("You performed a HTTP GET!");
  * const post = () => textResponse("You performed a HTTP POST!");
