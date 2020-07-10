@@ -1,5 +1,6 @@
 import { createRouteMap, jsonResponse, pipe } from "../reno/mod.ts";
 import { apiRouter } from "./api/routes.ts";
+import { methodsRouter } from "./methods.ts";
 
 const withCaching = pipe(
   (req, res) => {
@@ -20,4 +21,8 @@ const home = withCaching(() =>
   })
 );
 
-export const routes = createRouteMap([["/", home], ["/api/*", apiRouter]]);
+export const routes = createRouteMap([
+  ["/", home],
+  ["/api/*", apiRouter],
+  ["/methods/*", methodsRouter],
+]);
