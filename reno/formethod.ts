@@ -1,6 +1,10 @@
 import { RouteHandler } from "./router.ts";
 import { textResponse } from "./helpers.ts";
 
+/**
+ * A union of all possible HTTP
+ * methods, as uppercase strings, since
+ * deno/std doesn't provide one. */
 export type HttpMethod =
  | "GET"
  | "HEAD"
@@ -12,6 +16,24 @@ export type HttpMethod =
  | "OPTIONS"
  | "TRACE";
 
+/**
+ * Takes mappings of HTTP methods and route handler functions, and
+ * returns a higher-order route handler that will forward requests to
+ * the correct handler by their method:
+ * ```ts
+ * const get = () => textResponse("You performed a HTTP GET!");
+ * const post = () => textResponse("You performed a HTTP POST!");
+ *
+ * const routes = createRouteMap([
+ *   ["/endpoint", forMethod([
+ *     ["GET", get],
+ *     ["POST", post],
+ *   ])],
+ * ]);
+ *
+ * export const methodsRouter = createRouter(routes);
+ * ```
+ */
 export function forMethod(mappings: [HttpMethod, RouteHandler][]): RouteHandler {
   const handlers = new Map(mappings);
 

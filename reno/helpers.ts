@@ -8,7 +8,7 @@ const decoder = new TextDecoder();
 
 /**
  * An AugmentedRequest whose body property has
- * been overriden to be other a different type.
+ * been overriden to be of a different type.
  * Reno uses this internally to create typed
  * bodies for its provided higher-order route
  * handlers, but can potentially be useful when
