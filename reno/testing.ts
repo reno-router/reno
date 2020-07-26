@@ -30,9 +30,6 @@ async function stringifyBody(
   return res;
 }
 
-/**
- * @private
- */
 export function createAssertResponsesAreEqual(assertEqls: typeof assertEquals) {
   return async function (
     actual: AugmentedResponse,

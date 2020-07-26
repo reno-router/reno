@@ -7,7 +7,6 @@ import {
 import type { assertEquals } from "../deps.ts";
 import { textResponse, streamResponse } from "./helpers.ts";
 import { createAssertResponsesAreEqual } from "./testing.ts";
-import { AugmentedResponse } from "./router.ts";
 
 function createAssertEquals() {
   return testdouble.func("assertEqls") as typeof assertEquals;
