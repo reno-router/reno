@@ -7,32 +7,69 @@ function isReader(body?: string | Deno.Reader): body is Deno.Reader {
   return Boolean((body as Deno.Reader).read);
 }
 
-function stringifyBody(body?: string | Uint8Array | Deno.Reader): string | undefined {
-  if (body instanceof Uint8Array) {
-    return decoder.decode(body);
+function createResWithStringifiedBody(res: AugmentedResponse, body: Uint8Array) {
+  return {
+    ...res,
+    body: decoder.decode(body),
+  };
+}
+
+async function stringifyBody(res: AugmentedResponse): Promise<AugmentedResponse | void> {
+  if (res.body instanceof Uint8Array) {
+    return createResWithStringifiedBody(res, res.body);
   }
-  if (isReader(body)) {
-    return '';
+  if (isReader(res.body)) {
+    return createResWithStringifiedBody(res, await Deno.readAll(res.body));
   }
 
-  return body;
+  return res;
 }
 
 /**
  * A unit testing utility to assert that
  * the `body` and `headers` properties of
  * `actual` and `expected` are deeply equal.
- * In the future, the bodies will be serialised
- * into strings prior to comparison to clarify
- * body mismatches when an assertion fails.
+ * The benefit of using this function over
+ * `assertEquals` directly is that it will
+ * covert Uint8Array and Deno.Reader bodies
+ * to strings, making them human-readable
+ * and thus helping to debug assertion failures.
+ *
+ */
+export async function assertResponsesAreEqual(
+  actual: AugmentedResponse,
+  expected: AugmentedResponse,
+): Promise<void> {
+  const [actualMapped, expectedMapped] = await Promise.all(
+    [actual, expected].map(res => stringifyBody(res)),
+  );
+
+  assertEquals(actualMapped, expectedMapped);
+}
+
+/**
+ * @deprecated As of v1.2.0, you shoud use assertResponsesAreEqual()
+ *
+ * A unit testing utility to assert that
+ * the `body` and `headers` properties of
+ * `actual` and `expected` are deeply equal.
+ * Note this performs no processing on the body,
+ * resulting in assertion failures printing the
+ * raw body bytes to stdout; this really isn't
+ * useful for debugging purposes.
  */
 export function assertResponsesMatch(
   actual: AugmentedResponse,
   expected: AugmentedResponse,
 ) {
+  console.warn(`
+
+    ⚠ As of Reno v1.2.0, assertResponsesMatch has been deprecated. Please use assertResponsesAreEqual() instead!
+  `);
+
   assertEquals(
     ...([actual, expected].map((res) => ({
-      body: stringifyBody(res.body),
+      body: res.body,
       headers: res.headers && new Map(res.headers), // So that headers are deeply compared
     })) as [unknown, unknown]),
   );

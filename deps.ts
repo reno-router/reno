@@ -1,7 +1,7 @@
 // Recommended as per https://deno.land/std/manual.md#linking-to-third-party-code
 
 export * from "https://deno.land/std@v0.60.0/testing/asserts.ts";
-export * from "https://deno.land/std@v0.60.0/io/bufio.ts";
+export * from "https://deno.land/std@v0.60.0/io/mod.ts";
 export { Response } from "https://deno.land/std@v0.60.0/http/server.ts";
 
 import __jsTestDouble from "https://dev.jspm.io/testdouble@3.16.0";
