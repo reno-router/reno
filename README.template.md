@@ -80,7 +80,7 @@ const router = createRouter(routes);
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesMatch } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
+import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -101,9 +101,12 @@ test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertResponsesMatch(response, jsonResponse(quotes, {
-      "X-Foo": "bar"
-    }));
+    await assertResponsesAreEqual(
+      response,
+      jsonResponse(quotes, {
+        "X-Foo": "bar",
+      }),
+    );
   }
 });
 ```
