@@ -10,7 +10,7 @@ import {
   RouteHandler,
   AugmentedRequest,
 } from "./router.ts";
-import { assertResponsesMatch } from "./testing.ts";
+import { assertResponsesAreEqual } from "./testing.ts";
 import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
 import { writeCookies } from "./cookies.ts";
@@ -80,7 +80,7 @@ Deno.test({
 
     const actualResponse = await router(request);
 
-    assertResponsesMatch(actualResponse, response);
+    await assertResponsesAreEqual(actualResponse, response);
 
     testdouble.verify(cookieWriter(actualResponse));
   },
@@ -107,7 +107,7 @@ Deno.test({
 
     const actualResponse = await router(request);
 
-    assertResponsesMatch(actualResponse, response);
+    await assertResponsesAreEqual(actualResponse, response);
 
     testdouble.verify(cookieWriter(actualResponse));
   },
@@ -145,7 +145,7 @@ Deno.test({
 
     const actualResponse = await router(request);
 
-    assertResponsesMatch(actualResponse, response);
+    await assertResponsesAreEqual(actualResponse, response);
   },
 });
 

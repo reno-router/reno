@@ -1,5 +1,5 @@
 import { testdouble } from "../../deps.ts";
-import { jsonResponse, assertResponsesMatch } from "../../reno/mod.ts";
+import { jsonResponse, assertResponsesAreEqual } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 function createFetchStub(response: string[]) {
@@ -28,7 +28,7 @@ Deno.test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertResponsesMatch(
+    await assertResponsesAreEqual(
       response,
       jsonResponse(quotes, {
         "X-Foo": "bar",
@@ -52,7 +52,7 @@ Deno.test({
 
     const response = await ronSwansonQuoteHandler(req);
 
-    assertResponsesMatch(
+    await assertResponsesAreEqual(
       response,
       jsonResponse(quotes, {
         "X-Foo": "bar",

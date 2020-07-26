@@ -1,7 +1,7 @@
 import { pipe } from "./pipe.ts";
 import { textResponse } from "./helpers.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
-import { assertResponsesMatch } from "./testing.ts";
+import { assertResponsesAreEqual } from "./testing.ts";
 
 Deno.test({
   name:
@@ -32,13 +32,12 @@ Deno.test({
     const cachingHandler = withCaching(handler);
     const res = await cachingHandler(req);
 
-    assertResponsesMatch(res, {
-      ...textResponse("Foo"),
-      status: 200,
-      headers: new Headers({
+    await assertResponsesAreEqual(res, {
+      ...textResponse("Foo", {
         "Content-Type": "text/plain",
         "Cache-Control": "max-age=86400",
       }),
+      status: 200,
       cookies: new Map<string, string>([["requested_proto", "HTTP/1.1"]]),
     });
   },

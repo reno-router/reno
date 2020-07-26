@@ -7,14 +7,19 @@ function isReader(body?: string | Deno.Reader): body is Deno.Reader {
   return Boolean((body as Deno.Reader).read);
 }
 
-function createResWithStringifiedBody(res: AugmentedResponse, body: Uint8Array) {
+function createResWithStringifiedBody(
+  res: AugmentedResponse,
+  body: Uint8Array,
+) {
   return {
     ...res,
     body: decoder.decode(body),
   };
 }
 
-async function stringifyBody(res: AugmentedResponse): Promise<AugmentedResponse | void> {
+async function stringifyBody(
+  res: AugmentedResponse,
+): Promise<AugmentedResponse | void> {
   if (res.body instanceof Uint8Array) {
     return createResWithStringifiedBody(res, res.body);
   }
@@ -33,15 +38,25 @@ async function stringifyBody(res: AugmentedResponse): Promise<AugmentedResponse 
  * `assertEquals` directly is that it will
  * covert Uint8Array and Deno.Reader bodies
  * to strings, making them human-readable
- * and thus helping to debug assertion failures.
+ * and thus helping to debug assertion failures:
  *
+ * ```ts
+ * const response = await ronSwansonQuoteHandler(req);
+ *
+ * await assertResponsesAreEqual(
+ *   response,
+ *   jsonResponse(quotes, {
+ *     "X-Foo": "bar",
+ *   }),
+ * );
+ * ```
  */
 export async function assertResponsesAreEqual(
   actual: AugmentedResponse,
   expected: AugmentedResponse,
 ): Promise<void> {
   const [actualMapped, expectedMapped] = await Promise.all(
-    [actual, expected].map(res => stringifyBody(res)),
+    [actual, expected].map((res) => stringifyBody(res)),
   );
 
   assertEquals(actualMapped, expectedMapped);

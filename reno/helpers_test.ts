@@ -9,7 +9,7 @@ import {
   ProcessedRequest,
 } from "./helpers.ts";
 
-import { assertResponsesMatch } from "./testing.ts";
+import { assertResponsesAreEqual } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { RouteHandler, AugmentedRequest } from "./router.ts";
 
@@ -29,7 +29,7 @@ function createHandlerStub<TBody>(
 Deno.test({
   name:
     "jsonResponse builds an response object with the correct Content-Type header and an encoded body",
-  fn() {
+  async fn() {
     const body = {
       foo: "bar",
       bar: 1,
@@ -44,13 +44,13 @@ Deno.test({
 
     const actualResponse = jsonResponse(body);
 
-    assertResponsesMatch(actualResponse, expectedResponse);
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
 });
 
 Deno.test({
   name: "jsonResponse accepts custom headers",
-  fn() {
+  async fn() {
     const body = {
       foo: "bar",
       bar: 1,
@@ -72,14 +72,14 @@ Deno.test({
 
     const actualResponse = jsonResponse(body, headers);
 
-    assertResponsesMatch(actualResponse, expectedResponse);
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
 });
 
 Deno.test({
   name:
     "textResponse builds an response object with the correct Content-Type header and an encoded body",
-  fn() {
+  async fn() {
     const body = "Hello, world!";
 
     const expectedResponse = {
@@ -91,13 +91,13 @@ Deno.test({
 
     const actualResponse = textResponse(body);
 
-    assertResponsesMatch(actualResponse, expectedResponse);
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
 });
 
 Deno.test({
   name: "textResponse accepts custom headers",
-  fn() {
+  async fn() {
     const body = "Hello, world!";
 
     const headers = {
@@ -116,7 +116,7 @@ Deno.test({
 
     const actualResponse = textResponse(body, headers);
 
-    assertResponsesMatch(actualResponse, expectedResponse);
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
 });
 
@@ -153,7 +153,7 @@ Deno.test({
 
     const actualResponse = await augmentedHandler(request);
 
-    assertResponsesMatch(actualResponse, expectedResponse);
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
 });
 
@@ -221,7 +221,7 @@ Deno.test({
 
     const actualResponse = await augmentedHandler(request);
 
-    assertResponsesMatch(actualResponse, expectedResponse);
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
 });
 

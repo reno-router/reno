@@ -13,7 +13,8 @@ import { assertResponsesAreEqual } from "./testing.ts";
  * to keep everything better isolated. */
 
 Deno.test({
-  name: "assertResponsesAreEqual should output Uint8Array bodies as human-readable strings when the assertion fails",
+  name:
+    "assertResponsesAreEqual should output Uint8Array bodies as human-readable strings when the assertion fails",
   async fn() {
     const a = textResponse("Response body A");
     const b = textResponse("Response body B");
@@ -28,7 +29,8 @@ Deno.test({
 });
 
 Deno.test({
-  name: "assertResponsesAreEqual should output Deno.Reader bodies as human-readable strings when the assertion fails",
+  name:
+    "assertResponsesAreEqual should output Deno.Reader bodies as human-readable strings when the assertion fails",
   async fn() {
     const a = streamResponse(new StringReader("Response body A"));
     const b = streamResponse(new StringReader("Response body B"));
@@ -39,12 +41,12 @@ Deno.test({
       `-   { headers: Headers {}, body: "Response body A" }
 +   { headers: Headers {}, body: "Response body B" }`,
     );
-
   },
 });
 
 Deno.test({
-  name: "assertResponsesAreEqual should output string bodies as human-readable strings when the assertion fails",
+  name:
+    "assertResponsesAreEqual should output string bodies as human-readable strings when the assertion fails",
   async fn() {
     const a = { body: "Response body A" };
     const b = { body: "Response body B" };
@@ -55,6 +57,5 @@ Deno.test({
       `-   { body: "Response body A" }
 +   { body: "Response body B" }`,
     );
-
   },
 });

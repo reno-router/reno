@@ -3,7 +3,7 @@ import { forMethod, HttpMethod } from "./formethod.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { RouteHandler, AugmentedRequest } from "./router.ts";
 import { textResponse } from "./helpers.ts";
-import { assertResponsesMatch } from "./testing.ts";
+import { assertResponsesAreEqual } from "./testing.ts";
 
 function createRouteStub(
   response: Response | Error,
@@ -49,7 +49,7 @@ Deno.test({
 
     const res = await methodRouter(req);
 
-    assertResponsesMatch(res, postResponse);
+    await assertResponsesAreEqual(res, postResponse);
 
     [getHandler, putHandler].forEach((handler) => {
       testdouble.verify(handler(req), {
@@ -75,7 +75,7 @@ Deno.test({
 
     const res = await methodRouter(req);
 
-    assertResponsesMatch(res, expectedRes);
+    await assertResponsesAreEqual(res, expectedRes);
 
     [getHandler, putHandler, postHandler].forEach((handler) => {
       testdouble.verify(handler(req), {
