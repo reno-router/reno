@@ -35,7 +35,7 @@ async function stringifyBody(
  * `actual` and `expected` are deeply equal.
  * The benefit of using this function over
  * `assertEquals` directly is that it will
- * covert Uint8Array and Deno.Reader bodies
+ * convert `Uint8Array` and `Deno.Reader` bodies
  * to strings, making them human-readable
  * and thus helping to debug assertion failures:
  *
