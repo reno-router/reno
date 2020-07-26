@@ -31,6 +31,22 @@ async function stringifyBody(
 }
 
 /**
+ * @private
+ */
+export function createAssertResponsesAreEqual(assertEqls: typeof assertEquals) {
+  return async function (
+    actual: AugmentedResponse,
+    expected: AugmentedResponse,
+  ): Promise<void> {
+    const [actualMapped, expectedMapped] = await Promise.all(
+      [actual, expected].map((res) => stringifyBody(res)),
+    );
+
+    assertEqls(actualMapped, expectedMapped);
+  };
+}
+
+/**
  * A unit testing utility to assert that
  * `actual` and `expected` are deeply equal.
  * The benefit of using this function over
@@ -54,11 +70,7 @@ export async function assertResponsesAreEqual(
   actual: AugmentedResponse,
   expected: AugmentedResponse,
 ): Promise<void> {
-  const [actualMapped, expectedMapped] = await Promise.all(
-    [actual, expected].map((res) => stringifyBody(res)),
-  );
-
-  assertEquals(actualMapped, expectedMapped);
+  return createAssertResponsesAreEqual(assertEquals)(actual, expected);
 }
 
 /**

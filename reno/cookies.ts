@@ -1,4 +1,4 @@
-import { setCookie } from "https://deno.land/std@v0.60.0/http/cookie.ts";
+import { setCookie } from "https://deno.land/std@v0.62.0/http/cookie.ts";
 import { AugmentedResponse } from "./router.ts";
 
 /* Currently, setCookie will overwrite
