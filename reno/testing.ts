@@ -63,7 +63,7 @@ export async function assertResponsesAreEqual(
 }
 
 /**
- * @deprecated As of v1.2.0, you should use assertResponsesAreEqual()
+ * @deprecated **As of v1.2.0, you should use assertResponsesAreEqual()**
  *
  * A unit testing utility to assert that
  * the `body` and `headers` properties of
