@@ -32,7 +32,6 @@ async function stringifyBody(
 
 /**
  * A unit testing utility to assert that
- * the `body` and `headers` properties of
  * `actual` and `expected` are deeply equal.
  * The benefit of using this function over
  * `assertEquals` directly is that it will
