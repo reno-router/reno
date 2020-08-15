@@ -1,5 +1,7 @@
 #!/usr/bin/env deno
 
+import { parse as parseTOML } from "https://deno.land/std@0.62.0/encoding/toml.ts";
+
 interface Metadata {
   name: string;
   description: string;
@@ -17,23 +19,8 @@ function writeStringToFile(filename: string, contents: string) {
   return Deno.writeFileSync(filename, encoder.encode(contents));
 }
 
-function sanitiseTOMLToken(token: string) {
-  return token.trim().replace(/"/g, "");
-}
-
-function parseTOML<TResult>(toml: string) {
-  return Object.fromEntries(
-    toml.split("\n")
-      .map((entry) =>
-        entry.split("=")
-          .map((token) => sanitiseTOMLToken(token))
-      ),
-  ) as TResult;
-}
-
-const { version } = parseTOML<Metadata>(readFileAsString("Package.toml"));
+const { version } = parseTOML(readFileAsString("Package.toml")) as Metadata;
 const readmeTemplate = readFileAsString("README.template.md");
-const logoSvg = readFileAsString("logo/reno.svg");
 
 const updatedReadme = readmeTemplate
   .replace(/\{\{version\}\}/g, version);
