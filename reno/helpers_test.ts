@@ -36,6 +36,7 @@ Deno.test({
     };
 
     const expectedResponse = {
+      status: 200,
       headers: new Headers({
         "Content-Type": "application/json",
       }),
@@ -43,6 +44,28 @@ Deno.test({
     };
 
     const actualResponse = jsonResponse(body);
+
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
+  },
+});
+
+Deno.test({
+  name: "jsonResponse allows a custom HTTP status to be set",
+  async fn() {
+    const body = {
+      foo: "bar",
+      bar: 1,
+    };
+
+    const expectedResponse = {
+      status: 201,
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+      body: new TextEncoder().encode(JSON.stringify(body)),
+    };
+
+    const actualResponse = jsonResponse(body, {}, 201);
 
     await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
@@ -62,6 +85,7 @@ Deno.test({
     };
 
     const expectedResponse = {
+      status: 200,
       headers: new Headers({
         "X-Foo": "bar",
         "X-Bar": "baz",
@@ -83,6 +107,7 @@ Deno.test({
     const body = "Hello, world!";
 
     const expectedResponse = {
+      status: 200,
       body: new TextEncoder().encode(body),
       headers: new Headers({
         "Content-Type": "text/plain",
@@ -90,6 +115,25 @@ Deno.test({
     };
 
     const actualResponse = textResponse(body);
+
+    await assertResponsesAreEqual(actualResponse, expectedResponse);
+  },
+});
+
+Deno.test({
+  name: "textResponse allows a custom HTTP status to be set",
+  async fn() {
+    const body = "Hello, world!";
+
+    const expectedResponse = {
+      status: 201,
+      body: new TextEncoder().encode(body),
+      headers: new Headers({
+        "Content-Type": "text/plain",
+      }),
+    };
+
+    const actualResponse = textResponse(body, {}, 201);
 
     await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
@@ -106,6 +150,7 @@ Deno.test({
     };
 
     const expectedResponse = {
+      status: 200,
       body: new TextEncoder().encode(body),
       headers: new Headers({
         "X-Foo": "bar",

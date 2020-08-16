@@ -25,10 +25,7 @@ function logRequest(req: ServerRequest) {
 }
 
 function createErrorResponse(status: number, { message }: Error) {
-  return {
-    status,
-    ...textResponse(message),
-  };
+  return textResponse(message, {}, status);
 }
 
 function notFound(e: NotFoundError) {

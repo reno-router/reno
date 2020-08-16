@@ -24,10 +24,7 @@ type JsonBodyResponse = JsonBody & {
 };
 
 function methodNotAllowed(url: string, method: string) {
-  return {
-    status: 405,
-    ...textResponse(`Method ${method} not allowed for ${url}`),
-  };
+  return textResponse(`Method ${method} not allowed for ${url}`, {}, 405);
 }
 
 const serialised = JSON.stringify(colossalData);
