@@ -1,4 +1,4 @@
-import { StringReader } from "https://deno.land/std@v0.65.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@0.68.0/io/readers.ts";
 
 import colossalData from "./colossal.ts";
 
@@ -6,7 +6,6 @@ import {
   AugmentedRequest,
   createRouter,
   createRouteMap,
-  JsonRequest,
   jsonResponse,
   textResponse,
   withJsonBody,

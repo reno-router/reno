@@ -1,6 +1,6 @@
 #!/usr/bin/env deno
 
-import { parse as parseTOML } from "https://deno.land/std@0.62.0/encoding/toml.ts";
+import { parse as parseTOML } from "https://deno.land/std@0.68.0/encoding/toml.ts";
 
 interface Metadata {
   name: string;
