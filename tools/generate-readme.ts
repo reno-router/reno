@@ -19,7 +19,7 @@ function writeStringToFile(filename: string, contents: string) {
   return Deno.writeFileSync(filename, encoder.encode(contents));
 }
 
-const { version } = parseTOML(readFileAsString("Package.toml")) as Metadata;
+const { version } = parseTOML(readFileAsString("Package.toml")) as Record<keyof Metadata, string>;
 const readmeTemplate = readFileAsString("README.template.md");
 
 const updatedReadme = readmeTemplate
