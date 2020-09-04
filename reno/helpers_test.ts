@@ -214,8 +214,8 @@ Deno.test({
       path: "/",
     });
 
-    const handlerStub = createHandlerStub<{}>(request, expectedResponse);
-    const augmentedHandler = withJsonBody<{}>(handlerStub);
+    const handlerStub = createHandlerStub(request, expectedResponse);
+    const augmentedHandler = withJsonBody(handlerStub);
 
     // TODO: use assertThrowsAsync
     await augmentedHandler(request).catch((e) => {
@@ -235,9 +235,8 @@ Deno.test({
       body,
     });
 
-    const handlerStub = createHandlerStub<{}>(request);
-
-    const augmentedHandler = withJsonBody<{}>(handlerStub);
+    const handlerStub = createHandlerStub(request);
+    const augmentedHandler = withJsonBody(handlerStub);
 
     await augmentedHandler(request).catch((e) => {
       assertStrictEquals(e instanceof SyntaxError, true);

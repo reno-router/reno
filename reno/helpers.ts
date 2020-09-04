@@ -28,7 +28,9 @@ export type ProcessedRequest<TBody> =
  * type to be configured via the sole type
  * parameter. Defaults to an empty object.
  */
-export type JsonRequest<TBody = {}> = ProcessedRequest<TBody>;
+export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
+  TBody
+>;
 
 /**
  * A ProcessedRequest with a body type
