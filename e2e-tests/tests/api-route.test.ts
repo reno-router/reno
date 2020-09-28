@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-undef
+
 import frisby, { Joi } from "frisby";
 
 describe("/api", () => {
