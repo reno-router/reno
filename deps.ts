@@ -1,8 +1,8 @@
 // Recommended as per https://deno.land/std/manual.md#linking-to-third-party-code
 
-export * from "https://deno.land/std@0.68.0/testing/asserts.ts";
-export * from "https://deno.land/std@0.68.0/io/mod.ts";
-export { Response } from "https://deno.land/std@0.68.0/http/server.ts";
+export * from "https://deno.land/std@0.71.0/testing/asserts.ts";
+export * from "https://deno.land/std@0.71.0/io/mod.ts";
+export { Response } from "https://deno.land/std@0.71.0/http/server.ts";
 
 import __jsTestDouble from "https://dev.jspm.io/testdouble@3.16.0";
 import * as TestDouble from "https://raw.githubusercontent.com/testdouble/testdouble.js/ecd90efe4649b287c33831a7b94a8a5eb96b8ed0/index.d.ts";
