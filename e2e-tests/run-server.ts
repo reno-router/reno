@@ -14,7 +14,7 @@ export function runServer() {
       testSuiteGlobal.serverProc = cp.spawn(
         // The full path is required for Travis CI
         `${os.homedir()}/.deno/bin/deno`,
-        ["run", "--allow-net", "example/index.ts"],
+        ["run", "--allow-net", "example/server.ts"],
         {
           cwd: path.resolve(__dirname, ".."),
         },

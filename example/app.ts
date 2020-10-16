@@ -1,12 +1,9 @@
 import {
   ServerRequest,
-  listenAndServe,
 } from "https://deno.land/std@0.71.0/http/server.ts";
 
 import { createRouter, NotFoundError, textResponse } from "../reno/mod.ts";
 import { routes } from "./routes.ts";
-
-const BINDING = ":8000";
 
 function formatDate(date: Date) {
   return date.toLocaleDateString("en-GB", {
@@ -42,20 +39,13 @@ function mapToErrorResponse(e: Error) {
 
 const router = createRouter(routes);
 
-(async () => {
-  console.log(`Listening for requests on ${BINDING}...`);
+export default async function app(req: ServerRequest) {
+  logRequest(req);
 
-  await listenAndServe(
-    BINDING,
-    async (req: ServerRequest) => {
-      logRequest(req);
-
-      try {
-        const res = await router(req);
-        return req.respond(res);
-      } catch (e) {
-        return req.respond(mapToErrorResponse(e));
-      }
-    },
-  );
-})();
+  try {
+    const res = await router(req);
+    return req.respond(res);
+  } catch (e) {
+    return req.respond(mapToErrorResponse(e));
+  }
+}

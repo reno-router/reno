@@ -3,7 +3,7 @@
     "allowJs": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    "module": "amd",
+    "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "target": "es2018",
