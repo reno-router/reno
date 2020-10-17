@@ -210,7 +210,7 @@ Deno.test("/ should return the expected response", async () => {
 
 ## Example Apps
 
-As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v{{version}}/example), which is targetted by the [end-to-end test suite](https://github.com/reno-router/reno#end-to-end-tests), there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
+As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v{{version}}/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
 
 ## API Documentation
 
