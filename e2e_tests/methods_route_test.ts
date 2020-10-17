@@ -1,4 +1,4 @@
-import { superdeno, SuperDeno } from "./deps.ts";
+import { SuperDeno, superdeno } from "./deps.ts";
 import app from "../example/app.ts";
 
 ["GET", "POST"].forEach((method) => {

@@ -1,11 +1,11 @@
 import {
-  assertThrowsAsync,
   AssertionError,
+  assertThrowsAsync,
   StringReader,
   testdouble,
 } from "../deps.ts";
 import type { assertEquals } from "../deps.ts";
-import { textResponse, streamResponse } from "./helpers.ts";
+import { streamResponse, textResponse } from "./helpers.ts";
 import { createAssertResponsesAreEqual } from "./testing.ts";
 
 function createAssertEquals() {

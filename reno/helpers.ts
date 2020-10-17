@@ -1,6 +1,6 @@
 // TODO: find a better name than "helpers"
 
-import { AugmentedRequest, RouteHandler, AugmentedResponse } from "./router.ts";
+import { AugmentedRequest, AugmentedResponse, RouteHandler } from "./router.ts";
 import { BufReader } from "../deps.ts";
 
 const encoder = new TextEncoder();

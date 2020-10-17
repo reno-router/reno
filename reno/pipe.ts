@@ -1,4 +1,4 @@
-import { RouteHandler, AugmentedRequest, AugmentedResponse } from "./router.ts";
+import { AugmentedRequest, AugmentedResponse, RouteHandler } from "./router.ts";
 
 type Transform = (
   req: AugmentedRequest,

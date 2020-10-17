@@ -1,14 +1,10 @@
+import { assertStrictEquals, Response, testdouble } from "../deps.ts";
 import {
-  Response,
-  testdouble,
-  assertStrictEquals,
-} from "../deps.ts";
-import {
-  NotFoundError,
-  createRouteMap,
-  routerCreator,
-  RouteHandler,
   AugmentedRequest,
+  createRouteMap,
+  NotFoundError,
+  RouteHandler,
+  routerCreator,
 } from "./router.ts";
 import { assertResponsesAreEqual } from "./testing.ts";
 import { createServerRequest } from "../test_utils.ts";

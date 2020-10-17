@@ -1,6 +1,6 @@
 import {
-  ServerRequest,
   Response,
+  ServerRequest,
 } from "https://deno.land/std@0.74.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";

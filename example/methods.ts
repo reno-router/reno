@@ -1,8 +1,8 @@
 import {
-  createRouter,
   createRouteMap,
-  textResponse,
+  createRouter,
   forMethod,
+  textResponse,
 } from "../reno/mod.ts";
 
 const get = () => textResponse("You performed a HTTP GET!");

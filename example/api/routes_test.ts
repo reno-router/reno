@@ -1,5 +1,5 @@
 import { testdouble } from "../../deps.ts";
-import { jsonResponse, assertResponsesAreEqual } from "../../reno/mod.ts";
+import { assertResponsesAreEqual, jsonResponse } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 function createFetchStub(response: string[]) {

@@ -1,7 +1,7 @@
 import { Response, testdouble } from "../deps.ts";
 import { forMethod, HttpMethod } from "./formethod.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
-import { RouteHandler, AugmentedRequest } from "./router.ts";
+import { AugmentedRequest, RouteHandler } from "./router.ts";
 import { textResponse } from "./helpers.ts";
 import { assertResponsesAreEqual } from "./testing.ts";
 

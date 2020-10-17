@@ -1,6 +1,6 @@
 import {
-  ServerRequest,
   listenAndServe,
+  ServerRequest,
 } from "https://deno.land/std@0.74.0/http/server.ts";
 
 import app from "./app.ts";

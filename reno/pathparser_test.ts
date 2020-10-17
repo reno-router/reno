@@ -1,4 +1,4 @@
-import { assertEquals, assertStrictEquals, assertMatch } from "../deps.ts";
+import { assertEquals, assertMatch, assertStrictEquals } from "../deps.ts";
 import parsePath from "./pathparser.ts";
 
 function assertNotMatch(actual: string, regExp: RegExp) {
