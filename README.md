@@ -234,7 +234,7 @@ Then you can run:
 
 * `./scripts/example.sh` - starts the example server
 * `./scripts/format.sh` - formats the source code
-* `./scripts/format-check.sh` - checks the formatting of the source code
+* `./scripts/format_check.sh` - checks the formatting of the source code
 * `./scripts/lint.sh` - lints the source code
 * `./scripts/test.sh` - runs the unit tests
 * `./scripts/e2e.sh` - runs the end-to-end tests
