@@ -13,5 +13,5 @@ jobs:
     - stage: unit tests
       script: "./scripts/test.sh"
     - stage: end-to-end tests
-      script: "cd e2e-tests && ./ci.sh"
+      script: "./scripts/e2e.sh"
 
