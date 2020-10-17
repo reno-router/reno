@@ -14,4 +14,3 @@ jobs:
       script: "./scripts/test.sh"
     - stage: end-to-end tests
       script: "./scripts/e2e.sh"
-
