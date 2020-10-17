@@ -1,5 +1,5 @@
-import { superdeno } from "../deps.ts";
-import app from "../../example/app.ts";
+import { superdeno } from "./deps.ts";
+import app from "../example/app.ts";
 
 Deno.test("/ should return the expected response", async () => {
   await superdeno(app).get("/")

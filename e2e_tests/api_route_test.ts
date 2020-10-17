@@ -1,6 +1,5 @@
-import { superdeno } from "../deps.ts";
-import { assert } from "../../deps.ts";
-import app from "../../example/app.ts";
+import { superdeno } from "./deps.ts";
+import app from "../example/app.ts";
 
 Deno.test("/api/json-body should return the body passed via the request", async () => {
   await superdeno(app).post("/api/json-body")
@@ -48,7 +47,7 @@ Deno.test("/ron-swanson-quote should return a single quote by default", async ()
   await superdeno(app).get("/api/ron-swanson-quote")
     .expect(200)
     .expect("Content-Type", "application/json")
-    .expect(res => {
+    .expect((res) => {
       if (res.body.length !== 1) {
         throw new Error(`Expected 1 quotes, but received ${res.body.length}`);
       }
@@ -59,7 +58,7 @@ Deno.test("/ron-swanson-quote should return the number of quotes specified in th
   await superdeno(app).get("/api/ron-swanson-quote/8")
     .expect(200)
     .expect("Content-Type", "application/json")
-    .expect(res => {
+    .expect((res) => {
       if (res.body.length !== 8) {
         throw new Error(`Expected 8 quotes, but received ${res.body.length}`);
       }
@@ -70,7 +69,7 @@ Deno.test("/wildcard-route-params should successfully parse the route params", a
   await superdeno(app).get(
     "/api/wildcard-route-params/authors/bob/posts/post-1",
   )
-  .expect(200)
-  .expect("Content-Type", "text/plain")
-  .expect("You requested post-1 by bob");
+    .expect(200)
+    .expect("Content-Type", "text/plain")
+    .expect("You requested post-1 by bob");
 });
