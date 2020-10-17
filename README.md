@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.org/reno-router/reno.svg?branch=master)](https://travis-ci.org/reno-router/reno)
 
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.2/reno/mod.ts)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.3/reno/mod.ts)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
@@ -28,7 +28,7 @@ import {
   jsonResponse,
   streamResponse,
   NotFoundError,
-} from "https://deno.land/x/reno@v1.3.2/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.3.3/reno/mod.ts";
 
 function createErrorResponse(status: number, { message }: Error) {
   return textResponse(message, {}, status);
@@ -84,7 +84,7 @@ await listenAndServe(
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.2/reno/mod.ts";
+import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.3/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -161,7 +161,7 @@ const router = createRouter(routes);
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.2/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.3/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
@@ -210,11 +210,11 @@ Deno.test("/ should return the expected response", async () => {
 
 ## Example Apps
 
-As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.2/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
+As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.3/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
 
 ## API Documentation
 
-Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.2/reno/mod.ts) for comprehensive documentation on Reno's API.
+Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.3/reno/mod.ts) for comprehensive documentation on Reno's API.
 
 ## Local Development
 
