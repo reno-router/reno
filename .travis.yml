@@ -9,7 +9,7 @@ jobs:
     - stage: lint
       script: "./scripts/lint.sh"
     - stage: check formatting
-      script: "./scripts/format-check.sh"
+      script: "./scripts/format_check.sh"
     - stage: unit tests
       script: "./scripts/test.sh"
     - stage: end-to-end tests
