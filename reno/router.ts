@@ -175,23 +175,21 @@ export function routerCreator(
  *
  * const router = createRouter(routes);
  *
- * (async () => {
- *   console.log(`Listening for requests on ${BINDING}...`);
+ * console.log(`Listening for requests on ${BINDING}...`);
  *
- *   await listenAndServe(
- *     BINDING,
- *     async (req: ServerRequest) => {
- *       logRequest(req);
+ * await listenAndServe(
+ *   BINDING,
+ *   async (req: ServerRequest) => {
+ *     logRequest(req);
  *
- *       try {
- *         const res = await router(req);
- *         return req.respond(res);
- *       } catch (e) {
- *         return req.respond(mapToErrorResponse(e));
- *       }
- *     },
- *   );
- * })();
+ *     try {
+ *       const res = await router(req);
+ *       return req.respond(res);
+ *     } catch (e) {
+ *       return req.respond(mapToErrorResponse(e));
+ *     }
+ *   },
+ * );
  * ```
  */
 export function createRouter(routes: RouteMap) {
