@@ -77,6 +77,85 @@ await listenAndServe(
 );
 ```
 
+## Key Features
+
+### Responses are just Data Structures
+
+This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
+
+```ts
+import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.2/reno/mod.ts";
+import { createRonSwansonQuoteHandler } from "./routes.ts";
+
+const createFetchStub = (response: string[]) =>
+  sinon.stub().resolves({
+    json: sinon.stub().resolves(response),
+  });
+
+test({
+  name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
+  async fn() {
+    const quotes = ["Some Ron Swanson Quote"];
+    const fetchStub = createFetchStub(quotes);
+    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
+
+    const req = {
+      routeParams: []
+    };
+
+    const response = await ronSwansonQuoteHandler(req);
+
+    await assertResponsesAreEqual(
+      response,
+      jsonResponse(quotes, {
+        "X-Foo": "bar",
+      }),
+    );
+  }
+});
+```
+
+### Wildcard Path Segments
+
+Despite the power of regular expressions for matching and capturing paths when their route parameters conform to an expected format or type, they can often prove verbose and unwieldy for simpler applications. Reno thus provides an alternative wildcard syntax (`"*"`) for string paths to achieve route param extraction:
+
+```ts
+async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
+  const [authorId, postId] = req.routeParams;
+
+  return textResponse(`You requested ${postId} by ${authorId}`);
+}
+
+const routes = createRouteMap([
+  ["/wildcard-route-params/authors/*/posts/*", wildcardRouteParams],
+]);
+
+const router = createRouter(routes);
+```
+
+### Nested Routers
+
+Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcards as suffixes to group routers by a common path segment:
+
+```ts
+const routes = createRouteMap([
+  [
+    "/foo/*",
+    createRouter(
+      createRouteMap([
+        [
+          "/bar/*",
+          createRouter(createRouteMap([["/baz", () =>
+            textResponse("Hello from a nested route!")]])),
+        ],
+      ]),
+    ),
+  ],
+]);
+
+const router = createRouter(routes);
+```
+
 ### `pipe()` - An Alternative to Middleware
 
 Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
@@ -138,10 +217,7 @@ Then you can run:
 * `./scripts/format-check.sh` - checks the formatting of the source code
 * `./scripts/lint.sh` - lints the source code
 * `./scripts/test.sh` - runs the unit tests
-
-### End-to-End Tests
-
-There's an [end-to-end test suite](https://github.com/reno-router/reno/tree/master/e2e-tests) written in Node.js, TypeScript, and [Frisby](https://github.com/vlucas/frisby). You can run this by consulting the directory's [README](https://github.com/reno-router/reno/blob/master/e2e-tests/README.md).
+* `./scripts/e2e.sh` - runs the end-to-end tests
 
 ## Functionality Checklist
 
