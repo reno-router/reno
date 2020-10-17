@@ -27,7 +27,12 @@ import {
   textResponse,
   jsonResponse,
   streamResponse,
+  NotFoundError,
 } from "https://deno.land/x/reno@v1.3.2/reno/mod.ts";
+
+function createErrorResponse(status: number, { message }: Error) {
+  return textResponse(message, {}, status);
+}
 
 export const routes = createRouteMap([
   ["/home", () => textResponse("Hello world!")],
@@ -57,100 +62,19 @@ const mapToErrorResponse = (e: Error) =>
 
 const router = createRouter(routes);
 
-(async () => {
-  console.log("Listening for requests...");
+console.log("Listening for requests...");
 
-  await listenAndServe(
-    ":8001",
-    async (req: ServerRequest) => {
-      try {
-        const res = await router(req);
-        return req.respond(res);
-      } catch (e) {
-        return req.respond(mapToErrorResponse(e));
-      }
-    },
-  );
-})();
-```
-
-## Key Features
-
-### Responses are just Data Structures
-
-This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
-
-```ts
-import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.2/reno/mod.ts";
-import { createRonSwansonQuoteHandler } from "./routes.ts";
-
-const createFetchStub = (response: string[]) =>
-  sinon.stub().resolves({
-    json: sinon.stub().resolves(response),
-  });
-
-test({
-  name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
-  async fn() {
-    const quotes = ["Some Ron Swanson Quote"];
-    const fetchStub = createFetchStub(quotes);
-    const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
-
-    const req = {
-      routeParams: []
-    };
-
-    const response = await ronSwansonQuoteHandler(req);
-
-    await assertResponsesAreEqual(
-      response,
-      jsonResponse(quotes, {
-        "X-Foo": "bar",
-      }),
-    );
-  }
-});
-```
-
-### Wildcard Path Segments
-
-Despite the power of regular expressions for matching and capturing paths when their route parameters conform to an expected format or type, they can often prove verbose and unwieldy for simpler applications. Reno thus provides an alternative wildcard syntax (`"*"`) for string paths to achieve route param extraction:
-
-```ts
-async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
-  const [authorId, postId] = req.routeParams;
-
-  return textResponse(`You requested ${postId} by ${authorId}`);
-}
-
-const routes = createRouteMap([
-  ["/wildcard-route-params/authors/*/posts/*", wildcardRouteParams],
-]);
-
-const router = createRouter(routes);
-```
-
-### Nested Routers
-
-Like most other HTTP routing libraries that you know and love, Reno supports nested routers; you can use wildcards as suffixes to group routers by a common path segment:
-
-```ts
-const routes = createRouteMap([
-  [
-    "/foo/*",
-    createRouter(
-      createRouteMap([
-        [
-          "/bar/*",
-          createRouter(createRouteMap([["/baz", () =>
-            textResponse("Hello from a nested route!")]])),
-        ],
-      ]),
-    ),
-  ],
-]);
-
-const router = createRouter(routes);
+await listenAndServe(
+  ":8001",
+  async (req: ServerRequest) => {
+    try {
+      const res = await router(req);
+      return req.respond(res);
+    } catch (e) {
+      return req.respond(mapToErrorResponse(e));
+    }
+  },
+);
 ```
 
 ### `pipe()` - An Alternative to Middleware
