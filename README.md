@@ -4,7 +4,7 @@
 
 [![Build Status](https://travis-ci.org/reno-router/reno.svg?branch=master)](https://travis-ci.org/reno-router/reno)
 
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.3/reno/mod.ts)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.4/reno/mod.ts)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
@@ -28,7 +28,7 @@ import {
   jsonResponse,
   streamResponse,
   NotFoundError,
-} from "https://deno.land/x/reno@v1.3.3/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.3.4/reno/mod.ts";
 
 function createErrorResponse(status: number, { message }: Error) {
   return textResponse(message, {}, status);
@@ -84,7 +84,7 @@ await listenAndServe(
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.3/reno/mod.ts";
+import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.4/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -156,12 +156,57 @@ const routes = createRouteMap([
 const router = createRouter(routes);
 ```
 
-### `pipe()` - An Alternative to Middleware
+### Route Handlers are Composable
 
-Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
+Another consequence of route handlers being intrinsically pure functions is that they can be composed with higher-order route handlers, allowing particular behaviours to be reused across your entire application:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.3/reno/mod.ts";
+import { compose } from "https://deno.land/x/compose@1.3.2/index.js";
+
+import {
+  AugmentedRequest,
+  RouteHandler,
+  textResponse,
+  createRouteMap
+} from "https://deno.land/x/reno@v1.3.4/reno/mod.ts";
+
+import isValidAPIKey from "./api_keys.ts";
+
+function withLogging(next: RouteHandler) {
+  return function (req: AugmentedRequest) {
+    console.log(`${new Date().toJSON()}: ${req.method} ${req.url}`);
+    return next(req);
+  };
+}
+
+function withAuth(next: RouteHandler) {
+  return async function (req: AugmentedRequest) {
+    const apiKey = req.headers.has("Authorization")
+      ? req.headers.get("Authorization")?.replace("Bearer ", "")
+      : "";
+
+    const isValid = apiKey && await isValidAPIKey(apiKey);
+
+    return isValid
+      ? next(req)
+      : textResponse(`API key not authorised to access ${req.url}`, {}, 401);
+  };
+}
+
+const profile = compose(
+  withAuth,
+  withLogging,
+)(() => textResponse("Your profile!"));
+
+export const routes = createRouteMap([
+  ["/profile", profile],
+]);
+```
+
+Additionally, Reno provides a `pipe` utility for creating a higher-order route handler that invokes a sequence of functions against both the original request _and_ the computed response:
+
+```ts
+import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.4/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
@@ -210,11 +255,11 @@ Deno.test("/ should return the expected response", async () => {
 
 ## Example Apps
 
-As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.3/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
+As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.4/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
 
 ## API Documentation
 
-Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.3/reno/mod.ts) for comprehensive documentation on Reno's API.
+Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.4/reno/mod.ts) for comprehensive documentation on Reno's API.
 
 ## Local Development
 

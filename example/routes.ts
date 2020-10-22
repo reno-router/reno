@@ -1,4 +1,5 @@
 import { compose } from "https://deno.land/x/compose@1.3.2/index.js";
+
 import {
   AugmentedRequest,
   createRouteMap,
@@ -7,6 +8,7 @@ import {
   RouteHandler,
   textResponse,
 } from "../reno/mod.ts";
+
 import { apiRouter } from "./api/routes.ts";
 import { methodsRouter } from "./methods.ts";
 import isValidAPIKey from "./api_keys.ts";

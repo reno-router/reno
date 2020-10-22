@@ -156,9 +156,54 @@ const routes = createRouteMap([
 const router = createRouter(routes);
 ```
 
-### `pipe()` - An Alternative to Middleware
+### Route Handlers are Composable
 
-Reno emulates the middleware pattern, [found in Express](https://expressjs.com/en/guide/using-middleware.html), by favouring [function piping](https://www.sitepoint.com/function-composition-in-javascript/#theimportanceofinvocationorder) to create reusable, higher-order route handlers:
+Another consequence of route handlers being intrinsically pure functions is that they can be composed with higher-order route handlers, allowing particular behaviours to be reused across your entire application:
+
+```ts
+import { compose } from "https://deno.land/x/compose@1.3.2/index.js";
+
+import {
+  AugmentedRequest,
+  RouteHandler,
+  textResponse,
+  createRouteMap
+} from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
+
+import isValidAPIKey from "./api_keys.ts";
+
+function withLogging(next: RouteHandler) {
+  return function (req: AugmentedRequest) {
+    console.log(`${new Date().toJSON()}: ${req.method} ${req.url}`);
+    return next(req);
+  };
+}
+
+function withAuth(next: RouteHandler) {
+  return async function (req: AugmentedRequest) {
+    const apiKey = req.headers.has("Authorization")
+      ? req.headers.get("Authorization")?.replace("Bearer ", "")
+      : "";
+
+    const isValid = apiKey && await isValidAPIKey(apiKey);
+
+    return isValid
+      ? next(req)
+      : textResponse(`API key not authorised to access ${req.url}`, {}, 401);
+  };
+}
+
+const profile = compose(
+  withAuth,
+  withLogging,
+)(() => textResponse("Your profile!"));
+
+export const routes = createRouteMap([
+  ["/profile", profile],
+]);
+```
+
+Additionally, Reno provides a `pipe` utility for creating a higher-order route handler that invokes a sequence of functions against both the original request _and_ the computed response:
 
 ```ts
 import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
