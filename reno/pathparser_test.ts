@@ -11,7 +11,7 @@ function assertNotMatch(actual: string, regExp: RegExp) {
 
 Deno.test({
   name: "parsePath should convert a human-friendly path spec into a RegExp",
-  async fn() {
+  fn() {
     const path = "/api/foo/*/bar/*/*/baz";
     const regExp = parsePath(path);
 
@@ -28,7 +28,7 @@ Deno.test({
 
 Deno.test({
   name: "parsePath should treat the last wildcard as optional",
-  async fn() {
+  fn() {
     const path = "/api/foo/*";
     const regExp = parsePath(path);
 
@@ -40,7 +40,7 @@ Deno.test({
 
 Deno.test({
   name: "parsePath should return the input parameter if it`s a RegExp",
-  async fn() {
+  fn() {
     const path = /\/api\/foo\/.*/;
     const regExp = parsePath(path);
 

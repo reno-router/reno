@@ -63,7 +63,7 @@ export function createAssertResponsesAreEqual(assertEqls: typeof assertEquals) {
  * );
  * ```
  */
-export async function assertResponsesAreEqual(
+export function assertResponsesAreEqual(
   actual: AugmentedResponse,
   expected: AugmentedResponse,
 ): Promise<void> {

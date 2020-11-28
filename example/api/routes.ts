@@ -1,4 +1,4 @@
-import { StringReader } from "https://deno.land/std@0.74.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@0.79.0/io/readers.ts";
 
 import colossalData from "./colossal.ts";
 
@@ -77,7 +77,7 @@ function setCookies() {
   };
 }
 
-async function streamedResponse() {
+function streamedResponse() {
   return streamResponse(
     new StringReader(
       "This was written directly to the request reference`s underlying socket!",
@@ -85,7 +85,7 @@ async function streamedResponse() {
   );
 }
 
-async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
+function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
   const [authorId, postId] = req.routeParams;
 
   return textResponse(`You requested ${postId} by ${authorId}`);
