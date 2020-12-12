@@ -1,0 +1,24 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install supported Deno version
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
+
+    - name: Lint
+      run: "./scripts/lint.sh"
+
+    - name: Check formatting
+      run: "./scripts/format_check.sh"
+
+    - name: Unit tests
+      run: "./scripts/test.sh"
+
+    - name: End-to-end tests
+      run: "./scripts/e2e.sh"
