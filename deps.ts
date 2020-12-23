@@ -2,7 +2,7 @@
 
 export * from "https://deno.land/std@0.80.0/testing/asserts.ts";
 export * from "https://deno.land/std@0.80.0/io/mod.ts";
-export type { Response } from "https://deno.land/std@0.80.0/http/server.ts";
+export type { ServerRequest, Response } from "https://deno.land/std@0.80.0/http/server.ts";
 
 import __jsTestDouble from "https://dev.jspm.io/testdouble@3.16.0";
 import * as TestDouble from "https://raw.githubusercontent.com/testdouble/testdouble.js/ecd90efe4649b287c33831a7b94a8a5eb96b8ed0/index.d.ts";
