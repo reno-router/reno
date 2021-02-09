@@ -1,7 +1,7 @@
 import {
   Response,
   ServerRequest,
-} from "https://deno.land/std@0.81.0/http/server.ts";
+} from "https://deno.land/std@0.86.0/http/server.ts";
 
 import { writeCookies } from "./cookies.ts";
 import parsePath from "./pathparser.ts";
@@ -16,7 +16,7 @@ import parsePath from "./pathparser.ts";
 export type AugmentedRequest =
   & Pick<
     ServerRequest,
-    Exclude<keyof ServerRequest, "respond">
+    Exclude<keyof ServerRequest, "respond" | "done">
   >
   & {
     queryParams: URLSearchParams;
@@ -166,7 +166,7 @@ export function routerCreator(
  * import {
  *   ServerRequest,
  *   listenAndServe,
- * } from "https://deno.land/std@0.81.0/http/server.ts";
+ * } from "https://deno.land/std@0.86.0/http/server.ts";
 
  * import { createRouter } from "https://deno.land/x/reno@<VERSION>/reno/mod.ts";
  * import { routes } from "./routes.ts";

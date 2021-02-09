@@ -1,9 +1,9 @@
-import { BufReader } from "https://deno.land/std@0.81.0/io/bufio.ts";
+import { BufReader } from "https://deno.land/std@0.86.0/io/bufio.ts";
 import {
   ServerRequest,
-} from "https://deno.land/std@0.81.0/http/server.ts";
-import { StringReader } from "https://deno.land/std@0.81.0/io/readers.ts";
-import { readRequest } from "https://deno.land/std@0.81.0/http/_io.ts";
+} from "https://deno.land/std@0.86.0/http/server.ts";
+import { StringReader } from "https://deno.land/std@0.86.0/io/readers.ts";
+import { readRequest } from "https://deno.land/std@0.86.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 function createStubAddr() {
@@ -19,7 +19,7 @@ function createStubConn() {
     localAddr: createStubAddr(),
     remoteAddr: createStubAddr(),
     rid: 1,
-    closeWrite: () => undefined,
+    closeWrite: () => Promise.resolve(undefined),
     close: () => undefined,
     read: (p: Uint8Array) => Promise.resolve(p.length),
     write: (p: Uint8Array) => Promise.resolve(p.length),
