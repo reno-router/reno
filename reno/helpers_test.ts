@@ -87,9 +87,9 @@ Deno.test({
     const expectedResponse = {
       status: 200,
       headers: new Headers({
+        "Content-Type": "application/json",
         "X-Foo": "bar",
         "X-Bar": "baz",
-        "Content-Type": "application/json",
       }),
       body: new TextEncoder().encode(JSON.stringify(body)),
     };
@@ -153,9 +153,9 @@ Deno.test({
       status: 200,
       body: new TextEncoder().encode(body),
       headers: new Headers({
+        "Content-Type": "text/plain",
         "X-Foo": "bar",
         "X-Bar": "baz",
-        "Content-Type": "text/plain",
       }),
     };
 
