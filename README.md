@@ -2,15 +2,7 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
-<div class="badges" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-around">
-
-[![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
-
-[![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.12/reno/mod.ts)
-
-[![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
-
-</div>
+[![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions) [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.12/reno/mod.ts) [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
