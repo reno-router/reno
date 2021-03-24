@@ -2,19 +2,7 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
-<style>
-  .badges {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .badges img {
-    margin-right: 10px;
-  }
-</style>
-
-<div class="badges">
+<div class="badges" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-around">
 
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
 
