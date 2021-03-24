@@ -2,9 +2,27 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
+<style>
+  .badges {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .badges img {
+    margin-right: 10px;
+  }
+</style>
+
+<div class="badges">
+
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
 
 [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v{{version}}/reno/mod.ts)
+
+[![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
+
+</div>
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
@@ -29,6 +47,10 @@ import {
   streamResponse,
   NotFoundError,
 } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
+
+/* Alternatively, you can import Reno from nest.land:
+ * import { ... } from "https://x.nest.land/reno@{{version}}/reno/mod.ts";
+ */
 
 function createErrorResponse(status: number, { message }: Error) {
   return textResponse(message, {}, status);
