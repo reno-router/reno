@@ -14,11 +14,9 @@ jobs:
     - name: Install supported Deno version
       run: |
         curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
-        export DENO_INSTALL="/home/runner/.deno"
-        export PATH="$DENO_INSTALL/bin:$PATH"
 
     - name: Deploy to nest.land
       run: |
-        deno install -A --unstable https://x.nest.land/eggs@0.3.2/eggs.ts
+        $HOME/.deno/bin/deno install -A --unstable https://x.nest.land/eggs@0.3.2/eggs.ts
         eggs link ${{ secrets.NEST_API_KEY }}
         eggs publish --yes --no-check --version $(git describe --tags $(git rev-list --tags --max-count=1))
