@@ -35,7 +35,7 @@ function withAuth(next: RouteHandler) {
 }
 
 const withCaching = pipe(
-  (req, res) => {
+  (_, res) => {
     res.headers = res.headers || new Headers();
     res.headers.append("Cache-Control", "max-age=86400");
     return res;

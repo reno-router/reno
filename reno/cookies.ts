@@ -18,7 +18,7 @@ export function createCookieWriter(cookieSetter: typeof setCookie) {
     }
 
     [...res.cookies.entries()].forEach(([name, value]) => {
-      if (res.headers?.get('Set-Cookie')?.includes(`${name}=${value}`)) {
+      if (res.headers?.get("Set-Cookie")?.includes(`${name}=${value}`)) {
         return;
       }
 

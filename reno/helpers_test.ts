@@ -1,7 +1,6 @@
 import { assertStrictEquals, Response, testdouble } from "../deps.ts";
 
 import {
-  JsonRequest,
   jsonResponse,
   ProcessedRequest,
   textResponse,
@@ -14,7 +13,7 @@ import { createAugmentedRequest } from "../test_utils.ts";
 import { AugmentedRequest, RouteHandler } from "./router.ts";
 
 function createHandlerStub<TBody>(
-  request: AugmentedRequest,
+  _: AugmentedRequest,
   expectedResponse?: Response,
 ) {
   const handlerStub = testdouble.func();

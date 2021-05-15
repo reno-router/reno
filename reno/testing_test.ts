@@ -1,9 +1,4 @@
-import {
-  AssertionError,
-  assertThrowsAsync,
-  StringReader,
-  testdouble,
-} from "../deps.ts";
+import { StringReader, testdouble } from "../deps.ts";
 import type { assertEquals } from "../deps.ts";
 import { streamResponse, textResponse } from "./helpers.ts";
 import { createAssertResponsesAreEqual } from "./testing.ts";
@@ -40,8 +35,8 @@ Deno.test({
     const a = streamResponse(new StringReader("Response body A"));
     const b = streamResponse(new StringReader("Response body B"));
 
-    const [aMapped, bMapped] = [a, b].map(({ body, ...rest }, i) => ({
-      ...rest,
+    const [aMapped, bMapped] = [a, b].map((res, i) => ({
+      ...res,
       body: bodies[i],
     }));
 

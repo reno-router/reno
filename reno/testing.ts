@@ -1,4 +1,4 @@
-import { assertEquals } from "../deps.ts";
+import { assertEquals, readAll } from "../deps.ts";
 import { AugmentedResponse } from "./router.ts";
 
 const decoder = new TextDecoder();
@@ -24,7 +24,7 @@ async function stringifyBody(
     return createResWithStringifiedBody(res, res.body);
   }
   if (isReader(res.body)) {
-    return createResWithStringifiedBody(res, await Deno.readAll(res.body));
+    return createResWithStringifiedBody(res, await readAll(res.body));
   }
 
   return res;

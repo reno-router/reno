@@ -1,7 +1,4 @@
-import {
-  listenAndServe,
-  ServerRequest,
-} from "https://deno.land/std@0.96.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@0.96.0/http/server.ts";
 
 import app from "./app.ts";
 
