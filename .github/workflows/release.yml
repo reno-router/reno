@@ -9,9 +9,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Deploy to deno.land/x
-      uses: distributhor/workflow-webhook@v1
-      env:
-        webhook_url: https://api.deno.land/webhook/gh/reno
+      run: echo "Reno is deployed to deno.land/x via a webhook"
 
     - name: Install supported Deno version
       run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
