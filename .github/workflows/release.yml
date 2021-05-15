@@ -12,7 +12,10 @@ jobs:
       run: echo "Reno is deployed to deno.land/x via a webhook"
 
     - name: Install supported Deno version
-      run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
+      run: |
+        curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
+        export DENO_INSTALL="/home/runner/.deno"
+        export PATH="$DENO_INSTALL/bin:$PATH"
 
     - name: Deploy to nest.land
       run: |
