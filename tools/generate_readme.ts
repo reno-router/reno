@@ -1,7 +1,5 @@
 #!/usr/bin/env deno
 
-import { parse as parseTOML } from "https://deno.land/std@0.96.0/encoding/toml.ts";
-
 interface Metadata {
   name: string;
   description: string;
@@ -19,10 +17,9 @@ function writeStringToFile(filename: string, contents: string) {
   return Deno.writeFileSync(filename, encoder.encode(contents));
 }
 
-const { version } = parseTOML(readFileAsString("Package.toml")) as Record<keyof Metadata, string>;
+const metadata: Metadata = JSON.parse(readFileAsString("egg.json"));
 const readmeTemplate = readFileAsString("README.template.md");
-
 const updatedReadme = readmeTemplate
-  .replace(/\{\{version\}\}/g, version);
+  .replace(/\{\{version\}\}/g, metadata.version);
 
 writeStringToFile("README.md", updatedReadme);
