@@ -1,18 +1,14 @@
-import { setCookie } from "https://deno.land/std@0.90.0/http/cookie.ts";
+import { setCookie } from "https://deno.land/std@0.96.0/http/cookie.ts";
 import { AugmentedResponse } from "./router.ts";
 
-/* Currently, setCookie will overwrite
- * any current Set-Cookie instances in
- * the responses headers. This is due to
- * the Headers API not supporting multiple
- * entries of a single header type. Rather
- * than work around this here, we should
- * wait for a workaround to land in Deno.
- * See github.com/denoland/deno_std/issues/379
+/* This abstraction was built when Deno only allowed unique header
+ * names to be set against a given response, but this has since
+ * been rectified to support multiple instances of `Set-Cookie`.
+ * Given Reno's nested router architecture, we thus need to check
+ * if a cookie name with a matching incoming value already exists
+ * in the header. Ultimately, this whole function wants scrapping.
  *
- * TODO: keep an eye on the above issue to see
- * if and when a fix will land in Deno. Raise
- * this as known in this repo's GitHub issues */
+ * TODO: refactor! */
 export function createCookieWriter(cookieSetter: typeof setCookie) {
   return (
     res: AugmentedResponse,
@@ -22,6 +18,10 @@ export function createCookieWriter(cookieSetter: typeof setCookie) {
     }
 
     [...res.cookies.entries()].forEach(([name, value]) => {
+      if (res.headers?.get('Set-Cookie')?.includes(`${name}=${value}`)) {
+        return;
+      }
+
       cookieSetter(res, { name, value });
     });
   };
