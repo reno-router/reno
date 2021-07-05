@@ -16,7 +16,7 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@0.96.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@0.100.0/http/server.ts";
 
 import {
   createRouter,
@@ -240,7 +240,7 @@ export const routes = createRouteMap([["/", home]]);
 Given that a Reno router is a function that takes a request and returns a response (or more specifically, `Promise<Response>`), you are free to integrate it as you wish, managing the lifecycle of your HTTP server independently. This also makes it trivial to write end-to-end tests with [SuperDeno](https://github.com/asos-craigmorten/superdeno), as evidenced by [Reno's own E2E suite](https://github.com/reno-router/reno/tree/master/e2e_tests):
 
 ```ts
-import { superdeno } from "https://deno.land/x/superdeno@2.3.2/mod.ts";
+import { superdeno } from "https://deno.land/x/superdeno@4.3.0/mod.ts";
 import app from "../example/app.ts";
 
 Deno.test("/ should return the expected response", async () => {

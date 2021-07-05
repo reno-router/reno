@@ -1,6 +1,6 @@
 import { createCookieWriter } from "./cookies.ts";
 import { testdouble } from "../deps.ts";
-import { setCookie } from "https://deno.land/std@0.96.0/http/cookie.ts";
+import { setCookie } from "https://deno.land/std@0.100.0/http/cookie.ts";
 
 type CookieSetter = typeof setCookie;
 

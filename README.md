@@ -2,7 +2,7 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
-[![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions) [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.13/reno/mod.ts) [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
+[![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions) [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.14/reno/mod.ts) [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
@@ -16,7 +16,7 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@0.96.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@0.100.0/http/server.ts";
 
 import {
   createRouter,
@@ -26,10 +26,10 @@ import {
   jsonResponse,
   streamResponse,
   NotFoundError,
-} from "https://deno.land/x/reno@v1.3.13/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.3.14/reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@1.3.13/reno/mod.ts";
+ * import { ... } from "https://x.nest.land/reno@1.3.14/reno/mod.ts";
  */
 
 function createErrorResponse(status: number, { message }: Error) {
@@ -86,7 +86,7 @@ await listenAndServe(
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.13/reno/mod.ts";
+import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.14/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -170,7 +170,7 @@ import {
   RouteHandler,
   textResponse,
   createRouteMap
-} from "https://deno.land/x/reno@v1.3.13/reno/mod.ts";
+} from "https://deno.land/x/reno@v1.3.14/reno/mod.ts";
 
 import isValidAPIKey from "./api_keys.ts";
 
@@ -208,7 +208,7 @@ export const routes = createRouteMap([
 Additionally, Reno provides a `pipe` utility for creating a higher-order route handler that invokes a sequence of functions against both the original request _and_ the computed response:
 
 ```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.13/reno/mod.ts";
+import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.14/reno/mod.ts";
 
 const withCaching = pipe(
   (req, res) => {
@@ -240,7 +240,7 @@ export const routes = createRouteMap([["/", home]]);
 Given that a Reno router is a function that takes a request and returns a response (or more specifically, `Promise<Response>`), you are free to integrate it as you wish, managing the lifecycle of your HTTP server independently. This also makes it trivial to write end-to-end tests with [SuperDeno](https://github.com/asos-craigmorten/superdeno), as evidenced by [Reno's own E2E suite](https://github.com/reno-router/reno/tree/master/e2e_tests):
 
 ```ts
-import { superdeno } from "https://deno.land/x/superdeno@2.3.2/mod.ts";
+import { superdeno } from "https://deno.land/x/superdeno@4.3.0/mod.ts";
 import app from "../example/app.ts";
 
 Deno.test("/ should return the expected response", async () => {
@@ -257,11 +257,11 @@ Deno.test("/ should return the expected response", async () => {
 
 ## Example Apps
 
-As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.13/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
+As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.14/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
 
 ## API Documentation
 
-Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.13/reno/mod.ts) for comprehensive documentation on Reno's API.
+Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.14/reno/mod.ts) for comprehensive documentation on Reno's API.
 
 ## Local Development
 

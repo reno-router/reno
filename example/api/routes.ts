@@ -1,4 +1,4 @@
-import { StringReader } from "https://deno.land/std@0.96.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@0.100.0/io/readers.ts";
 
 import colossalData from "./colossal.ts";
 
