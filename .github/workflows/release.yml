@@ -20,6 +20,6 @@ jobs:
     - name: Deploy to nest.land
       run: |
         export PATH="/home/runner/.deno/bin:$PATH"
-        deno install -A --unstable https://x.nest.land/eggs@0.3.6/eggs.ts
+        deno install -A --unstable https://x.nest.land/eggs@0.3.8/eggs.ts
         eggs link ${{ secrets.NEST_API_KEY }}
         eggs publish --yes --no-check --version $(git describe --tags $(git rev-list --tags --max-count=1))
