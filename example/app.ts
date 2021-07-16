@@ -1,4 +1,4 @@
-import { ServerRequest } from "https://deno.land/std@0.100.0/http/server.ts";
+import { ServerRequest } from "https://deno.land/std@0.101.0/http/server.ts";
 
 import { createRouter, NotFoundError, textResponse } from "../reno/mod.ts";
 import { routes } from "./routes.ts";

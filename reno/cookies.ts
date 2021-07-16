@@ -1,4 +1,4 @@
-import { setCookie } from "https://deno.land/std@0.100.0/http/cookie.ts";
+import { setCookie } from "https://deno.land/std@0.101.0/http/cookie.ts";
 import { AugmentedResponse } from "./router.ts";
 
 /* This abstraction was built when Deno only allowed unique header
