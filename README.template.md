@@ -29,7 +29,7 @@ import {
 } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@{{version}}/reno/mod.ts";
+ * import { ... } from "https://x.nest.land/reno@v{{version}}/reno/mod.ts";
  */
 
 function createErrorResponse(status: number, { message }: Error) {
