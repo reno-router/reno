@@ -136,7 +136,7 @@ export function routerCreator(
       const queryParams = rootQueryParams || url.searchParams;
 
       /* TODO: restructure this lookup to support O(1) retrieval.
-       * Perhaps compute a radix tree or a similar structure. */
+       * Perhaps precompute a radix tree or a similar structure. */
       for (const [path, handler] of routes) {
         const [firstMatch, ...restMatches] =
           url.pathname.match(pathParser(path)) || [];
