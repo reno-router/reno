@@ -1,9 +1,9 @@
-import { BufReader } from "https://deno.land/std@0.101.0/io/bufio.ts";
+import { BufReader } from "https://deno.land/std@0.105.0/io/bufio.ts";
 import {
   ServerRequest,
-} from "https://deno.land/std@0.101.0/http/server.ts";
-import { StringReader } from "https://deno.land/std@0.101.0/io/readers.ts";
-import { readRequest } from "https://deno.land/std@0.101.0/http/_io.ts";
+} from "https://deno.land/std@0.105.0/http/server.ts";
+import { StringReader } from "https://deno.land/std@0.105.0/io/readers.ts";
+import { readRequest } from "https://deno.land/std@0.105.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 function createStubAddr() {
@@ -43,12 +43,11 @@ export async function createServerRequest(
 ) {
   const request = `${method} ${path} HTTP/1.1
 Content-Length: ${body.length}
-${
-    [...headers.entries()].reduce(
-      (acc, [name, val]) => `${acc}\n${name}: ${val}`,
-      "",
-    )
-  }
+${[...headers.entries()].reduce(
+    (acc, [name, val]) => `${acc}\n${name}: ${val}`,
+    "",
+  )
+    }
 ${body}`;
 
   const bufReader = BufReader.create(new StringReader(request));
