@@ -21,6 +21,6 @@ export * from "./pipe.ts";
  * supports. You most likely won't need to use this,
  * but it's handy for scenarios in which you need to
  * run Reno against the bleeding edge version of
- * Deno (e.g. denosaurs/bench).
+ * the Deno runtime (e.g. denosaurs/bench).
  */
 export { ServerRequest } from "../deps.ts";
