@@ -207,36 +207,6 @@ export const routes = createRouteMap([
 ]);
 ```
 
-Additionally, Reno provides a `pipe` utility for creating a higher-order route handler that invokes a sequence of functions against both the original request _and_ the computed response:
-
-```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v1.3.16/reno/mod.ts";
-
-const withCaching = pipe(
-  (req, res) => {
-    /* Mutate the response returned by
-     * the inner route handler... */
-    res.headers.append("Cache-Control", "max-age=86400");
-  },
-
-  /* ...or go FP and return a new
-   * response reference entirely. */
-  (req, res) => ({
-    ...res,
-    cookies: new Map<string, string>([["requested_proto", req.proto]])
-  })
-);
-
-const home = withCaching(() =>
-  jsonResponse({
-    foo: "bar",
-    isLol: true
-  })
-);
-
-export const routes = createRouteMap([["/", home]]);
-```
-
 ### Reno Apps are Unobtrusive, Pure Functions
 
 Given that a Reno router is a function that takes a request and returns a response (or more specifically, `Promise<Response>`), you are free to integrate it as you wish, managing the lifecycle of your HTTP server independently. This also makes it trivial to write end-to-end tests with [SuperDeno](https://github.com/asos-craigmorten/superdeno), as evidenced by [Reno's own E2E suite](https://github.com/reno-router/reno/tree/master/e2e_tests):
