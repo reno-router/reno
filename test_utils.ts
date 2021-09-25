@@ -1,9 +1,6 @@
-import { BufReader } from "https://deno.land/std@0.105.0/io/bufio.ts";
-import {
-  ServerRequest,
-} from "https://deno.land/std@0.105.0/http/server.ts";
-import { StringReader } from "https://deno.land/std@0.105.0/io/readers.ts";
-import { readRequest } from "https://deno.land/std@0.105.0/http/_io.ts";
+import { BufReader } from "https://deno.land/std@0.107.0/io/bufio.ts";
+import { StringReader } from "https://deno.land/std@0.107.0/io/readers.ts";
+import { readRequest } from "https://deno.land/std@0.107.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 function createStubAddr() {
@@ -41,20 +38,11 @@ export async function createServerRequest(
     body = "",
   }: CreateServerRequestOptions,
 ) {
-  const request = `${method} ${path} HTTP/1.1
-Content-Length: ${body.length}
-${[...headers.entries()].reduce(
-    (acc, [name, val]) => `${acc}\n${name}: ${val}`,
-    "",
-  )
-    }
-${body}`;
-
-  const bufReader = BufReader.create(new StringReader(request));
-
-  /* readRequest can also return EOF,
-   * thus we need to type assert here */
-  return (await readRequest(createStubConn(), bufReader)) as ServerRequest;
+  return new Request(path, {
+    method,
+    headers,
+    body,
+  });
 }
 
 /* Helper to create router-compatible

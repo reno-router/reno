@@ -1,9 +1,14 @@
-import { Response, testdouble } from "../deps.ts";
+import { testdouble } from "../deps.ts";
 import { forMethod, HttpMethod } from "./formethod.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { AugmentedRequest, RouteHandler } from "./router.ts";
-import { textResponse } from "./helpers.ts";
 import { assertResponsesAreEqual } from "./testing.ts";
+
+function createRes(body: string, status = 200) {
+  return new Response(body, {
+    status,
+  });
+}
 
 function createRouteStub(
   response: Response | Error,
@@ -25,9 +30,9 @@ function createRouteStub(
   return route;
 }
 
-const getResponse = textResponse("Response for HTTP GET");
-const putResponse = textResponse("Response for HTTP PUT");
-const postResponse = textResponse("Response for HTTP POST");
+const getResponse = createRes("Response for HTTP GET");
+const putResponse = createRes("Response for HTTP PUT");
+const postResponse = createRes("Response for HTTP POST");
 const getHandler = createRouteStub(getResponse, "GET");
 const putHandler = createRouteStub(putResponse, "PUT");
 const postHandler = createRouteStub(postResponse, "POST");
@@ -68,10 +73,7 @@ Deno.test({
       method: "PATCH",
     });
 
-    const expectedRes = {
-      ...textResponse(`Method PATCH not allowed for /foo`),
-      status: 405,
-    };
+    const expectedRes = createRes(`Method PATCH not allowed for /foo`, 405);
 
     const res = await methodRouter(req);
 

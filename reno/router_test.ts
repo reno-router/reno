@@ -1,4 +1,4 @@
-import { assertStrictEquals, Response, testdouble } from "../deps.ts";
+import { assertStrictEquals, testdouble } from "../deps.ts";
 import {
   AugmentedRequest,
   createRouteMap,
@@ -59,11 +59,7 @@ Deno.test({
   name:
     "createRouter`s routing function should invoke a handler for a given path from the provided map, and call the cookie writer and path parser",
   async fn() {
-    const response = {
-      headers: new Headers(),
-      body: new Uint8Array(),
-    };
-
+    const response = new Response();
     const routePath = "/foo";
     const routeRegExp = /\/foo$/;
 
@@ -86,11 +82,7 @@ Deno.test({
   name:
     "createRouter`s routing function should expose wildcards as path params",
   async fn() {
-    const response = {
-      headers: new Headers(),
-      body: new Uint8Array(),
-    };
-
+    const response = new Response();
     const routePath = "/foo/*/bar/*/baz";
     const requestPath = "/foo/one/bar/two/baz";
 
@@ -112,11 +104,7 @@ Deno.test({
 Deno.test({
   name: "createRouter`s routing function should support nested routers",
   async fn() {
-    const response = {
-      headers: new Headers(),
-      body: new Uint8Array(),
-    };
-
+    const response = new Response();
     const path = "/foo/bar/baz?lol=rofl&rofl=lmao";
     const routeStub = createRouteStub(response, path, []);
     const pathParser = createPathParserSpy("/foo/*", "/bar/*", "/baz");

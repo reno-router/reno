@@ -1,9 +1,8 @@
-import { assertStrictEquals, Response, testdouble } from "../deps.ts";
+import { assertStrictEquals, testdouble } from "../deps.ts";
 
 import {
   jsonResponse,
   ProcessedRequest,
-  textResponse,
   withFormBody,
   withJsonBody,
 } from "./helpers.ts";
@@ -34,13 +33,12 @@ Deno.test({
       bar: 1,
     };
 
-    const expectedResponse = {
+    const expectedResponse = new Response(JSON.stringify(body), {
       status: 200,
       headers: new Headers({
         "Content-Type": "application/json",
       }),
-      body: new TextEncoder().encode(JSON.stringify(body)),
-    };
+    })
 
     const actualResponse = jsonResponse(body);
 
@@ -56,13 +54,12 @@ Deno.test({
       bar: 1,
     };
 
-    const expectedResponse = {
+    const expectedResponse = new Response(JSON.stringify(body), {
       status: 201,
       headers: new Headers({
         "Content-Type": "application/json",
       }),
-      body: new TextEncoder().encode(JSON.stringify(body)),
-    };
+    })
 
     const actualResponse = jsonResponse(body, {}, 201);
 
@@ -83,82 +80,16 @@ Deno.test({
       "X-Bar": "baz",
     };
 
-    const expectedResponse = {
+    const expectedResponse = new Response(JSON.stringify(body), {
       status: 200,
       headers: new Headers({
         "Content-Type": "application/json",
         "X-Foo": "bar",
         "X-Bar": "baz",
       }),
-      body: new TextEncoder().encode(JSON.stringify(body)),
-    };
+    })
 
     const actualResponse = jsonResponse(body, headers);
-
-    await assertResponsesAreEqual(actualResponse, expectedResponse);
-  },
-});
-
-Deno.test({
-  name:
-    "textResponse builds an response object with the correct Content-Type header and an encoded body",
-  async fn() {
-    const body = "Hello, world!";
-
-    const expectedResponse = {
-      status: 200,
-      body: new TextEncoder().encode(body),
-      headers: new Headers({
-        "Content-Type": "text/plain",
-      }),
-    };
-
-    const actualResponse = textResponse(body);
-
-    await assertResponsesAreEqual(actualResponse, expectedResponse);
-  },
-});
-
-Deno.test({
-  name: "textResponse allows a custom HTTP status to be set",
-  async fn() {
-    const body = "Hello, world!";
-
-    const expectedResponse = {
-      status: 201,
-      body: new TextEncoder().encode(body),
-      headers: new Headers({
-        "Content-Type": "text/plain",
-      }),
-    };
-
-    const actualResponse = textResponse(body, {}, 201);
-
-    await assertResponsesAreEqual(actualResponse, expectedResponse);
-  },
-});
-
-Deno.test({
-  name: "textResponse accepts custom headers",
-  async fn() {
-    const body = "Hello, world!";
-
-    const headers = {
-      "X-Foo": "bar",
-      "X-Bar": "baz",
-    };
-
-    const expectedResponse = {
-      status: 200,
-      body: new TextEncoder().encode(body),
-      headers: new Headers({
-        "Content-Type": "text/plain",
-        "X-Foo": "bar",
-        "X-Bar": "baz",
-      }),
-    };
-
-    const actualResponse = textResponse(body, headers);
 
     await assertResponsesAreEqual(actualResponse, expectedResponse);
   },
@@ -187,10 +118,7 @@ Deno.test({
       body: serialisedBody,
     });
 
-    const expectedResponse = {
-      headers: new Headers(),
-      body: new Uint8Array(0),
-    };
+    const expectedResponse = new Response();
 
     const handlerStub = createHandlerStub<Body>(request, expectedResponse);
     const augmentedHandler = withJsonBody<Body>(handlerStub);
@@ -204,10 +132,7 @@ Deno.test({
 Deno.test({
   name: "withJsonBody reject if there`s no request body",
   async fn() {
-    const expectedResponse = {
-      headers: new Headers(),
-      body: new Uint8Array(0),
-    };
+    const expectedResponse = new Response();
 
     const request = await createAugmentedRequest({
       path: "/",
@@ -247,11 +172,7 @@ Deno.test({
 Deno.test({
   name: "withFormBody should parse form data and expose the values as a Map",
   async fn() {
-    const expectedResponse = {
-      headers: new Headers(),
-      body: new Uint8Array(0),
-    };
-
+    const expectedResponse = new Response();
     const body = "foo=bar&bar=baz&baz=rofl";
 
     const request = await createAugmentedRequest({
@@ -271,10 +192,7 @@ Deno.test({
 Deno.test({
   name: "withFormBody reject if there's no req body",
   async fn() {
-    const expectedResponse = {
-      headers: new Headers(),
-      body: new Uint8Array(0),
-    };
+    const expectedResponse = new Response();
 
     const request = await createAugmentedRequest({
       path: "/",

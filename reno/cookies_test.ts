@@ -1,6 +1,6 @@
 import { createCookieWriter } from "./cookies.ts";
 import { testdouble } from "../deps.ts";
-import { setCookie } from "https://deno.land/std@0.105.0/http/cookie.ts";
+import { setCookie } from "https://deno.land/std@0.107.0/http/cookie.ts";
 
 type CookieSetter = typeof setCookie;
 
@@ -8,7 +8,7 @@ Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
   fn() {
     const res = {
-      body: new Uint8Array(0),
+      headers: new Headers(),
     };
 
     const cookieSetter = testdouble.func();
@@ -28,7 +28,7 @@ Deno.test({
   fn() {
     const res = {
       cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"]]),
-      body: new Uint8Array(0),
+      headers: new Headers(),
     };
 
     const cookieSetter = testdouble.func();
@@ -36,6 +36,7 @@ Deno.test({
 
     writeCookies(res);
 
+    // TODO: refactor to query res.headers instead
     testdouble.verify(
       cookieSetter(res, {
         name: "X-Foo",
@@ -60,7 +61,7 @@ Deno.test({
   fn() {
     const res = {
       cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]]),
-      body: new Uint8Array(0),
+      headers: new Headers()
     };
 
     const cookieSetter = testdouble.func();
@@ -68,6 +69,7 @@ Deno.test({
 
     writeCookies(res);
 
+    // TODO: refactor to query res.headers instead
     testdouble.verify(
       cookieSetter(res, {
         name: "X-Foo",

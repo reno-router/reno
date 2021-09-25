@@ -24,7 +24,7 @@ Note that **this library only supports the legacy Deno HTTP server and related s
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@0.105.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@0.107.0/http/server.ts";
 
 import {
   createRouter,

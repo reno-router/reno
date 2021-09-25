@@ -1,10 +1,7 @@
 // TODO: find a better name than "helpers"
 
 import { AugmentedRequest, RouteHandler } from "./router.ts";
-import { BufReader } from "../deps.ts";
-
-const encoder = new TextEncoder();
-const decoder = new TextDecoder();
+import { readableStreamFromReader } from "../deps.ts";
 
 /**
  * An AugmentedRequest whose body property has
@@ -39,27 +36,14 @@ export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
 export type FormRequest = ProcessedRequest<URLSearchParams>;
 
 function createProcessedRequest<TBody>(req: AugmentedRequest, body: TBody) {
-  return {
-    ...req,
-    body,
-  };
+  /* We use Object.assign() instead of spreading
+   * the original request into a new object, as the
+   * methods of the Request type are not enumerable. */
+  return Object.assign(req, { body });
 }
 
 function parseFormBody(body: string) {
   return new URLSearchParams(body);
-}
-
-async function getReqBodyAsString(req: AugmentedRequest) {
-  if (!req.contentLength) {
-    throw new Error("Content-Length header was not set!");
-  }
-
-  const bufReader = BufReader.create(req.body);
-  const bytes = new Uint8Array(req.contentLength);
-
-  await bufReader.readFull(bytes);
-
-  return decoder.decode(bytes);
 }
 
 /**
@@ -89,7 +73,7 @@ export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
    * empty body can have whitespace, so
    * we decode early and trim the resultant
    * string to determine the body's presence */
-    const bodyText = (await getReqBodyAsString(req)).trim();
+    const bodyText = (await req.text()).trim();
 
     if (!bodyText.length) {
       return handler(
@@ -116,30 +100,13 @@ export function jsonResponse<TResponseBody>(
   headers = {},
   status = 200,
 ) {
-  return {
+  return new Response(JSON.stringify(body), {
     status,
     headers: new Headers({
+      ...headers,
       "Content-Type": "application/json",
-      ...headers,
     }),
-    body: encoder.encode(JSON.stringify(body)),
-  };
-}
-
-/**
- * A response creator function for building text responses, that:
- * defaults the Content-Type header to "text/plain";
- * and encodes the body as a Uint8Array
- */
-export function textResponse(body: string, headers = {}, status = 200) {
-  return {
-    status,
-    headers: new Headers({
-      "Content-Type": "text/plain",
-      ...headers,
-    }),
-    body: encoder.encode(body),
-  };
+  })
 }
 
 /**
@@ -149,10 +116,9 @@ export function textResponse(body: string, headers = {}, status = 200) {
  * in the future may contain some sort of enhancing behaviour
  */
 export function streamResponse(body: Deno.Reader, headers = {}) {
-  return {
+  return new Response(readableStreamFromReader(body), {
     headers: new Headers(headers),
-    body,
-  };
+  });
 }
 
 /**
@@ -172,7 +138,7 @@ export function withFormBody(handler: RouteHandler<FormRequest>) {
   return async (
     req: AugmentedRequest,
   ) => {
-    const bodyText = await getReqBodyAsString(req);
+    const bodyText = await req.text();
     const body = parseFormBody(bodyText);
 
     return handler(createProcessedRequest(req, body));

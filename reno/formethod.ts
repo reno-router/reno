@@ -1,5 +1,4 @@
 import { RouteHandler } from "./router.ts";
-import { textResponse } from "./helpers.ts";
 
 /**
  * A union of all possible HTTP
@@ -43,8 +42,7 @@ export function forMethod(
   return (req, ...restArgs) =>
     handlers.has(req.method as HttpMethod) // TODO: perform type assertion in AugmentedRequest creation?
       ? handlers.get(req.method as HttpMethod)!(req, ...restArgs)
-      : {
-        ...textResponse(`Method ${req.method} not allowed for ${req.url}`),
-        status: 405,
-      };
+      : new Response(`Method ${req.method} not allowed for ${req.url}`, {
+        status: 405
+      });
 }

@@ -1,4 +1,4 @@
-import { setCookie } from "https://deno.land/std@0.105.0/http/cookie.ts";
+import { setCookie } from "https://deno.land/std@0.107.0/http/cookie.ts";
 import { AugmentedResponse } from "./router.ts";
 
 /* This abstraction was built when Deno only allowed unique header
@@ -11,7 +11,7 @@ import { AugmentedResponse } from "./router.ts";
  * TODO: refactor! */
 export function createCookieWriter(cookieSetter: typeof setCookie) {
   return (
-    res: AugmentedResponse,
+    res: Pick<AugmentedResponse, 'cookies' | 'headers'>,
   ) => {
     if (!res.cookies) {
       return;
@@ -22,7 +22,7 @@ export function createCookieWriter(cookieSetter: typeof setCookie) {
         return;
       }
 
-      cookieSetter(res, { name, value });
+      cookieSetter(res.headers, { name, value });
     });
   };
 }

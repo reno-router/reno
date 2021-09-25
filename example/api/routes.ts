@@ -1,4 +1,4 @@
-import { StringReader } from "https://deno.land/std@0.105.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@0.107.0/io/readers.ts";
 
 import colossalData from "./colossal.ts";
 
@@ -8,7 +8,6 @@ import {
   createRouter,
   jsonResponse,
   streamResponse,
-  textResponse,
   withJsonBody,
 } from "../../reno/mod.ts";
 
@@ -23,15 +22,15 @@ type JsonBodyResponse = JsonBody & {
 };
 
 function methodNotAllowed(url: string, method: string) {
-  return textResponse(`Method ${method} not allowed for ${url}`, {}, 405);
+  return new Response(`Method ${method} not allowed for ${url}`, {
+    status: 405,
+  });
 }
 
-const serialised = JSON.stringify(colossalData);
+const serialised = jsonResponse(colossalData);
 
 function colossal() {
-  return textResponse(serialised, {
-    "Content-Type": "application/json",
-  });
+  return serialised;
 }
 
 /* Handler to demonstrate request
@@ -68,13 +67,13 @@ export function createRonSwansonQuoteHandler(
 }
 
 function setCookies() {
-  return {
+  // TODO: cookies response helper
+  return Object.assign(new Response("Cookies set"), {
     cookies: new Map([
       ["deno-playground-foo", "bar"],
       ["deno-playground-bar", "baz"],
     ]),
-    ...textResponse("Cookies set!"),
-  };
+  })
 }
 
 function streamedResponse() {
@@ -88,7 +87,7 @@ function streamedResponse() {
 function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
   const [authorId, postId] = req.routeParams;
 
-  return textResponse(`You requested ${postId} by ${authorId}`);
+  return new Response(`You requested ${postId} by ${authorId}`);
 }
 
 // TODO: add handler for form data

@@ -1,27 +1,16 @@
-import {
-  Response,
-  ServerRequest,
-} from "https://deno.land/std@0.105.0/http/server.ts";
-
 import { writeCookies } from "./cookies.ts";
 import parsePath from "./pathparser.ts";
 
 /**
  * The standard request type used througout Reno, which
  * is passed to user-defined route handler functions.
- * Mostly identical to std/http's ServerRequest, except:
- * - the `respond` method is excluded as it shouldn't be invoked within Reno apps
- * - Reno-specific props for query params and route params are exposed
+ * Mostly identical to std/http's ServerRequest, except the
+ * inclusion of Reno-specific props for query and route params
  */
-export type AugmentedRequest =
-  & Pick<
-    ServerRequest,
-    Exclude<keyof ServerRequest, "respond" | "done">
-  >
-  & {
-    queryParams: URLSearchParams;
-    routeParams: string[];
-  };
+export type AugmentedRequest = Request & {
+  queryParams: URLSearchParams;
+  routeParams: string[];
+};
 
 /**
  * The standard response type returned by route handler functions.
@@ -38,7 +27,7 @@ export type AugmentedResponse = Response & {
  * that is intended to be invoked when a HTTP
  * server receives a request. */
 export type Router = (
-  req: ServerRequest,
+  req: Request,
 ) => AugmentedResponse | Promise<AugmentedResponse>;
 
 /**
@@ -105,18 +94,17 @@ export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
 }
 
 export function createAugmentedRequest(
-  { body, contentLength, finalize, ...rest }: ServerRequest | AugmentedRequest,
+  req: Request | AugmentedRequest,
   queryParams: URLSearchParams,
   routeParams: string[],
 ) {
-  return {
-    ...rest,
-    body,
+  /* We use Object.assign() instead of spreading
+   * the original request into a new object, as the
+   * methods of the Request type are not enumerable. */
+  return Object.assign(req, {
     queryParams,
     routeParams,
-    contentLength,
-    finalize,
-  };
+  });
 }
 
 export function routerCreator(
@@ -125,7 +113,7 @@ export function routerCreator(
 ) {
   return (routes: RouteMap) =>
     async (
-      req: ServerRequest | AugmentedRequest,
+      req: Request | AugmentedRequest,
       rootQueryParams?: URLSearchParams,
       childPathParts?: string[],
     ) => {
@@ -167,7 +155,7 @@ export function routerCreator(
  * import {
  *   ServerRequest,
  *   listenAndServe,
- * } from "https://deno.land/std@0.105.0/http/server.ts";
+ * } from "https://deno.land/std@0.107.0/http/server.ts";
 
  * import { createRouter } from "https://deno.land/x/reno@<VERSION>/reno/mod.ts";
  * import { routes } from "./routes.ts";

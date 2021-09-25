@@ -1,6 +1,5 @@
-import { StringReader, testdouble } from "../deps.ts";
+import { testdouble } from "../deps.ts";
 import type { assertEquals } from "../deps.ts";
-import { streamResponse, textResponse } from "./helpers.ts";
 import { createAssertResponsesAreEqual } from "./testing.ts";
 
 function createAssertEquals() {
@@ -9,51 +8,12 @@ function createAssertEquals() {
 
 Deno.test({
   name:
-    "assertResponsesAreEqual should output Uint8Array bodies as human-readable strings when the assertion fails",
+    "assertResponsesAreEqual should output response bodies as human-readable strings when the assertion fails",
   async fn() {
     const assertEqls = createAssertEquals();
-    const a = textResponse("Response body A");
-    const b = textResponse("Response body B");
 
-    const [aMapped, bMapped] = [a, b].map(({ body, ...rest }) => ({
-      ...rest,
-      body: new TextDecoder().decode(body),
-    }));
-
-    await createAssertResponsesAreEqual(assertEqls)(a, b);
-
-    testdouble.verify(assertEqls(aMapped, bMapped));
-  },
-});
-
-Deno.test({
-  name:
-    "assertResponsesAreEqual should output Deno.Reader bodies as human-readable strings when the assertion fails",
-  async fn() {
-    const assertEqls = createAssertEquals();
-    const bodies = ["A", "B"].map((x) => `Response body ${x}`);
-    const a = streamResponse(new StringReader("Response body A"));
-    const b = streamResponse(new StringReader("Response body B"));
-
-    const [aMapped, bMapped] = [a, b].map((res, i) => ({
-      ...res,
-      body: bodies[i],
-    }));
-
-    const assertResponsesAreEqual = createAssertResponsesAreEqual(assertEqls);
-    await assertResponsesAreEqual(a, b);
-
-    testdouble.verify(assertEqls(aMapped, bMapped));
-  },
-});
-
-Deno.test({
-  name:
-    "assertResponsesAreEqual should output string bodies as human-readable strings when the assertion fails",
-  async fn() {
-    const assertEqls = createAssertEquals();
-    const a = { body: "Response body A" };
-    const b = { body: "Response body B" };
+    const [a, b] = ['Response body A', 'Response body B']
+      .map(body => new Response(body))
 
     const assertResponsesAreEqual = createAssertResponsesAreEqual(assertEqls);
     await assertResponsesAreEqual(a, b);
