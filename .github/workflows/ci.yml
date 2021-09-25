@@ -9,9 +9,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install supported Deno version
-      run: |
-        curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
-        export PATH="/home/runner/.deno/bin:$PATH"
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
 
     - name: Lint
       run: make lint
