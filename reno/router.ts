@@ -67,7 +67,11 @@ export type RouteMap = Map<RegExp | string, RouteHandler>;
  *   e instanceof NotFoundError ? notFound(e) : serverError(e);
  * ```
  */
-export class NotFoundError extends Error {} // TODO: rename RouteMissingError?
+export class NotFoundError extends Error {
+  constructor(pathname: string) {
+    super(`No match for ${pathname}`);
+  }
+} // TODO: rename RouteMissingError?
 
 /**
  * Creates a `RouteMap`, a `Map` that holds route handling functions
@@ -110,6 +114,16 @@ export function createAugmentedRequest(
   });
 }
 
+function isAugmentedRequest(req: Request | AugmentedRequest): req is AugmentedRequest {
+  return 'pathname' in req;
+}
+
+function getPathname(req: Request | AugmentedRequest) {
+  return isAugmentedRequest(req)
+    ? req.pathname
+    : new URL(req.url).pathname;
+}
+
 export function routerCreator(
   pathParser: typeof parsePath,
   cookieWriter: typeof writeCookies,
@@ -145,7 +159,7 @@ export function routerCreator(
         }
       }
 
-      return Promise.reject(new NotFoundError(`No match for ${req.url}`));
+      return Promise.reject(new NotFoundError(getPathname(req)));
     };
 }
 
