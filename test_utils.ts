@@ -20,7 +20,7 @@ export async function createServerRequest(
     path,
     method = "GET",
     headers = new Headers(),
-    body = "",
+    body,
   }: CreateServerRequestOptions,
 ) {
   return new Request(`http://host${path}`, {
