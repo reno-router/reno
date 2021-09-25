@@ -1,4 +1,4 @@
-export { createRouteMap, createRouter, NotFoundError } from "./router.ts";
+export { createRouteMap, createRouter, RouteMissingError } from "./router.ts";
 
 export type {
   AugmentedRequest,

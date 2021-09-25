@@ -60,18 +60,18 @@ export type RouteMap = Map<RegExp | string, RouteHandler>;
  * `instanceof` checks in error handling logic:
  *
  * ```ts
- * const notFound = (e: NotFoundError) => createErrorResponse(404, e);
+ * const notFound = (e: RouteMissingError) => createErrorResponse(404, e);
  * const serverError = (e: Error) => createErrorResponse(500, e);
  *
  * const mapToErrorResponse = (e: Error) =>
- *   e instanceof NotFoundError ? notFound(e) : serverError(e);
+ *   e instanceof RouteMissingError ? notFound(e) : serverError(e);
  * ```
  */
-export class NotFoundError extends Error {
+export class RouteMissingError extends Error {
   constructor(pathname: string) {
     super(`No match for ${pathname}`);
   }
-} // TODO: rename RouteMissingError?
+}
 
 /**
  * Creates a `RouteMap`, a `Map` that holds route handling functions
@@ -159,7 +159,7 @@ export function routerCreator(
         }
       }
 
-      return Promise.reject(new NotFoundError(getPathname(req)));
+      return Promise.reject(new RouteMissingError(getPathname(req)));
     };
 }
 

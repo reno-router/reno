@@ -2,7 +2,7 @@ import { assertStrictEquals, testdouble } from "../deps.ts";
 import {
   AugmentedRequest,
   createRouteMap,
-  NotFoundError,
+  RouteMissingError,
   RouteHandler,
   routerCreator,
 } from "./router.ts";
@@ -135,7 +135,7 @@ Deno.test({
 
 Deno.test({
   name:
-    "createRouter`s routing function should reject with a NotFoundError when no routes match",
+    "createRouter`s routing function should reject with a RouteMissingError when no routes match",
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
     const routeStub = testdouble.func() as RouteHandler<AugmentedRequest>;
@@ -149,9 +149,9 @@ Deno.test({
       .then(() => Promise.reject(new Error("Should have caught an error!")))
       .catch((e) => {
         assertStrictEquals(
-          e instanceof NotFoundError,
+          e instanceof RouteMissingError,
           true,
-          "Expected error to be NotFoundError",
+          "Expected error to be RouteMissingError",
         );
         assertStrictEquals(e.message, "No match for /foo-bar");
       });
