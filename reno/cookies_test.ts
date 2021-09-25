@@ -1,8 +1,5 @@
-import { createCookieWriter } from "./cookies.ts";
-import { testdouble } from "../deps.ts";
-import { setCookie } from "https://deno.land/std@0.107.0/http/cookie.ts";
-
-type CookieSetter = typeof setCookie;
+import { writeCookies } from "./cookies.ts";
+import { testdouble, assertEquals, setCookie } from "../deps.ts";
 
 Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
@@ -11,14 +8,9 @@ Deno.test({
       headers: new Headers(),
     };
 
-    const cookieSetter = testdouble.func();
-    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
-
     writeCookies(res);
 
-    testdouble.verify(cookieSetter(), {
-      times: 0,
-    });
+    assertEquals(res.headers, new Headers())
   },
 });
 
@@ -31,27 +23,14 @@ Deno.test({
       headers: new Headers(),
     };
 
-    const cookieSetter = testdouble.func();
-    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
-
     writeCookies(res);
 
-    // TODO: refactor to query res.headers instead
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Foo",
-        value: "bar",
-      }),
-      { times: 1 },
-    );
+    const expectedHeaders = new Headers([
+      ['Set-Cookie', 'X-Foo=bar'],
+      ['Set-Cookie', 'X-Bar=baz'],
+    ]);
 
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Bar",
-        value: "baz",
-      }),
-      { times: 1 },
-    );
+    assertEquals(res.headers, expectedHeaders);
   },
 });
 
@@ -64,34 +43,13 @@ Deno.test({
       headers: new Headers()
     };
 
-    const cookieSetter = testdouble.func();
-    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
-
     writeCookies(res);
 
-    // TODO: refactor to query res.headers instead
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Foo",
-        value: "bar",
-      }),
-      { times: 0 },
-    );
+    const expectedHeaders = new Headers([
+      ['Set-Cookie', 'X-Foo=baz'],
+      ['Set-Cookie', 'X-Bar=baz'],
+    ]);
 
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Bar",
-        value: "baz",
-      }),
-      { times: 1 },
-    );
-
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Foo",
-        value: "baz",
-      }),
-      { times: 1 },
-    );
+    assertEquals(res.headers, expectedHeaders);
   },
 });
