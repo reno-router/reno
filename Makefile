@@ -15,3 +15,10 @@ lint:
 
 test:
 	${HOME}/.deno/bin/deno test reno example
+
+install-types:
+	mkdir -p types
+	${HOME}/.deno/bin/deno types > types/deno.d.ts
+
+generate-readme:
+	${HOME}/.deno/bin/deno run --allow-read --allow-write tools/generate_readme.ts
