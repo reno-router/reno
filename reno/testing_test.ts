@@ -18,6 +18,17 @@ Deno.test({
     const assertResponsesAreEqual = createAssertResponsesAreEqual(assertEqls);
     await assertResponsesAreEqual(a, b);
 
-    testdouble.verify(assertEqls(a, b));
+    testdouble.verify(
+      assertEqls(
+        {
+          ...a,
+          body: 'Response body A',
+        },
+        {
+          ...b,
+          body: 'Response body B',
+        },
+      )
+    );
   },
 });
