@@ -1,6 +1,4 @@
-import { ServerRequest } from "https://deno.land/std@0.107.0/http/server.ts";
-
-import { createRouter, NotFoundError, textResponse } from "../reno/mod.ts";
+import { AugmentedRequest, createRouter, MissingRouteError } from "../reno/mod.ts";
 import { routes } from "./routes.ts";
 
 function formatDate(date: Date) {
@@ -15,15 +13,18 @@ function formatDate(date: Date) {
   });
 }
 
-function logRequest(req: ServerRequest) {
-  console.log(`[${formatDate(new Date())}] Request for ${req.url}`);
+function logRequest(req: Request) {
+  const { pathname } = new URL(req.url);
+  console.log(`[${formatDate(new Date())}] Request for ${pathname}`);
 }
 
 function createErrorResponse(status: number, { message }: Error) {
-  return textResponse(message, {}, status);
+  return new Response(message, {
+    status,
+  });
 }
 
-function notFound(e: NotFoundError) {
+function notFound(e: MissingRouteError) {
   return createErrorResponse(404, e);
 }
 
@@ -32,18 +33,17 @@ function serverError(e: Error) {
 }
 
 function mapToErrorResponse(e: Error) {
-  return e instanceof NotFoundError ? notFound(e) : serverError(e);
+  return e instanceof MissingRouteError ? notFound(e) : serverError(e);
 }
 
 const router = createRouter(routes);
 
-export default async function app(req: ServerRequest) {
+export default async function app(req: Request) {
   logRequest(req);
 
   try {
-    const res = await router(req);
-    return req.respond(res);
+    return await router(req);
   } catch (e) {
-    return req.respond(mapToErrorResponse(e));
+    return mapToErrorResponse(e);
   }
 }

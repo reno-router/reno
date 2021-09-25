@@ -67,7 +67,7 @@ export type RouteMap = Map<RegExp | string, RouteHandler>;
  *   e instanceof RouteMissingError ? notFound(e) : serverError(e);
  * ```
  */
-export class RouteMissingError extends Error {
+export class MissingRouteError extends Error {
   constructor(pathname: string) {
     super(`No match for ${pathname}`);
   }
@@ -159,7 +159,7 @@ export function routerCreator(
         }
       }
 
-      return Promise.reject(new RouteMissingError(getPathname(req)));
+      return Promise.reject(new MissingRouteError(getPathname(req)));
     };
 }
 

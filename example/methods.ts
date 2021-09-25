@@ -2,11 +2,10 @@ import {
   createRouteMap,
   createRouter,
   forMethod,
-  textResponse,
 } from "../reno/mod.ts";
 
-const get = () => textResponse("You performed a HTTP GET!");
-const post = () => textResponse("You performed a HTTP POST!");
+const get = () => new Response("You performed a HTTP GET!");
+const post = () => new Response("You performed a HTTP POST!");
 
 const routes = createRouteMap([
   [

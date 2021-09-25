@@ -2,7 +2,7 @@ import { assertStrictEquals, testdouble } from "../deps.ts";
 import {
   AugmentedRequest,
   createRouteMap,
-  RouteMissingError,
+  MissingRouteError,
   RouteHandler,
   routerCreator,
 } from "./router.ts";
@@ -149,7 +149,7 @@ Deno.test({
       .then(() => Promise.reject(new Error("Should have caught an error!")))
       .catch((e) => {
         assertStrictEquals(
-          e instanceof RouteMissingError,
+          e instanceof MissingRouteError,
           true,
           "Expected error to be RouteMissingError",
         );
