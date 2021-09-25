@@ -38,7 +38,7 @@ Deno.test({
       headers: new Headers({
         "Content-Type": "application/json",
       }),
-    })
+    });
 
     const actualResponse = jsonResponse(body);
 
@@ -59,7 +59,7 @@ Deno.test({
       headers: new Headers({
         "Content-Type": "application/json",
       }),
-    })
+    });
 
     const actualResponse = jsonResponse(body, {}, 201);
 
@@ -87,7 +87,7 @@ Deno.test({
         "X-Foo": "bar",
         "X-Bar": "baz",
       }),
-    })
+    });
 
     const actualResponse = jsonResponse(body, headers);
 

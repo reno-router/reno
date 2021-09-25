@@ -12,8 +12,8 @@ Deno.test({
   async fn() {
     const assertEqls = createAssertEquals();
 
-    const [a, b] = ['Response body A', 'Response body B']
-      .map(body => new Response(body))
+    const [a, b] = ["Response body A", "Response body B"]
+      .map((body) => new Response(body));
 
     const assertResponsesAreEqual = createAssertResponsesAreEqual(assertEqls);
     await assertResponsesAreEqual(a, b);
@@ -22,13 +22,13 @@ Deno.test({
       assertEqls(
         {
           ...a,
-          body: 'Response body A',
+          body: "Response body A",
         },
         {
           ...b,
-          body: 'Response body B',
+          body: "Response body B",
         },
-      )
+      ),
     );
   },
 });

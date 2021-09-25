@@ -97,8 +97,10 @@ export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
   return new Map(routes);
 }
 
-function isAugmentedRequest(req: Request | AugmentedRequest): req is AugmentedRequest {
-  return 'pathname' in req;
+function isAugmentedRequest(
+  req: Request | AugmentedRequest,
+): req is AugmentedRequest {
+  return "pathname" in req;
 }
 
 export function createAugmentedRequest(
@@ -117,9 +119,7 @@ export function createAugmentedRequest(
 }
 
 function getPathname(req: Request | AugmentedRequest) {
-  return isAugmentedRequest(req)
-    ? req.pathname
-    : new URL(req.url).pathname;
+  return isAugmentedRequest(req) ? req.pathname : new URL(req.url).pathname;
 }
 
 export function routerCreator(

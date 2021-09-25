@@ -1,5 +1,5 @@
 import { writeCookies } from "./cookies.ts";
-import { testdouble, assertEquals, setCookie } from "../deps.ts";
+import { assertEquals } from "../deps.ts";
 
 Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
@@ -10,7 +10,7 @@ Deno.test({
 
     writeCookies(res);
 
-    assertEquals(res.headers, new Headers())
+    assertEquals(res.headers, new Headers());
   },
 });
 
@@ -26,8 +26,8 @@ Deno.test({
     writeCookies(res);
 
     const expectedHeaders = new Headers([
-      ['Set-Cookie', 'X-Foo=bar'],
-      ['Set-Cookie', 'X-Bar=baz'],
+      ["Set-Cookie", "X-Foo=bar"],
+      ["Set-Cookie", "X-Bar=baz"],
     ]);
 
     assertEquals(res.headers, expectedHeaders);
@@ -39,15 +39,18 @@ Deno.test({
     "writeCookies should not overwrite a cookie if it's already present in the response header",
   fn() {
     const res = {
-      cookies: [["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]] as [string, string][],
-      headers: new Headers()
+      cookies: [["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]] as [
+        string,
+        string,
+      ][],
+      headers: new Headers(),
     };
 
     writeCookies(res);
 
     const expectedHeaders = new Headers([
-      ['Set-Cookie', 'X-Foo=bar'],
-      ['Set-Cookie', 'X-Bar=baz'],
+      ["Set-Cookie", "X-Foo=bar"],
+      ["Set-Cookie", "X-Bar=baz"],
     ]);
 
     assertEquals(res.headers, expectedHeaders);

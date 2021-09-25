@@ -1,4 +1,4 @@
-import { AugmentedRequest, createRouter, MissingRouteError } from "../reno/mod.ts";
+import { createRouter, MissingRouteError } from "../reno/mod.ts";
 import { routes } from "./routes.ts";
 
 function formatDate(date: Date) {

@@ -1,8 +1,4 @@
-import {
-  createRouteMap,
-  createRouter,
-  forMethod,
-} from "../reno/mod.ts";
+import { createRouteMap, createRouter, forMethod } from "../reno/mod.ts";
 
 const get = () => new Response("You performed a HTTP GET!");
 const post = () => new Response("You performed a HTTP POST!");

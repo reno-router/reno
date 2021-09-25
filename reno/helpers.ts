@@ -11,10 +11,9 @@ import { readableStreamFromReader } from "../deps.ts";
  * handlers, but can potentially be useful when
  * defining your own higher-order functions.
  */
-export type ProcessedRequest<TBody> =
-  AugmentedRequest & {
-    parsedBody: TBody;
-  };
+export type ProcessedRequest<TBody> = AugmentedRequest & {
+  parsedBody: TBody;
+};
 
 /**
  * A ProcessedRequest that allows the body
@@ -31,7 +30,10 @@ export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
  */
 export type FormRequest = ProcessedRequest<URLSearchParams>;
 
-function createProcessedRequest<TBody>(req: AugmentedRequest, parsedBody: TBody) {
+function createProcessedRequest<TBody>(
+  req: AugmentedRequest,
+  parsedBody: TBody,
+) {
   /* We use Object.assign() instead of spreading
    * the original request into a new object, as the
    * methods of the Request type are not enumerable. */
@@ -104,7 +106,7 @@ export function jsonResponse<TResponseBody>(
       ...headers,
       "Content-Type": "application/json",
     }),
-  })
+  });
 }
 
 /**
@@ -156,7 +158,10 @@ export function withFormBody(handler: RouteHandler<FormRequest>) {
  * );
  * ```
  */
-export function withCookies(res: Response, cookies: [string, string][]): AugmentedResponse {
+export function withCookies(
+  res: Response,
+  cookies: [string, string][],
+): AugmentedResponse {
   return Object.assign(res, {
     cookies,
   });

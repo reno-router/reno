@@ -35,7 +35,7 @@ const serialised = JSON.stringify(colossalData);
 function colossal() {
   return new Response(serialised, {
     headers: new Headers({
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     }),
   });
 }
@@ -74,12 +74,10 @@ export function createRonSwansonQuoteHandler(
 }
 
 function setCookies() {
-  return withCookies(new Response("Cookies set!"),
-    [
-      ["deno-playground-foo", "bar"],
-      ["deno-playground-bar", "baz"],
-    ],
-  );
+  return withCookies(new Response("Cookies set!"), [
+    ["deno-playground-foo", "bar"],
+    ["deno-playground-bar", "baz"],
+  ]);
 }
 
 function streamedResponse() {
@@ -105,7 +103,7 @@ const routes = createRouteMap([
   ["/wildcard-route-params/authors/*/posts/*", wildcardRouteParams],
   [
     /^\/ron-swanson-quote\/?([0-9]?)$/,
-    createRonSwansonQuoteHandler(window.fetch),
+    createRonSwansonQuoteHandler(fetch),
   ],
 ]);
 
