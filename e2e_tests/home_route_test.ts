@@ -35,6 +35,6 @@ Deno.test("/profile should return a HTTP 401 if the API key is not set", async (
 Deno.test("/does-not-exist should return a HTTP 404", async () => {
   await superdeno(app).get("/does-not-exist")
     .expect(404)
-    .expect("Content-Type", "text/plain")
+    .expect("Content-Type", "text/plain;charset=UTF-8")
     .expect("No match for /does-not-exist");
 });

@@ -23,14 +23,14 @@ Deno.test("/api/json-body should return HTTP 405 when a non-POST method is used"
       age: 30,
     })
     .expect(405)
-    .expect("Content-Type", "text/plain")
+    .expect("Content-Type", "text/plain;charset=UTF-8")
     .expect("Method PUT not allowed for /api/json-body");
 });
 
 Deno.test("/set-cookies should set the expected cookie headers", async () => {
   await superdeno(app).get("/api/set-cookies")
     .expect(200)
-    .expect("Content-Type", "text/plain")
+    .expect("Content-Type", "text/plain;charset=UTF-8")
     .expect("Set-Cookie", "deno-playground-foo=bar, deno-playground-bar=baz")
     .expect("Cookies set!");
 });
@@ -70,6 +70,6 @@ Deno.test("/wildcard-route-params should successfully parse the route params", a
     "/api/wildcard-route-params/authors/bob/posts/post-1",
   )
     .expect(200)
-    .expect("Content-Type", "text/plain")
+    .expect("Content-Type", "text/plain;charset=UTF-8")
     .expect("You requested post-1 by bob");
 });

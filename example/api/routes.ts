@@ -22,7 +22,9 @@ type JsonBodyResponse = JsonBody & {
 };
 
 function methodNotAllowed(url: string, method: string) {
-  return new Response(`Method ${method} not allowed for ${url}`, {
+  const { pathname } = new URL(url);
+
+  return new Response(`Method ${method} not allowed for ${pathname}`, {
     status: 405,
   });
 }

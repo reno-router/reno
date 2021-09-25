@@ -98,9 +98,12 @@ export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
   return new Map(routes);
 }
 
+function isAugmentedRequest(req: Request | AugmentedRequest): req is AugmentedRequest {
+  return 'pathname' in req;
+}
+
 export function createAugmentedRequest(
   req: Request | AugmentedRequest,
-  pathname: string,
   queryParams: URLSearchParams,
   routeParams: string[],
 ) {
@@ -108,14 +111,10 @@ export function createAugmentedRequest(
    * the original request into a new object, as the
    * methods of the Request type are not enumerable. */
   return Object.assign(req, {
-    pathname,
+    pathname: getPathname(req),
     queryParams,
     routeParams,
   });
-}
-
-function isAugmentedRequest(req: Request | AugmentedRequest): req is AugmentedRequest {
-  return 'pathname' in req;
 }
 
 function getPathname(req: Request | AugmentedRequest) {
@@ -148,7 +147,7 @@ export function routerCreator(
 
         if (firstMatch) {
           const res = await handler(
-            createAugmentedRequest(req, url.pathname, queryParams, restMatches),
+            createAugmentedRequest(req, queryParams, restMatches),
             queryParams,
             restMatches,
           );
