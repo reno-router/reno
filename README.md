@@ -10,9 +10,10 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 
 ## Deno 1.13+ support
 
-Note that **this library only supports the legacy Deno HTTP server and related std/http APIs**. I am actively working on version 2 of Reno, which will support the native HTTP server APIs introduced in Deno 1.13, and I hope to have this ready soon.
+Currently, **the latest release of this library only supports the legacy Deno HTTP server and related std/http APIs**. However, there is a [v2.0.0](https://github.com/reno-router/reno/tree/v2.0.0) branch that supports the new native HTTP APIs, introduced in Deno 1.13, and satisfies the existing test suites. This new major version is production-ready, but the documentation needs updating before it can be officially released; it will hopefully be made available the week commencing Monday 27th September 2021.
 
 ---
+
 
 * [Overview](#overview)
 * [Key Features](#key-features)
