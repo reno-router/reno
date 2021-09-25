@@ -1,13 +1,5 @@
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
-function createStubAddr() {
-  return {
-    transport: "tcp",
-    hostname: "",
-    port: 0,
-  } as const;
-}
-
 interface CreateServerRequestOptions {
   path: string;
   method?: string;
