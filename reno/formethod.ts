@@ -42,7 +42,7 @@ export function forMethod(
   return (req, ...restArgs) =>
     handlers.has(req.method as HttpMethod) // TODO: perform type assertion in AugmentedRequest creation?
       ? handlers.get(req.method as HttpMethod)!(req, ...restArgs)
-      : new Response(`Method ${req.method} not allowed for ${req.url}`, {
+      : new Response(`Method ${req.method} not allowed for ${req.pathname}`, {
         status: 405
       });
 }

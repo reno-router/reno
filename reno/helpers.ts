@@ -12,12 +12,8 @@ import { readableStreamFromReader } from "../deps.ts";
  * defining your own higher-order functions.
  */
 export type ProcessedRequest<TBody> =
-  & Pick<
-    AugmentedRequest,
-    Exclude<keyof AugmentedRequest, "body">
-  >
-  & {
-    body: TBody;
+  AugmentedRequest & {
+    parsedBody: TBody;
   };
 
 /**
@@ -35,11 +31,13 @@ export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
  */
 export type FormRequest = ProcessedRequest<URLSearchParams>;
 
-function createProcessedRequest<TBody>(req: AugmentedRequest, body: TBody) {
+function createProcessedRequest<TBody>(req: AugmentedRequest, parsedBody: TBody) {
   /* We use Object.assign() instead of spreading
    * the original request into a new object, as the
    * methods of the Request type are not enumerable. */
-  return Object.assign(req, { body });
+  return Object.assign(req, {
+    parsedBody,
+  });
 }
 
 function parseFormBody(body: string) {

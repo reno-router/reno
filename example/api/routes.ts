@@ -27,10 +27,14 @@ function methodNotAllowed(url: string, method: string) {
   });
 }
 
-const serialised = jsonResponse(colossalData);
+const serialised = JSON.stringify(colossalData);
 
 function colossal() {
-  return serialised;
+  return new Response(serialised, {
+    headers: new Headers({
+      'Content-Type': 'application/json',
+    }),
+  });
 }
 
 /* Handler to demonstrate request
@@ -39,11 +43,11 @@ function colossal() {
  * this would validate, but I feel
  * this should be handled by a
  * third-party dependency */
-const jsonBody = withJsonBody<JsonBody>(({ url, method, body }) =>
+const jsonBody = withJsonBody<JsonBody>(({ url, method, parsedBody }) =>
   method === "POST"
     ? jsonResponse<JsonBodyResponse>({
       message: "Here's the body you posted to this endpoint",
-      ...body,
+      ...parsedBody,
     })
     : methodNotAllowed(url, method)
 );

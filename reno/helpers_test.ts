@@ -115,6 +115,7 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
+      method: "POST",
       body: serialisedBody,
     });
 
@@ -130,12 +131,13 @@ Deno.test({
 });
 
 Deno.test({
-  name: "withJsonBody reject if there`s no request body",
+  name: "withJsonBody should reject if there`s no request body",
   async fn() {
     const expectedResponse = new Response();
 
     const request = await createAugmentedRequest({
       path: "/",
+      method: "POST",
     });
 
     const handlerStub = createHandlerStub(request, expectedResponse);
@@ -156,6 +158,7 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
+      method: "POST",
       body,
     });
 
@@ -177,6 +180,7 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
+      method: "POST",
       body,
     });
 
@@ -196,6 +200,7 @@ Deno.test({
 
     const request = await createAugmentedRequest({
       path: "/",
+      method: "POST",
     });
 
     const handlerStub = createHandlerStub(request, expectedResponse);

@@ -5,9 +5,10 @@ import parsePath from "./pathparser.ts";
  * The standard request type used througout Reno, which
  * is passed to user-defined route handler functions.
  * Mostly identical to std/http's ServerRequest, except the
- * inclusion of Reno-specific props for query and route params
+ * inclusion of Reno-specific props for ease of use.
  */
 export type AugmentedRequest = Request & {
+  pathname: string;
   queryParams: URLSearchParams;
   routeParams: string[];
 };
@@ -95,6 +96,7 @@ export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
 
 export function createAugmentedRequest(
   req: Request | AugmentedRequest,
+  pathname: string,
   queryParams: URLSearchParams,
   routeParams: string[],
 ) {
@@ -102,6 +104,7 @@ export function createAugmentedRequest(
    * the original request into a new object, as the
    * methods of the Request type are not enumerable. */
   return Object.assign(req, {
+    pathname,
     queryParams,
     routeParams,
   });
@@ -131,7 +134,7 @@ export function routerCreator(
 
         if (firstMatch) {
           const res = await handler(
-            createAugmentedRequest(req, queryParams, restMatches),
+            createAugmentedRequest(req, url.pathname, queryParams, restMatches),
             queryParams,
             restMatches,
           );

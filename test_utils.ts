@@ -1,6 +1,3 @@
-import { BufReader } from "https://deno.land/std@0.107.0/io/bufio.ts";
-import { StringReader } from "https://deno.land/std@0.107.0/io/readers.ts";
-import { readRequest } from "https://deno.land/std@0.107.0/http/_io.ts";
 import { createAugmentedRequest as createAugmentedRouterRequest } from "./reno/router.ts";
 
 function createStubAddr() {
@@ -9,18 +6,6 @@ function createStubAddr() {
     hostname: "",
     port: 0,
   } as const;
-}
-
-function createStubConn() {
-  return {
-    localAddr: createStubAddr(),
-    remoteAddr: createStubAddr(),
-    rid: 1,
-    closeWrite: () => Promise.resolve(undefined),
-    close: () => undefined,
-    read: (p: Uint8Array) => Promise.resolve(p.length),
-    write: (p: Uint8Array) => Promise.resolve(p.length),
-  };
 }
 
 interface CreateServerRequestOptions {
@@ -38,7 +23,7 @@ export async function createServerRequest(
     body = "",
   }: CreateServerRequestOptions,
 ) {
-  return new Request(path, {
+  return new Request(`http://host${path}`, {
     method,
     headers,
     body,
@@ -66,6 +51,7 @@ export async function createAugmentedRequest(
 
   return createAugmentedRouterRequest(
     req,
+    path,
     queryParams,
     routeParams,
   );
