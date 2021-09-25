@@ -1,6 +1,6 @@
 // TODO: find a better name than "helpers"
 
-import { AugmentedRequest, RouteHandler } from "./router.ts";
+import { AugmentedRequest, AugmentedResponse, RouteHandler } from "./router.ts";
 import { readableStreamFromReader } from "../deps.ts";
 
 /**
@@ -141,4 +141,23 @@ export function withFormBody(handler: RouteHandler<FormRequest>) {
 
     return handler(createProcessedRequest(req, body));
   };
+}
+
+/**
+ * Assigns the provided cookies to the underlying Response instance, which
+ * are then sent to the requestor via multiple `Set-Cookie` headers:
+ *
+ * ```ts
+ * const handler: RouteHandler = async req => withCookies(
+ *   new Response("Hi!"),
+ *   [
+ *     ["session_id", await getSessionId(req)],
+ *   ],
+ * );
+ * ```
+ */
+export function withCookies(res: Response, cookies: [string, string][]): AugmentedResponse {
+  return Object.assign(res, {
+    cookies,
+  });
 }

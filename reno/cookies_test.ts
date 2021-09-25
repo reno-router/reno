@@ -19,7 +19,7 @@ Deno.test({
     "writeCookies should use Deno`s setCookie binding to set each cookie against the response when the map is present",
   fn() {
     const res = {
-      cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"]]),
+      cookies: [["X-Foo", "bar"], ["X-Bar", "baz"]] as [string, string][],
       headers: new Headers(),
     };
 
@@ -36,17 +36,17 @@ Deno.test({
 
 Deno.test({
   name:
-    "writeCookies should overwrite a cookie if it's already present in the response header",
+    "writeCookies should not overwrite a cookie if it's already present in the response header",
   fn() {
     const res = {
-      cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]]),
+      cookies: [["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]] as [string, string][],
       headers: new Headers()
     };
 
     writeCookies(res);
 
     const expectedHeaders = new Headers([
-      ['Set-Cookie', 'X-Foo=baz'],
+      ['Set-Cookie', 'X-Foo=bar'],
       ['Set-Cookie', 'X-Bar=baz'],
     ]);
 

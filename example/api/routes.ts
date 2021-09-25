@@ -8,6 +8,7 @@ import {
   createRouter,
   jsonResponse,
   streamResponse,
+  withCookies,
   withJsonBody,
 } from "../../reno/mod.ts";
 
@@ -73,13 +74,12 @@ export function createRonSwansonQuoteHandler(
 }
 
 function setCookies() {
-  // TODO: cookies response helper
-  return Object.assign(new Response("Cookies set"), {
-    cookies: new Map([
+  return withCookies(new Response("Cookies set!"),
+    [
       ["deno-playground-foo", "bar"],
       ["deno-playground-bar", "baz"],
-    ]),
-  })
+    ],
+  );
 }
 
 function streamedResponse() {

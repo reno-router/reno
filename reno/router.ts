@@ -19,8 +19,7 @@ export type AugmentedRequest = Request & {
  * cookies as a `Map`
  */
 export type AugmentedResponse = Response & {
-  // TODO: make 2D tuple to abstract Map instantiation
-  cookies?: Map<string, string>;
+  cookies?: [string, string][];
 };
 
 /**

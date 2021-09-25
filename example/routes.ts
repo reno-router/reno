@@ -5,6 +5,7 @@ import {
   createRouteMap,
   jsonResponse,
   RouteHandler,
+  withCookies,
 } from "../reno/mod.ts";
 
 import { apiRouter } from "./api/routes.ts";
@@ -41,7 +42,17 @@ const withCaching = (handler: RouteHandler) =>
     return res;
   };
 
-const home = withCaching(() =>
+const withProtoCookie = (handler: RouteHandler) =>
+  async (req: AugmentedRequest) => {
+    return withCookies(await handler(req), [
+      ["requested_method", req.method],
+    ]);
+  };
+
+const home = compose(
+  withCaching,
+  withProtoCookie,
+)(() =>
   jsonResponse({
     foo: "bar",
     isLol: true,

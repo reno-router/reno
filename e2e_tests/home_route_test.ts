@@ -5,7 +5,7 @@ Deno.test("/ should return the expected response", async () => {
   await superdeno(app).get("/")
     .expect(200)
     .expect("Cache-Control", "max-age=86400")
-    .expect("Set-Cookie", "requested_proto=HTTP/1.1")
+    .expect("Set-Cookie", "requested_method=GET")
     .expect({
       foo: "bar",
       isLol: true,

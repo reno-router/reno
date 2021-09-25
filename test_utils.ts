@@ -51,7 +51,6 @@ export async function createAugmentedRequest(
 
   return createAugmentedRouterRequest(
     req,
-    path,
     queryParams,
     routeParams,
   );
