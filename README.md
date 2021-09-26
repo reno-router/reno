@@ -27,7 +27,9 @@ import {
   jsonResponse,
   streamResponse,
   MissingRouteError,
-} from "./reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.0/reno/mod.ts";
+
+
 
 /* Alternatively, you can import Reno from nest.land:
  * import { ... } from "https://x.nest.land/reno@v2.0.0/reno/mod.ts";
