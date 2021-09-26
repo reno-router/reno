@@ -29,8 +29,6 @@ import {
   MissingRouteError,
 } from "https://deno.land/x/reno@v2.0.0/reno/mod.ts";
 
-
-
 /* Alternatively, you can import Reno from nest.land:
  * import { ... } from "https://x.nest.land/reno@v2.0.0/reno/mod.ts";
  */
@@ -73,7 +71,7 @@ console.log("Listening for requests...");
 
 await listenAndServe(
   ":8001",
-  async (req: Request) => {
+  async req => {
     try {
       return await router(req);
     } catch (e) {

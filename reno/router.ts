@@ -16,7 +16,7 @@ export type AugmentedRequest = Request & {
 /**
  * The standard response type returned by route handler functions.
  * Essentially the same as std/http's Response, but also exposes
- * cookies as a `Map`
+ * cookies as an array of [string, string] tuples.
  */
 export type AugmentedResponse = Response & {
   cookies?: [string, string][];
@@ -59,11 +59,11 @@ export type RouteMap = Map<RegExp | string, RouteHandler>;
  * `instanceof` checks in error handling logic:
  *
  * ```ts
- * const notFound = (e: RouteMissingError) => createErrorResponse(404, e);
+ * const notFound = (e: MissingRouteError) => createErrorResponse(404, e);
  * const serverError = (e: Error) => createErrorResponse(500, e);
  *
  * const mapToErrorResponse = (e: Error) =>
- *   e instanceof RouteMissingError ? notFound(e) : serverError(e);
+ *   e instanceof MissingRouteError ? notFound(e) : serverError(e);
  * ```
  */
 export class MissingRouteError extends Error {
@@ -76,9 +76,10 @@ export class MissingRouteError extends Error {
  * Creates a `RouteMap`, a `Map` that holds route handling functions
  * and keys them by the path by which the router will make them
  * accessible:
+ *
  * ```ts
  * export const routes = createRouteMap([
- *   ["/home", () => textResponse("Hello world!")],
+ *   ["/home", () => new Response("Hello world!")],
  *
  *   // Supports RegExp routes for further granularity
  *   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
@@ -86,7 +87,7 @@ export class MissingRouteError extends Error {
  *
  *     const res = await fetch(
  *       `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${quotesCount}`,
- *    );
+ *     );
  *
  *     return jsonResponse(await res.json());
  *   }],
@@ -167,11 +168,7 @@ export function routerCreator(
  * Deno's HTTP server receives a request:
  *
  * ```ts
- * import {
- *   ServerRequest,
- *   listenAndServe,
- * } from "https://deno.land/std@0.107.0/http/server.ts";
-
+ * import { listenAndServe } from "https://deno.land/std@0.107.0/http/server.ts";
  * import { createRouter } from "https://deno.land/x/reno@<VERSION>/reno/mod.ts";
  * import { routes } from "./routes.ts";
  *
@@ -183,14 +180,11 @@ export function routerCreator(
  *
  * await listenAndServe(
  *   BINDING,
- *   async (req: ServerRequest) => {
- *     logRequest(req);
- *
+ *   async req => {
  *     try {
- *       const res = await router(req);
- *       return req.respond(res);
+ *       return await router(req);
  *     } catch (e) {
- *       return req.respond(mapToErrorResponse(e));
+ *       return mapToErrorResponse(e);
  *     }
  *   },
  * );
