@@ -2,7 +2,7 @@
 
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
-[![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions) [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v1.3.16/reno/mod.ts) [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
+[![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions) [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v2.0.0/reno/mod.ts) [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
@@ -30,7 +30,7 @@ import {
 } from "./reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@v1.3.16/reno/mod.ts";
+ * import { ... } from "https://x.nest.land/reno@v2.0.0/reno/mod.ts";
  */
 
 function createErrorResponse(status: number, { message }: Error) {
@@ -88,7 +88,7 @@ await listenAndServe(
 This, along with request handlers being [pure functions](https://en.wikipedia.org/wiki/Pure_function), makes unit testing Reno services a breeze:
 
 ```ts
-import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v1.3.16/reno/mod.ts";
+import { jsonResponse, assertResponsesAreEqual } from "https://deno.land/x/reno@v2.0.0/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -96,7 +96,7 @@ const createFetchStub = (response: string[]) =>
     json: sinon.stub().resolves(response),
   });
 
-test({
+Deno.test({
   name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
   async fn() {
     const quotes = ["Some Ron Swanson Quote"];
@@ -104,7 +104,7 @@ test({
     const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
 
     const req = {
-      routeParams: []
+      routeParams: [],
     };
 
     const response = await ronSwansonQuoteHandler(req);
@@ -115,7 +115,7 @@ test({
         "X-Foo": "bar",
       }),
     );
-  }
+  },
 });
 ```
 
@@ -124,10 +124,10 @@ test({
 Despite the power of regular expressions for matching and capturing paths when their route parameters conform to an expected format or type, they can often prove verbose and unwieldy for simpler applications. Reno thus provides an alternative wildcard syntax (`"*"`) for string paths to achieve route param extraction:
 
 ```ts
-async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
+function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
   const [authorId, postId] = req.routeParams;
 
-  return textResponse(`You requested ${postId} by ${authorId}`);
+  return new Response(`You requested ${postId} by ${authorId}`);
 }
 
 const routes = createRouteMap([
@@ -150,7 +150,7 @@ const routes = createRouteMap([
         [
           "/bar/*",
           createRouter(createRouteMap([["/baz", () =>
-            textResponse("Hello from a nested route!")]])),
+            new Response("Hello from a nested route!")]])),
         ],
       ]),
     ),
@@ -170,9 +170,8 @@ import { compose } from "https://deno.land/x/compose@1.3.2/index.js";
 import {
   AugmentedRequest,
   RouteHandler,
-  textResponse,
   createRouteMap
-} from "https://deno.land/x/reno@v1.3.16/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.0/reno/mod.ts";
 
 import isValidAPIKey from "./api_keys.ts";
 
@@ -193,14 +192,16 @@ function withAuth(next: RouteHandler) {
 
     return isValid
       ? next(req)
-      : textResponse(`API key not authorised to access ${req.url}`, {}, 401);
+      : new Response(`API key not authorised to access ${req.pathname}`, {
+        status: 401,
+      });
   };
 }
 
 const profile = compose(
   withAuth,
   withLogging,
-)(() => textResponse("Your profile!"));
+)(() => new Response("Your profile!"));
 
 export const routes = createRouteMap([
   ["/profile", profile],
@@ -212,14 +213,14 @@ export const routes = createRouteMap([
 Given that a Reno router is a function that takes a request and returns a response (or more specifically, `Promise<Response>`), you are free to integrate it as you wish, managing the lifecycle of your HTTP server independently. This also makes it trivial to write end-to-end tests with [SuperDeno](https://github.com/asos-craigmorten/superdeno), as evidenced by [Reno's own E2E suite](https://github.com/reno-router/reno/tree/master/e2e_tests):
 
 ```ts
-import { superdeno } from "https://deno.land/x/superdeno@4.3.0/mod.ts";
+import { superdeno } from "https://deno.land/x/superdeno@4.5.0/mod.ts";
 import app from "../example/app.ts";
 
 Deno.test("/ should return the expected response", async () => {
   await superdeno(app).get("/")
     .expect(200)
     .expect("Cache-Control", "max-age=86400")
-    .expect("Set-Cookie", "requested_proto=HTTP/1.1")
+    .expect("Set-Cookie", "requested_method=GET")
     .expect({
       foo: "bar",
       isLol: true,
@@ -229,11 +230,11 @@ Deno.test("/ should return the expected response", async () => {
 
 ## Example Apps
 
-As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v1.3.16/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
+As well as the [example app found in this repo](https://github.com/reno-router/reno/tree/v2.0.0/example), which is targetted by the end-to-end test suite, there is a [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice) built with Deno, Reno, PostgreSQL, and Docker.
 
 ## API Documentation
 
-Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v1.3.16/reno/mod.ts) for comprehensive documentation on Reno's API.
+Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v2.0.0/reno/mod.ts) for comprehensive documentation on Reno's API.
 
 ## Local Development
 
@@ -247,16 +248,17 @@ $ curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version
 deno upgrade --version $(cat .deno_version)
 ```
 
-You should also run `./tools/install_types.sh` to install the TypeScript definitions for Deno and any other third-party dependencies.
+You should also run `make install-types` to install the TypeScript definitions for Deno and any other third-party dependencies.
 
 Then you can run:
 
-* `./scripts/example.sh` - starts the example server
-* `./scripts/format.sh` - formats the source code
-* `./scripts/format_check.sh` - checks the formatting of the source code
-* `./scripts/lint.sh` - lints the source code
-* `./scripts/test.sh` - runs the unit tests
-* `./scripts/e2e.sh` - runs the end-to-end tests
+* `make example-app`: starts the example server
+* `make test`: runs the unit tests
+* `make e2e`: runs the end-to-end tests
+* `make lint`: lints the source code
+* `make format`: formats the source code
+* `make format-check`: checks the formatting of the source code
+* `make generate-readme`: generates README.md from the template, into which the version number in the package metadata is injected
 
 ## Functionality Checklist
 
