@@ -265,7 +265,7 @@ Then you can run:
 ## Functionality Checklist
 
 * [x] Path routing
-* [x] Async-compatible route handlers
+* [x] Async route handlers
 * [x] Error handling
 * [x] Route params
 * [x] Query params
