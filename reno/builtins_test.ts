@@ -5,7 +5,7 @@ import {
   ProcessedRequest,
   withFormBody,
   withJsonBody,
-} from "./helpers.ts";
+} from "./builtins.ts";
 
 import { assertResponsesAreEqual } from "./testing.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
