@@ -43,11 +43,10 @@ const withCaching = (handler: RouteHandler) =>
   };
 
 const withProtoCookie = (handler: RouteHandler) =>
-  async (req: AugmentedRequest) => {
-    return withCookies(await handler(req), [
+  async (req: AugmentedRequest) =>
+    withCookies(await handler(req), [
       ["requested_method", req.method],
     ]);
-  };
 
 const home = compose(
   withCaching,
