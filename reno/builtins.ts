@@ -4,20 +4,28 @@ import { AugmentedRequest, AugmentedResponse, RouteHandler } from "./router.ts";
 import { readableStreamFromReader } from "../deps.ts";
 
 /**
- * An AugmentedRequest whose body property has
- * been overriden to be of a different type.
- * Reno uses this internally to create typed
- * bodies for its provided higher-order route
- * handlers, but can potentially be useful when
- * defining your own higher-order functions.
+ * An AugmentedRequest with an additional property
+ * containing the body after it has been parsed or
+ * processed, typically by one of the built-in
+ * middlewares. For example, the `withJsonBody()`
+ * middleware will deserialise the raw body with
+ * `JSON.parse()` and assign the result to the
+ * `parsedBody` property before forwarding the
+ * `ProcessedRequest` to the wrapped route handler.
+ *
+ * This type can also be useful when defining
+ * your own higher-order route handlers.
  */
 export type ProcessedRequest<TBody> = AugmentedRequest & {
+  /**
+   * The parsed or processed request body.
+   */
   parsedBody: TBody;
 };
 
 /**
  * A ProcessedRequest that allows the body
- * type to be configured via the sole type
+ * type to be specified via the sole type
  * parameter. Defaults to an empty object.
  */
 export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
@@ -60,9 +68,9 @@ function parseFormBody(body: string) {
  *   length: number;
  * }
  *
- * const getNameLength = withJsonBody<PersonRequestBody>(({ body }) =>
+ * const getNameLength = withJsonBody<PersonRequestBody>(({ parsedBody }) =>
  *   jsonResponse<NameLengthResponseBody>({
- *     length: body.name.length,
+ *     length: parsedBody.name.length,
  *   })
  * );
  * ```
@@ -70,9 +78,9 @@ function parseFormBody(body: string) {
 export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
   return async (req: AugmentedRequest) => {
     /* There are some instances in which an
-   * empty body can have whitespace, so
-   * we decode early and trim the resultant
-   * string to determine the body's presence */
+     * empty body can have whitespace, so
+     * we decode early and trim the resultant
+     * string to determine the body's presence */
     const bodyText = (await req.text()).trim();
 
     if (!bodyText.length) {
@@ -129,8 +137,8 @@ export function streamResponse(body: Deno.Reader, headers = {}) {
  * the inner handler via the `body` prop of the first argument:
  *
  * ```ts
- * const getNameLength = withFormBody(({ body }) =>
- *   textResponse(`?name is ${(body.get('name') || '0').length} bytes`)
+ * const getNameLength = withFormBody(({ parsedBody }) =>
+ *   new Response(`?name is ${(parsedBody.get('name') || '0').length} bytes`)
  * );
  * ```
  */
