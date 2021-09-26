@@ -1,5 +1,4 @@
 import { RouteHandler } from "./router.ts";
-import { textResponse } from "./helpers.ts";
 
 /**
  * A union of all possible HTTP
@@ -22,8 +21,8 @@ export type HttpMethod =
  * the correct handler by their method. Any requests whose method
  * does not have an associated handler will result in a HTTP 405:
  * ```ts
- * const get = () => textResponse("You performed a HTTP GET!");
- * const post = () => textResponse("You performed a HTTP POST!");
+ * const get = () => new Response("You performed a HTTP GET!");
+ * const post = () => new Response("You performed a HTTP POST!");
  *
  * const routes = createRouteMap([
  *   ["/endpoint", forMethod([
@@ -43,8 +42,7 @@ export function forMethod(
   return (req, ...restArgs) =>
     handlers.has(req.method as HttpMethod) // TODO: perform type assertion in AugmentedRequest creation?
       ? handlers.get(req.method as HttpMethod)!(req, ...restArgs)
-      : {
-        ...textResponse(`Method ${req.method} not allowed for ${req.url}`),
+      : new Response(`Method ${req.method} not allowed for ${req.pathname}`, {
         status: 405,
-      };
+      });
 }

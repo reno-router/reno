@@ -1,24 +1,16 @@
-import { createCookieWriter } from "./cookies.ts";
-import { testdouble } from "../deps.ts";
-import { setCookie } from "https://deno.land/std@0.105.0/http/cookie.ts";
-
-type CookieSetter = typeof setCookie;
+import { writeCookies } from "./cookies.ts";
+import { assertEquals } from "../deps.ts";
 
 Deno.test({
   name: "writeCookies should do nothing if there are no cookies to set",
   fn() {
     const res = {
-      body: new Uint8Array(0),
+      headers: new Headers(),
     };
-
-    const cookieSetter = testdouble.func();
-    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
 
     writeCookies(res);
 
-    testdouble.verify(cookieSetter(), {
-      times: 0,
-    });
+    assertEquals(res.headers, new Headers());
   },
 });
 
@@ -27,69 +19,40 @@ Deno.test({
     "writeCookies should use Deno`s setCookie binding to set each cookie against the response when the map is present",
   fn() {
     const res = {
-      cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"]]),
-      body: new Uint8Array(0),
+      cookies: [["X-Foo", "bar"], ["X-Bar", "baz"]] as [string, string][],
+      headers: new Headers(),
     };
-
-    const cookieSetter = testdouble.func();
-    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
 
     writeCookies(res);
 
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Foo",
-        value: "bar",
-      }),
-      { times: 1 },
-    );
+    const expectedHeaders = new Headers([
+      ["Set-Cookie", "X-Foo=bar"],
+      ["Set-Cookie", "X-Bar=baz"],
+    ]);
 
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Bar",
-        value: "baz",
-      }),
-      { times: 1 },
-    );
+    assertEquals(res.headers, expectedHeaders);
   },
 });
 
 Deno.test({
   name:
-    "writeCookies should overwrite a cookie if it's already present in the response header",
+    "writeCookies should not overwrite a cookie if it's already present in the response header",
   fn() {
     const res = {
-      cookies: new Map([["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]]),
-      body: new Uint8Array(0),
+      cookies: [["X-Foo", "bar"], ["X-Bar", "baz"], ["X-Foo", "baz"]] as [
+        string,
+        string,
+      ][],
+      headers: new Headers(),
     };
-
-    const cookieSetter = testdouble.func();
-    const writeCookies = createCookieWriter(cookieSetter as CookieSetter);
 
     writeCookies(res);
 
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Foo",
-        value: "bar",
-      }),
-      { times: 0 },
-    );
+    const expectedHeaders = new Headers([
+      ["Set-Cookie", "X-Foo=bar"],
+      ["Set-Cookie", "X-Bar=baz"],
+    ]);
 
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Bar",
-        value: "baz",
-      }),
-      { times: 1 },
-    );
-
-    testdouble.verify(
-      cookieSetter(res, {
-        name: "X-Foo",
-        value: "baz",
-      }),
-      { times: 1 },
-    );
+    assertEquals(res.headers, expectedHeaders);
   },
 });

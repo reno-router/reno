@@ -12,13 +12,13 @@ jobs:
       run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
 
     - name: Lint
-      run: "./scripts/lint.sh"
+      run: make lint
 
     - name: Check formatting
-      run: "./scripts/format_check.sh"
+      run: make format-check
 
     - name: Unit tests
-      run: "./scripts/test.sh"
+      run: make test
 
     - name: End-to-end tests
-      run: "./scripts/e2e.sh"
+      run: make e2e

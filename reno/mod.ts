@@ -1,4 +1,4 @@
-export { createRouteMap, createRouter, NotFoundError } from "./router.ts";
+export { createRouteMap, createRouter, MissingRouteError } from "./router.ts";
 
 export type {
   AugmentedRequest,
@@ -10,17 +10,5 @@ export type {
 } from "./router.ts";
 
 export * from "./formethod.ts";
-export * from "./helpers.ts";
-export { assertResponsesAreEqual, assertResponsesMatch } from "./testing.ts";
-export * from "./pipe.ts";
-
-/**
- * This is a means of referring to the std/http
- * ServerRequest type for the version of Deno's
- * standard library that this version of Reno
- * supports. You most likely won't need to use this,
- * but it's handy for scenarios in which you need to
- * run Reno against the bleeding edge version of
- * the Deno runtime (e.g. denosaurs/bench).
- */
-export { ServerRequest } from "../deps.ts";
+export * from "./builtins.ts";
+export { assertResponsesAreEqual } from "./testing.ts";

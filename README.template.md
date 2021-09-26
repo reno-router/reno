@@ -6,14 +6,6 @@
 
 Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
 
----
-
-## Deno 1.13+ support
-
-Currently, **the latest release of this library only supports the legacy Deno HTTP server and related std/http APIs**. However, there is a [v2.0.0](https://github.com/reno-router/reno/tree/v2.0.0) branch that supports the new native HTTP APIs, introduced in Deno 1.13, and satisfies the existing test suites. This new major version is production-ready, but the documentation needs updating before it can be officially released; it will hopefully be made available the week commencing Monday 27th September 2021.
-
----
-
 * [Overview](#overview)
 * [Key Features](#key-features)
 * [Example Apps](#example-apps)
@@ -21,19 +13,20 @@ Currently, **the latest release of this library only supports the legacy Deno HT
 * [Local Development](#local-development)
 * [Functionality Checklist](#functionality-checklist)
 
+---
+
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@0.105.0/http/server.ts";
+import { listenAndServe } from "https://deno.land/std@0.107.0/http/server.ts";
 
 import {
-  createRouter,
   AugmentedRequest,
   createRouteMap,
-  textResponse,
+  createRouter,
   jsonResponse,
   streamResponse,
-  NotFoundError,
+  MissingRouteError,
 } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
@@ -41,11 +34,13 @@ import {
  */
 
 function createErrorResponse(status: number, { message }: Error) {
-  return textResponse(message, {}, status);
+  return new Response(message, {
+    status,
+  });
 }
 
 export const routes = createRouteMap([
-  ["/home", () => textResponse("Hello world!")],
+  ["/home", () => new Response("Hello world!")],
 
   // Supports RegExp routes for further granularity
   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
@@ -64,11 +59,11 @@ export const routes = createRouteMap([
   )],
 ]);
 
-const notFound = (e: NotFoundError) => createErrorResponse(404, e);
+const notFound = (e: MissingRouteError) => createErrorResponse(404, e);
 const serverError = (e: Error) => createErrorResponse(500, e);
 
 const mapToErrorResponse = (e: Error) =>
-  e instanceof NotFoundError ? notFound(e) : serverError(e);
+  e instanceof MissingRouteError ? notFound(e) : serverError(e);
 
 const router = createRouter(routes);
 
@@ -76,12 +71,11 @@ console.log("Listening for requests...");
 
 await listenAndServe(
   ":8001",
-  async (req: ServerRequest) => {
+  async req => {
     try {
-      const res = await router(req);
-      return req.respond(res);
+      return await router(req);
     } catch (e) {
-      return req.respond(mapToErrorResponse(e));
+      return mapToErrorResponse(e);
     }
   },
 );
@@ -102,7 +96,7 @@ const createFetchStub = (response: string[]) =>
     json: sinon.stub().resolves(response),
   });
 
-test({
+Deno.test({
   name: "ronSwansonQuoteHandler should fetch a quote from an API and return it",
   async fn() {
     const quotes = ["Some Ron Swanson Quote"];
@@ -110,7 +104,7 @@ test({
     const ronSwansonQuoteHandler = createRonSwansonQuoteHandler(fetchStub);
 
     const req = {
-      routeParams: []
+      routeParams: [],
     };
 
     const response = await ronSwansonQuoteHandler(req);
@@ -121,7 +115,7 @@ test({
         "X-Foo": "bar",
       }),
     );
-  }
+  },
 });
 ```
 
@@ -130,10 +124,10 @@ test({
 Despite the power of regular expressions for matching and capturing paths when their route parameters conform to an expected format or type, they can often prove verbose and unwieldy for simpler applications. Reno thus provides an alternative wildcard syntax (`"*"`) for string paths to achieve route param extraction:
 
 ```ts
-async function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
+function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
   const [authorId, postId] = req.routeParams;
 
-  return textResponse(`You requested ${postId} by ${authorId}`);
+  return new Response(`You requested ${postId} by ${authorId}`);
 }
 
 const routes = createRouteMap([
@@ -156,7 +150,7 @@ const routes = createRouteMap([
         [
           "/bar/*",
           createRouter(createRouteMap([["/baz", () =>
-            textResponse("Hello from a nested route!")]])),
+            new Response("Hello from a nested route!")]])),
         ],
       ]),
     ),
@@ -176,7 +170,6 @@ import { compose } from "https://deno.land/x/compose@1.3.2/index.js";
 import {
   AugmentedRequest,
   RouteHandler,
-  textResponse,
   createRouteMap
 } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
 
@@ -199,48 +192,20 @@ function withAuth(next: RouteHandler) {
 
     return isValid
       ? next(req)
-      : textResponse(`API key not authorised to access ${req.url}`, {}, 401);
+      : new Response(`API key not authorised to access ${req.pathname}`, {
+        status: 401,
+      });
   };
 }
 
 const profile = compose(
   withAuth,
   withLogging,
-)(() => textResponse("Your profile!"));
+)(() => new Response("Your profile!"));
 
 export const routes = createRouteMap([
   ["/profile", profile],
 ]);
-```
-
-Additionally, Reno provides a `pipe` utility for creating a higher-order route handler that invokes a sequence of functions against both the original request _and_ the computed response:
-
-```ts
-import { createRouteMap, jsonResponse, pipe } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
-
-const withCaching = pipe(
-  (req, res) => {
-    /* Mutate the response returned by
-     * the inner route handler... */
-    res.headers.append("Cache-Control", "max-age=86400");
-  },
-
-  /* ...or go FP and return a new
-   * response reference entirely. */
-  (req, res) => ({
-    ...res,
-    cookies: new Map<string, string>([["requested_proto", req.proto]])
-  })
-);
-
-const home = withCaching(() =>
-  jsonResponse({
-    foo: "bar",
-    isLol: true
-  })
-);
-
-export const routes = createRouteMap([["/", home]]);
 ```
 
 ### Reno Apps are Unobtrusive, Pure Functions
@@ -248,14 +213,14 @@ export const routes = createRouteMap([["/", home]]);
 Given that a Reno router is a function that takes a request and returns a response (or more specifically, `Promise<Response>`), you are free to integrate it as you wish, managing the lifecycle of your HTTP server independently. This also makes it trivial to write end-to-end tests with [SuperDeno](https://github.com/asos-craigmorten/superdeno), as evidenced by [Reno's own E2E suite](https://github.com/reno-router/reno/tree/master/e2e_tests):
 
 ```ts
-import { superdeno } from "https://deno.land/x/superdeno@4.3.0/mod.ts";
+import { superdeno } from "https://deno.land/x/superdeno@4.5.0/mod.ts";
 import app from "../example/app.ts";
 
 Deno.test("/ should return the expected response", async () => {
   await superdeno(app).get("/")
     .expect(200)
     .expect("Cache-Control", "max-age=86400")
-    .expect("Set-Cookie", "requested_proto=HTTP/1.1")
+    .expect("Set-Cookie", "requested_method=GET")
     .expect({
       foo: "bar",
       isLol: true,
@@ -283,21 +248,22 @@ $ curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version
 deno upgrade --version $(cat .deno_version)
 ```
 
-You should also run `./tools/install_types.sh` to install the TypeScript definitions for Deno and any other third-party dependencies.
+You should also run `make install-types` to install the TypeScript definitions for Deno and any other third-party dependencies.
 
 Then you can run:
 
-* `./scripts/example.sh` - starts the example server
-* `./scripts/format.sh` - formats the source code
-* `./scripts/format_check.sh` - checks the formatting of the source code
-* `./scripts/lint.sh` - lints the source code
-* `./scripts/test.sh` - runs the unit tests
-* `./scripts/e2e.sh` - runs the end-to-end tests
+* `make example-app`: starts the example server
+* `make test`: runs the unit tests
+* `make e2e`: runs the end-to-end tests
+* `make lint`: lints the source code
+* `make format`: formats the source code
+* `make format-check`: checks the formatting of the source code
+* `make generate-readme`: generates README.md from the template, into which the version number in the package metadata is injected
 
 ## Functionality Checklist
 
 * [x] Path routing
-* [x] Async-compatible route handlers
+* [x] Async route handlers
 * [x] Error handling
 * [x] Route params
 * [x] Query params

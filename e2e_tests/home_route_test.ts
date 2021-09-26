@@ -5,7 +5,7 @@ Deno.test("/ should return the expected response", async () => {
   await superdeno(app).get("/")
     .expect(200)
     .expect("Cache-Control", "max-age=86400")
-    .expect("Set-Cookie", "requested_proto=HTTP/1.1")
+    .expect("Set-Cookie", "requested_method=GET")
     .expect({
       foo: "bar",
       isLol: true,
@@ -35,6 +35,6 @@ Deno.test("/profile should return a HTTP 401 if the API key is not set", async (
 Deno.test("/does-not-exist should return a HTTP 404", async () => {
   await superdeno(app).get("/does-not-exist")
     .expect(404)
-    .expect("Content-Type", "text/plain")
+    .expect("Content-Type", "text/plain;charset=UTF-8")
     .expect("No match for /does-not-exist");
 });

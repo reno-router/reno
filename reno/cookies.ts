@@ -1,30 +1,24 @@
-import { setCookie } from "https://deno.land/std@0.105.0/http/cookie.ts";
+import { setCookie } from "../deps.ts";
 import { AugmentedResponse } from "./router.ts";
 
-/* This abstraction was built when Deno only allowed unique header
- * names to be set against a given response, but this has since
- * been rectified to support multiple instances of `Set-Cookie`.
- * Given Reno's nested router architecture, we thus need to check
- * if a cookie name with a matching incoming value already exists
- * in the header. Ultimately, this whole function wants scrapping.
- *
- * TODO: refactor! */
-export function createCookieWriter(cookieSetter: typeof setCookie) {
-  return (
-    res: AugmentedResponse,
-  ) => {
-    if (!res.cookies) {
-      return;
-    }
-
-    [...res.cookies.entries()].forEach(([name, value]) => {
-      if (res.headers?.get("Set-Cookie")?.includes(`${name}=${value}`)) {
-        return;
-      }
-
-      cookieSetter(res, { name, value });
-    });
-  };
+function hasSetCookie(headers: Headers, name: string) {
+  return [...headers.entries()]
+    .some(([header, value]) =>
+      header.toLowerCase() === "set-cookie" &&
+      value.match(new RegExp(`^${name}=`))
+    );
 }
 
-export const writeCookies = createCookieWriter(setCookie);
+export function writeCookies(
+  res: Pick<AugmentedResponse, "cookies" | "headers">,
+) {
+  if (!res.cookies) {
+    return;
+  }
+
+  res.cookies.forEach(([name, value]) => {
+    if (!hasSetCookie(res.headers, name)) {
+      setCookie(res.headers, { name, value });
+    }
+  });
+}

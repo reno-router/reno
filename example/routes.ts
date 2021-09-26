@@ -4,9 +4,8 @@ import {
   AugmentedRequest,
   createRouteMap,
   jsonResponse,
-  pipe,
   RouteHandler,
-  textResponse,
+  withCookies,
 } from "../reno/mod.ts";
 
 import { apiRouter } from "./api/routes.ts";
@@ -30,23 +29,29 @@ function withAuth(next: RouteHandler) {
 
     return isValid
       ? next(req)
-      : textResponse(`API key not authorised to access ${req.url}`, {}, 401);
+      : new Response(`API key not authorised to access ${req.pathname}`, {
+        status: 401,
+      });
   };
 }
 
-const withCaching = pipe(
-  (_, res) => {
-    res.headers = res.headers || new Headers();
+const withCaching = (handler: RouteHandler) =>
+  async (req: AugmentedRequest) => {
+    const res = await handler(req);
     res.headers.append("Cache-Control", "max-age=86400");
     return res;
-  },
-  (req, res) => ({
-    ...res,
-    cookies: new Map<string, string>([["requested_proto", req.proto]]),
-  }),
-);
+  };
 
-const home = withCaching(() =>
+const withProtoCookie = (handler: RouteHandler) =>
+  async (req: AugmentedRequest) =>
+    withCookies(await handler(req), [
+      ["requested_method", req.method],
+    ]);
+
+const home = compose(
+  withCaching,
+  withProtoCookie,
+)(() =>
   jsonResponse({
     foo: "bar",
     isLol: true,
@@ -56,7 +61,7 @@ const home = withCaching(() =>
 const profile = compose(
   withAuth,
   withLogging,
-)(() => textResponse("Your profile!"));
+)(() => new Response("Your profile!"));
 
 export const routes = createRouteMap([
   ["/", home],

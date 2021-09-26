@@ -1,4 +1,4 @@
-import { StringReader } from "https://deno.land/std@0.105.0/io/readers.ts";
+import { StringReader } from "https://deno.land/std@0.107.0/io/readers.ts";
 
 import colossalData from "./colossal.ts";
 
@@ -8,7 +8,7 @@ import {
   createRouter,
   jsonResponse,
   streamResponse,
-  textResponse,
+  withCookies,
   withJsonBody,
 } from "../../reno/mod.ts";
 
@@ -23,14 +23,20 @@ type JsonBodyResponse = JsonBody & {
 };
 
 function methodNotAllowed(url: string, method: string) {
-  return textResponse(`Method ${method} not allowed for ${url}`, {}, 405);
+  const { pathname } = new URL(url);
+
+  return new Response(`Method ${method} not allowed for ${pathname}`, {
+    status: 405,
+  });
 }
 
 const serialised = JSON.stringify(colossalData);
 
 function colossal() {
-  return textResponse(serialised, {
-    "Content-Type": "application/json",
+  return new Response(serialised, {
+    headers: new Headers({
+      "Content-Type": "application/json",
+    }),
   });
 }
 
@@ -40,11 +46,11 @@ function colossal() {
  * this would validate, but I feel
  * this should be handled by a
  * third-party dependency */
-const jsonBody = withJsonBody<JsonBody>(({ url, method, body }) =>
+const jsonBody = withJsonBody<JsonBody>(({ url, method, parsedBody }) =>
   method === "POST"
     ? jsonResponse<JsonBodyResponse>({
       message: "Here's the body you posted to this endpoint",
-      ...body,
+      ...parsedBody,
     })
     : methodNotAllowed(url, method)
 );
@@ -68,13 +74,10 @@ export function createRonSwansonQuoteHandler(
 }
 
 function setCookies() {
-  return {
-    cookies: new Map([
-      ["deno-playground-foo", "bar"],
-      ["deno-playground-bar", "baz"],
-    ]),
-    ...textResponse("Cookies set!"),
-  };
+  return withCookies(new Response("Cookies set!"), [
+    ["deno-playground-foo", "bar"],
+    ["deno-playground-bar", "baz"],
+  ]);
 }
 
 function streamedResponse() {
@@ -88,7 +91,7 @@ function streamedResponse() {
 function wildcardRouteParams(req: Pick<AugmentedRequest, "routeParams">) {
   const [authorId, postId] = req.routeParams;
 
-  return textResponse(`You requested ${postId} by ${authorId}`);
+  return new Response(`You requested ${postId} by ${authorId}`);
 }
 
 // TODO: add handler for form data
@@ -100,7 +103,7 @@ const routes = createRouteMap([
   ["/wildcard-route-params/authors/*/posts/*", wildcardRouteParams],
   [
     /^\/ron-swanson-quote\/?([0-9]?)$/,
-    createRonSwansonQuoteHandler(window.fetch),
+    createRonSwansonQuoteHandler(fetch),
   ],
 ]);
 

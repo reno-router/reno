@@ -1,31 +1,31 @@
 // TODO: find a better name than "helpers"
 
-import { AugmentedRequest, RouteHandler } from "./router.ts";
-import { BufReader } from "../deps.ts";
-
-const encoder = new TextEncoder();
-const decoder = new TextDecoder();
+import { AugmentedRequest, AugmentedResponse, RouteHandler } from "./router.ts";
+import { readableStreamFromReader } from "../deps.ts";
 
 /**
- * An AugmentedRequest whose body property has
- * been overriden to be of a different type.
- * Reno uses this internally to create typed
- * bodies for its provided higher-order route
- * handlers, but can potentially be useful when
- * defining your own higher-order functions.
+ * An AugmentedRequest with an additional property
+ * containing the body after it has been parsed or
+ * processed, typically by one of the built-in
+ * middlewares. For example, the `withJsonBody()`
+ * middleware will deserialise the raw body with
+ * `JSON.parse()` and assign the result to the
+ * `parsedBody` property before forwarding the
+ * `ProcessedRequest` to the wrapped route handler.
+ *
+ * This type can also be useful when defining
+ * your own higher-order route handlers.
  */
-export type ProcessedRequest<TBody> =
-  & Pick<
-    AugmentedRequest,
-    Exclude<keyof AugmentedRequest, "body">
-  >
-  & {
-    body: TBody;
-  };
+export type ProcessedRequest<TBody> = AugmentedRequest & {
+  /**
+   * The parsed or processed request body.
+   */
+  parsedBody: TBody;
+};
 
 /**
  * A ProcessedRequest that allows the body
- * type to be configured via the sole type
+ * type to be specified via the sole type
  * parameter. Defaults to an empty object.
  */
 export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
@@ -38,28 +38,20 @@ export type JsonRequest<TBody = Record<string, unknown>> = ProcessedRequest<
  */
 export type FormRequest = ProcessedRequest<URLSearchParams>;
 
-function createProcessedRequest<TBody>(req: AugmentedRequest, body: TBody) {
-  return {
-    ...req,
-    body,
-  };
+function createProcessedRequest<TBody>(
+  req: AugmentedRequest,
+  parsedBody: TBody,
+) {
+  /* We use Object.assign() instead of spreading
+   * the original request into a new object, as the
+   * methods of the Request type are not enumerable. */
+  return Object.assign(req, {
+    parsedBody,
+  });
 }
 
 function parseFormBody(body: string) {
   return new URLSearchParams(body);
-}
-
-async function getReqBodyAsString(req: AugmentedRequest) {
-  if (!req.contentLength) {
-    throw new Error("Content-Length header was not set!");
-  }
-
-  const bufReader = BufReader.create(req.body);
-  const bytes = new Uint8Array(req.contentLength);
-
-  await bufReader.readFull(bytes);
-
-  return decoder.decode(bytes);
 }
 
 /**
@@ -76,9 +68,9 @@ async function getReqBodyAsString(req: AugmentedRequest) {
  *   length: number;
  * }
  *
- * const getNameLength = withJsonBody<PersonRequestBody>(({ body }) =>
+ * const getNameLength = withJsonBody<PersonRequestBody>(({ parsedBody }) =>
  *   jsonResponse<NameLengthResponseBody>({
- *     length: body.name.length,
+ *     length: parsedBody.name.length,
  *   })
  * );
  * ```
@@ -86,10 +78,10 @@ async function getReqBodyAsString(req: AugmentedRequest) {
 export function withJsonBody<TBody>(handler: RouteHandler<JsonRequest<TBody>>) {
   return async (req: AugmentedRequest) => {
     /* There are some instances in which an
-   * empty body can have whitespace, so
-   * we decode early and trim the resultant
-   * string to determine the body's presence */
-    const bodyText = (await getReqBodyAsString(req)).trim();
+     * empty body can have whitespace, so
+     * we decode early and trim the resultant
+     * string to determine the body's presence */
+    const bodyText = (await req.text()).trim();
 
     if (!bodyText.length) {
       return handler(
@@ -116,30 +108,13 @@ export function jsonResponse<TResponseBody>(
   headers = {},
   status = 200,
 ) {
-  return {
+  return new Response(JSON.stringify(body), {
     status,
     headers: new Headers({
+      ...headers,
       "Content-Type": "application/json",
-      ...headers,
     }),
-    body: encoder.encode(JSON.stringify(body)),
-  };
-}
-
-/**
- * A response creator function for building text responses, that:
- * defaults the Content-Type header to "text/plain";
- * and encodes the body as a Uint8Array
- */
-export function textResponse(body: string, headers = {}, status = 200) {
-  return {
-    status,
-    headers: new Headers({
-      "Content-Type": "text/plain",
-      ...headers,
-    }),
-    body: encoder.encode(body),
-  };
+  });
 }
 
 /**
@@ -149,10 +124,9 @@ export function textResponse(body: string, headers = {}, status = 200) {
  * in the future may contain some sort of enhancing behaviour
  */
 export function streamResponse(body: Deno.Reader, headers = {}) {
-  return {
+  return new Response(readableStreamFromReader(body), {
     headers: new Headers(headers),
-    body,
-  };
+  });
 }
 
 /**
@@ -163,8 +137,8 @@ export function streamResponse(body: Deno.Reader, headers = {}) {
  * the inner handler via the `body` prop of the first argument:
  *
  * ```ts
- * const getNameLength = withFormBody(({ body }) =>
- *   textResponse(`?name is ${(body.get('name') || '0').length} bytes`)
+ * const getNameLength = withFormBody(({ parsedBody }) =>
+ *   new Response(`?name is ${(parsedBody.get('name') || '0').length} bytes`)
  * );
  * ```
  */
@@ -172,9 +146,31 @@ export function withFormBody(handler: RouteHandler<FormRequest>) {
   return async (
     req: AugmentedRequest,
   ) => {
-    const bodyText = await getReqBodyAsString(req);
+    const bodyText = await req.text();
     const body = parseFormBody(bodyText);
 
     return handler(createProcessedRequest(req, body));
   };
+}
+
+/**
+ * Assigns the provided cookies to the underlying Response instance, which
+ * are then sent to the requestor via multiple `Set-Cookie` headers:
+ *
+ * ```ts
+ * const handler: RouteHandler = async req => withCookies(
+ *   new Response("Hi!"),
+ *   [
+ *     ["session_id", await getSessionId(req)],
+ *   ],
+ * );
+ * ```
+ */
+export function withCookies(
+  res: Response,
+  cookies: [string, string][],
+): AugmentedResponse {
+  return Object.assign(res, {
+    cookies,
+  });
 }
