@@ -28,14 +28,14 @@ export function createAssertResponsesAreEqual(assertEqls: typeof assertEquals) {
  * `actual` and `expected` are deeply equal.
  * The benefit of using this function over
  * `assertEquals` directly is that it will
- * convert `Uint8Array` and `Deno.Reader` bodies
+ * convert `ReadableStream` bodies
  * to strings, making them human-readable
  * and thus helping to debug assertion failures:
  *
  * ```ts
  * const response = await ronSwansonQuoteHandler(req);
  *
- * await assertResponseBodiesAreEqual(
+ * await assertResponsesAreEqual(
  *   response,
  *   jsonResponse(quotes, {
  *     "X-Foo": "bar",
