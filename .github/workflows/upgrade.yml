@@ -86,6 +86,8 @@ jobs:
     # checking out the branch. I thus decided to roll my own.
     - name: Commit and push changes
       run: |
+        git config --global user.name "James Wright"
+        git config --global user.email "hi@james.engineering"
         git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
         git checkout -b upgrade/${{steps.calculate-reno-version.outputs.value}}
         git add -A
