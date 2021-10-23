@@ -50,7 +50,4 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo ${{needs.get-versions.outputs.supported-runtime}}
-          echo ${{needs.get-versions.outputs.supported-std}}
-          echo ${{needs.get-versions.outputs.latest-runtime}}
-          echo ${{needs.get-versions.outputs.latest-std}}
+          echo ${{needs.get-versions.outputs.supported-runtime}} ${{needs.get-versions.outputs.supported-std}} ${{needs.get-versions.outputs.latest-runtime}} ${{needs.get-versions.outputs.latest-std}}
