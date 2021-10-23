@@ -89,3 +89,4 @@ jobs:
         author_email: hi@james.engineering
         branch: upgrade/${{steps.calculate-reno-version.outputs.value}}
         message: Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
+        push: --set-upstream origin upgrade/${{steps.calculate-reno-version.outputs.value}}
