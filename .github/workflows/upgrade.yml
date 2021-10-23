@@ -6,8 +6,13 @@ on:
       - feat/automated-upgrade
 
 jobs:
-  upgrade:
+  get-versions:
     runs-on: ubuntu-latest
+    outputs:
+      supported-runtime: ${{steps.supported-deno-version.outputs.value}}
+      supported-std: ${{steps.supported-std-version.outputs.value}}"
+      latest-runtime: ${{steps.latest-deno-version.outputs.release}}
+      latest-std: ${{steps.latest-std-version.outputs.release}}"
     steps:
     - uses: actions/checkout@v2
 
@@ -39,8 +44,13 @@ jobs:
         repo: deno_std
         excludes: prerelease, draft
 
-    - name: Print results
-      run: |
-        echo "Supported: ${{ steps.supported-deno-version.outputs.value }}/${{ steps.supported-std-version.outputs.value }}"
-        echo "Latest: ${{ steps.latest-deno-version.outputs.release }}/${{ steps.latest-std-version.outputs.release }}"
-
+  determine-upgrade:
+    runs-on: ubuntu-latest
+    needs: get-versions
+    steps:
+      - name: Debug
+        run: |
+          echo ${{needs.get-versions.outputs.supported-runtime}}
+          echo ${{needs.get-versions.outputs.supported-std}}
+          echo ${{needs.get-versions.outputs.latest-runtime}}
+          echo ${{needs.get-versions.outputs.latest-std}}
