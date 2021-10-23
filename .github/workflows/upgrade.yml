@@ -48,4 +48,4 @@ jobs:
     needs: determine-upgrade
 
     steps:
-      - run: echo ${{needs.determine-upgrade.upgrade-required}}
+      - run: echo ${{needs.determine-upgrade.outputs.upgrade-required}}
