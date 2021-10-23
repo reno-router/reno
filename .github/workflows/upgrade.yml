@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
+      supported-deno-version: ${{steps.supported-deno-version.outputs.value}}
+      supported-std-version: ${{steps.supported-std-version.outputs.value}}
+      latest-deno-version: ${{steps.latest-deno-version.outputs.release}}
+      latest-std-version: ${{steps.latest-std-version.outputs.release}}
       upgrade-required: ${{steps.latest-deno-version.outputs.release > steps.supported-deno-version.outputs.value || steps.latest-std-version.outputs.release > steps.supported-std-version.outputs.value }}
 
     steps:
@@ -19,7 +23,7 @@ jobs:
       id: supported-deno-version
       uses: sergeysova/jq-action@v2
       with:
-        cmd: jq -r .deno deno_versions.json
+        cmd: jq -r .deno deno_versions.json # TODO: cmd => run
 
     - name: Get supported std version number
       id: supported-std-version
@@ -46,6 +50,36 @@ jobs:
   upgrade:
     runs-on: ubuntu-latest
     needs: determine-upgrade
+    if: ${{needs.determine-upgrade.outputs.upgrade-required}}
 
     steps:
-      - run: echo ${{needs.determine-upgrade.outputs.upgrade-required}}
+    - name: Upgrade Deno runtime version
+      uses: sergeysova/jq-action@v2
+      cmd: jq -r '.deno = "${{needs.determine-upgrade.outputs.latest-deno-version}}"' deno_versions.json > deno_versions.json
+
+    - name: Upgrade std version
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "https://deno.land/std@${{needs.determine-upgrade.outputs.current-std-version}}"
+        replace: "https://deno.land/std@${{needs.determine-upgrade.outputs.latest-std-version}}"
+        regex: false
+
+    - name: Bump Reno version
+      id: bump-reno-version
+      uses: sergeysova/jq-action@v2
+
+      # There's probably a way to do this with a single
+      # jq execution, but I can't figure it out right now.
+      run: |
+        version_number=$(jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json)
+        jq -r '.version = $version_number' egg.json > egg.json
+        echo "::set-output name=version::$version_number"
+
+    - name: Commit changes
+      uses: EndBug/add-and-commit@v7
+      with:
+        author_name: James Wright
+        author_email: hi@james.engineering
+        branch: upgrade/${{steps.bump-reno-version.outputs.version}}
+        message: Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
+
