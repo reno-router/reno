@@ -81,12 +81,13 @@ jobs:
       with:
         cmd: jq -r '.version = ${{steps.calculate-reno-version.outputs.value}} egg.json > egg.json'
 
+    # I tried using the EndBug/add-and-commit@v7 action for this
+    # with pull set to NO-PULL, but it would throw an error when
+    # checking out the branch. I thus decided to roll my own.
     - name: Commit and push changes
-      uses: EndBug/add-and-commit@v7
-      with:
-        pull: NO-PULL
-        author_name: James Wright
-        author_email: hi@james.engineering
-        branch: upgrade/${{steps.calculate-reno-version.outputs.value}}
-        message: Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
-        push: --set-upstream origin upgrade/${{steps.calculate-reno-version.outputs.value}}
+      run: |
+        git remote add github "https://$GITHUB_ACTOR:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+        git checkout -b upgrade/${{steps.calculate-reno-version.outputs.value}}
+        git add -A
+        git commit -m "Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}"
+        git push -u origin upgrade/${{steps.calculate-reno-version.outputs.value}}
