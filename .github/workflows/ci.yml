@@ -8,8 +8,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install supported Deno version
-      run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
+    - name: Get supported Deno runtime version number
+      id: deno-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r .deno deno_versions.json
+
+    - name: Install supported Deno runtime version
+      run: curl -fsSL https://deno.land/x/install/install.sh | sh -s v${{ steps.deno-version.outputs.value }}
 
     - name: Lint
       run: make lint

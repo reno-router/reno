@@ -1,0 +1,46 @@
+name: Upgrade Deno runtime and std versions
+
+on:
+  push:
+    branches:
+      - feat/automated-upgrade
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get supported Deno runtime version number
+      id: supported-deno-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r .deno deno_versions.json
+
+    - name: Get supported std version number
+      id: supported-std-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r .std deno_versions.json
+
+    - name: Get latest Deno runtime release
+      id: latest-deno-version
+      uses: pozetroninc/github-action-get-latest-release@master
+      with:
+        owner: denoland
+        repo: deno
+        excludes: prerelease, draft
+
+    - name: Get latest std release
+      id: latest-std-version
+      uses: pozetroninc/github-action-get-latest-release@master
+      with:
+        owner: denoland
+        repo: deno_std
+        excludes: prerelease, draft
+
+    - name: Print results
+      run: |
+        echo "Supported: ${{ steps.supported-deno-version.outputs.value }}/${{ steps.supported-std-version.outputs.value }}"
+        echo "Latest: ${{ steps.latest-deno-version.outputs.value }}/${{ steps.latest-std-version.outputs.value }}"
+
