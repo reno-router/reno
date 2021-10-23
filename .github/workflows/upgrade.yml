@@ -55,7 +55,8 @@ jobs:
     steps:
     - name: Upgrade Deno runtime version
       uses: sergeysova/jq-action@v2
-      cmd: jq -r '.deno = "${{needs.determine-upgrade.outputs.latest-deno-version}}"' deno_versions.json > deno_versions.json
+      with:
+        cmd: jq -r '.deno = "${{needs.determine-upgrade.outputs.latest-deno-version}}"' deno_versions.json > deno_versions.json
 
     - name: Upgrade std version
       uses: jacobtomlinson/gha-find-replace@v2
@@ -70,10 +71,11 @@ jobs:
 
       # There's probably a way to do this with a single
       # jq execution, but I can't figure it out right now.
-      cmd: |
-        version_number=$(jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json)
-        jq -r '.version = $version_number' egg.json > egg.json
-        echo "::set-output name=version::$version_number"
+      with:
+        cmd: |
+          version_number=$(jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json)
+          jq -r '.version = $version_number' egg.json > egg.json
+          echo "::set-output name=version::$version_number"
 
     - name: Commit changes
       uses: EndBug/add-and-commit@v7
