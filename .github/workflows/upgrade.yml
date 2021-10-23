@@ -23,7 +23,7 @@ jobs:
       id: supported-deno-version
       uses: sergeysova/jq-action@v2
       with:
-        cmd: jq -r .deno deno_versions.json # TODO: cmd => run
+        cmd: jq -r .deno deno_versions.json
 
     - name: Get supported std version number
       id: supported-std-version
@@ -70,7 +70,7 @@ jobs:
 
       # There's probably a way to do this with a single
       # jq execution, but I can't figure it out right now.
-      run: |
+      cmd: |
         version_number=$(jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json)
         jq -r '.version = $version_number' egg.json > egg.json
         echo "::set-output name=version::$version_number"
