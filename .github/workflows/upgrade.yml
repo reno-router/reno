@@ -53,6 +53,9 @@ jobs:
     if: ${{needs.determine-upgrade.outputs.upgrade-required}}
 
     steps:
+      - uses: actions/checkout@v2
+
+    steps:
     - name: Upgrade Deno runtime version
       uses: sergeysova/jq-action@v2
       with:
@@ -65,8 +68,8 @@ jobs:
         replace: "https://deno.land/std@${{needs.determine-upgrade.outputs.latest-std-version}}"
         regex: false
 
-    # There's probably a way to these two steps with one
-    # jq execution, but I can't figure it out right now.
+    # There's probably a way to achieve the next two steps with
+    # one jq execution, but I can't figure it out right now.
     - name: Calculate Reno version
       id: calculate-reno-version
       uses: sergeysova/jq-action@v2
@@ -86,4 +89,3 @@ jobs:
         author_email: hi@james.engineering
         branch: upgrade/${{steps.calculate-reno-version.outputs.value}}
         message: Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
-
