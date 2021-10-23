@@ -84,7 +84,7 @@ jobs:
       with:
         cmd: |
           version=${{steps.calculate-reno-version.outputs.value}}
-          jq -r '.version = $version' egg.json > egg.json
+          jq -r ".version = \"$version\"" egg.json > egg.json
 
     - name: Generate README
       run: |
