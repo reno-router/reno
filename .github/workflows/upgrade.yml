@@ -65,23 +65,25 @@ jobs:
         replace: "https://deno.land/std@${{needs.determine-upgrade.outputs.latest-std-version}}"
         regex: false
 
+    # There's probably a way to these two steps with one
+    # jq execution, but I can't figure it out right now.
+    - name: Calculate Reno version
+      id: calculate-reno-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json
+
     - name: Bump Reno version
       id: bump-reno-version
       uses: sergeysova/jq-action@v2
-
-      # There's probably a way to do this with a single
-      # jq execution, but I can't figure it out right now.
       with:
-        cmd: |
-          version_number=$(jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json)
-          jq -r '.version = $version_number' egg.json > egg.json
-          echo "::set-output name=version::$version_number"
+        cmd: jq -r '.version = ${{steps.calculate-reno-version.outputs.value}} egg.json > egg.json'
 
     - name: Commit changes
       uses: EndBug/add-and-commit@v7
       with:
         author_name: James Wright
         author_email: hi@james.engineering
-        branch: upgrade/${{steps.bump-reno-version.outputs.version}}
+        branch: upgrade/${{steps.calculate-reno-version.outputs.value}}
         message: Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
 
