@@ -92,4 +92,4 @@ jobs:
         git checkout -b upgrade/${{steps.calculate-reno-version.outputs.value}}
         git add -A
         git commit -m "Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}"
-        git push -u origin upgrade/${{steps.calculate-reno-version.outputs.value}}
+        git push -u github upgrade/${{steps.calculate-reno-version.outputs.value}}
