@@ -81,7 +81,7 @@ jobs:
       id: bump-reno-version
       uses: sergeysova/jq-action@v2
       with:
-        cmd: jq -r '.version = ${{steps.calculate-reno-version.outputs.value}} egg.json > egg.json'
+        cmd: jq -r '.version = ${{steps.calculate-reno-version.outputs.value}}' egg.json > egg.json
 
     # I tried using the EndBug/add-and-commit@v7 action for this
     # with pull set to NO-PULL, but it would throw an error when
