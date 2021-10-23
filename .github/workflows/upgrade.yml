@@ -53,9 +53,8 @@ jobs:
     if: ${{needs.determine-upgrade.outputs.upgrade-required}}
 
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-    steps:
     - name: Upgrade Deno runtime version
       uses: sergeysova/jq-action@v2
       with:
