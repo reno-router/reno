@@ -42,5 +42,5 @@ jobs:
     - name: Print results
       run: |
         echo "Supported: ${{ steps.supported-deno-version.outputs.value }}/${{ steps.supported-std-version.outputs.value }}"
-        echo "Latest: ${{ steps.latest-deno-version.outputs.value }}/${{ steps.latest-std-version.outputs.value }}"
+        echo "Latest: ${{ steps.latest-deno-version.outputs.release }}/${{ steps.latest-std-version.outputs.release }}"
 
