@@ -82,7 +82,9 @@ jobs:
       id: bump-reno-version
       uses: sergeysova/jq-action@v2
       with:
-        cmd: jq -r '.version = ${{steps.calculate-reno-version.outputs.value}}' egg.json > egg.json
+        cmd: |
+          version=${{steps.calculate-reno-version.outputs.value}}
+          jq -r '.version = $version' egg.json > egg.json
 
     - name: Generate README
       run: |
