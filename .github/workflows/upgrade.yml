@@ -81,9 +81,10 @@ jobs:
       with:
         cmd: jq -r '.version = ${{steps.calculate-reno-version.outputs.value}} egg.json > egg.json'
 
-    - name: Commit changes
+    - name: Commit and push changes
       uses: EndBug/add-and-commit@v7
       with:
+        pull: NO-PULL
         author_name: James Wright
         author_email: hi@james.engineering
         branch: upgrade/${{steps.calculate-reno-version.outputs.value}}
