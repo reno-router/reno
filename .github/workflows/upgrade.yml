@@ -6,7 +6,7 @@ on:
       - feat/automated-upgrade
 
 jobs:
-  build:
+  upgrade:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
