@@ -1,0 +1,88 @@
+name: Post-upgrade
+
+on:
+  workflow_dispatch:
+    inputs:
+      success:
+        required: true
+        description: Whether the CI run succeeded or failed
+      ci_run_id:
+        required: true
+        description: The ID of the CI run
+
+jobs:
+  success:
+    if: ${{github.event.inputs.success}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set source branch
+        id: set-source-branch
+        run: echo "::set-output name=source-branch::$(echo ${{github.ref}} | sed 's/refs\/heads\///')"
+
+      - name: Get Reno version
+        id: get-reno-version
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: jq -r .version egg.json
+
+      - name: Get supported Deno runtime version
+        id: get-supported-deno-version
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: jq -r .deno deno_versions.json
+
+      - name: Get supported std version
+        id: get-supported-std-version
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: jq -r .std deno_versions.json
+
+
+      - name: Checkout master
+        uses: actions/checkout@v2
+        branch: master
+
+      - name: Merge upgrade branch
+        uses: devmasx/merge-branch@1.4.0
+        with:
+          type: now
+          from_branch: ${{steps.set-source-branch.outputs.source-branch}}
+          target_branch: master
+          github_token: ${{secrets.UPGRADE_TOKEN}}
+
+      - name: Delete upgrade branch
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{secrets.UPGRADE_TOKEN}}
+          branches: ${{steps.set-source-branch.outputs.source-branch}}
+
+      - name: Create tag
+        id: tag-version
+        uses: mathieudutour/github-tag-action@v5.6
+        with:
+          github_token: ${{secrets.UPGRADE_TOKEN}}
+          custom_tag: v${{steps.get-reno-version.outputs.value}}
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{steps.tag-version.outputs.new_tag}}
+          name: ${{steps.tag_version.outputs.new_tag}}
+          body: This is an automated compatibility release to support Deno ${{steps.get-supported-deno-version.outputs.value}} and std ${{steps.get-supported-std-version.outputs.value}}.
+          token: ${{secrets.UPGRADE_TOKEN}}
+
+  failure:
+    if: ${{!github.event.inputs.success}}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Send failure email
+      if: ${{!github.event.inputs.success}}
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.BUILDBOT_EMAIL}}
+        password: ${{secrets.BUILDBOT_EMAIL_PASSWORD}}
+        to: hi@james.engineering
+        from: Reno Buildbot
+        body: "An automated attempt to upgrade Reno has failed. Please consult the run and manually intervene to resolve the issue: https://github.com/${{github.repository}}/actions/runs/${{github.event.inputs.ci_run_id}}"
