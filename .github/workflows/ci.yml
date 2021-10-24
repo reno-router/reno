@@ -48,5 +48,5 @@ jobs:
           token: ${{secrets.UPGRADE_TOKEN}}
           inputs: |
             {
-              "success": ${{needs.build.result == 'success'}}
+              "build-result": "${{needs.build.result}}"
             }

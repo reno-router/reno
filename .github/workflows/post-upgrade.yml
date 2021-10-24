@@ -3,7 +3,7 @@ name: Post-upgrade
 on:
   workflow_dispatch:
     inputs:
-      success:
+      build-result:
         required: true
         description: Whether the CI run succeeded or failed
 
@@ -27,7 +27,7 @@ jobs:
   success:
     runs-on: ubuntu-latest
     needs: find-pr
-    if: ${{github.event.inputs.success}}
+    if: ${{github.event.inputs.build-result == 'success'}}
     steps:
       - name: Get Reno version
         id: get-reno-version
@@ -76,10 +76,9 @@ jobs:
   failure:
     runs-on: ubuntu-latest
     needs: find-pr
-    if: ${{!github.event.inputs.success}}
+    if: ${{github.event.inputs.build-result == 'failure'}}
     steps:
     - name: Send failure email
-      if: ${{!github.event.inputs.success}}
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
