@@ -1,0 +1,24 @@
+name: Upgrade failure
+
+on:
+  workflow_dispatch:
+    inputs:
+      ci_run_id:
+        description: The ID of the failed CI run
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send failure email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{secrets.BUILDBOT_EMAIL}}
+        password: ${{secrets.BUILDBOT_EMAIL_PASSWORD}}
+        to: hi@james.engineering
+        from: Reno Buildbot
+        body: "An automated attempt to upgrade Reno has failed. Please consult the run and manually intervene to resolve the issue: https://github.com/${{github.repository}}/actions/runs/${{github.event.inputs.ci_run_id}}"
