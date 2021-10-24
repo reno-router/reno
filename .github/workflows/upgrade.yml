@@ -101,15 +101,14 @@ jobs:
         curl -fsSL https://deno.land/x/install/install.sh | sh -s v${{needs.determine-upgrade.outputs.latest-deno-version}}
         make generate-readme
 
-    # I tried using the EndBug/add-and-commit@v7 action for this
-    # with pull set to NO-PULL, but it would throw an error when
-    # checking out the branch. I thus decided to roll my own.
-    - name: Commit and push changes
-      run: |
-        git config user.name "Reno Buildbot"
-        git config user.email ${{secrets.BUILDBOT_EMAIL}}
-        git remote add github "https://$GITHUB_ACTOR:${{secrets.UPGRADE_TOKEN}}@github.com/$GITHUB_REPOSITORY.git"
-        git checkout -b upgrade/v${{steps.calculate-reno-version.outputs.value}}
-        git add -A
-        git commit -m "Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}"
-        git push -u origin upgrade/v${{steps.calculate-reno-version.outputs.value}}
+    - name: Create pull request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{secrets.UPGRADE_TOKEN}}
+        branch: upgrade/v${{steps.calculate-reno-version.outputs.value}}
+        delete-branch: true
+        base: master
+        commit-message: [Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
+        commiter: Reno Buildbot <${{secrets.BUILDBOT_EMAIL}}>
+        title: [Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
+        body: This is an automated pull request.
