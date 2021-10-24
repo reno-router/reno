@@ -1,6 +1,9 @@
 import { testdouble } from "../deps.ts";
 import type { assertEquals } from "../deps.ts";
-import { createAssertResponsesAreEqual } from "./testing.ts";
+import {
+  createAssertResponsesAreEqual,
+  createResponseSubset,
+} from "./testing.ts";
 
 function createAssertEquals() {
   return testdouble.func("assertEqls") as typeof assertEquals;
@@ -20,14 +23,8 @@ Deno.test({
 
     testdouble.verify(
       assertEqls(
-        {
-          ...a,
-          body: "Response body A",
-        },
-        {
-          ...b,
-          body: "Response body B",
-        },
+        createResponseSubset(a, "Response body A"),
+        createResponseSubset(b, "Response body B"),
       ),
     );
   },
