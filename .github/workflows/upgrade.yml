@@ -102,6 +102,7 @@ jobs:
         make generate-readme
 
     - name: Create pull request
+      id: create-pull-request
       uses: peter-evans/create-pull-request@v3
       with:
         token: ${{secrets.UPGRADE_TOKEN}}
@@ -112,3 +113,16 @@ jobs:
         commiter: Reno Buildbot <${{secrets.BUILDBOT_EMAIL}}>
         title: [Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
         body: This is an automated pull request.
+
+    - name: Invoke CI workflow
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: CI
+        repo: reno-router/reno
+        token: ${{secrets.UPGRADE_TOKEN}}
+        inputs: |
+          {
+            "pull-request-url": "${{steps.create-pull-request.outputs.pull-request-url}}"
+            "pull-request-number": ${{steps.create-pull-request.outputs.pull-request-number}}
+          }
+

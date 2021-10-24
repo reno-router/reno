@@ -52,7 +52,7 @@ jobs:
         with:
           workflow: Post-upgrade
           repo: reno-router/reno
-          token: ${{ secrets.UPGRADE_TOKEN }}
+          token: ${{secrets.UPGRADE_TOKEN}}
           inputs: |
             {
               "success": ${{needs.build.result == 'success'}},
