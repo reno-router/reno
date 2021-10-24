@@ -10,12 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      # TODO: STRIP OUT 'v' prefix prior to upgrade-required evaluation!!!
-      supported-deno-version: ${{steps.supported-deno-version.outputs.value}}
-      supported-std-version: ${{steps.supported-std-version.outputs.value}}
-      latest-deno-version: ${{steps.latest-deno-version.outputs.release}}
-      latest-std-version: ${{steps.latest-std-version.outputs.release}}
-      upgrade-required: ${{steps.latest-deno-version.outputs.release > steps.supported-deno-version.outputs.value || steps.latest-std-version.outputs.release > steps.supported-std-version.outputs.value }}
+      supported-deno-version: ${{steps.sanitise-version-numbers.outputs.supported-deno}}
+      supported-std-version: ${{steps.sanitise-version-numbers.outputs.supported-std}}
+      latest-deno-version: ${{steps.sanitise-version-numbers.outputs.latest-deno}}
+      latest-std-version: ${{steps.sanitise-version-numbers.outputs.latest-std}}
+      upgrade-required: ${{steps.sanitise-version-numbers.outputs.latest-deno > steps.sanitise-version-numbers.outputs.supported-deno || ${{steps.sanitise-version-numbers.outputs.latest-std > steps.sanitise-version-numbers.outputs.supported-std }}
 
     steps:
     - uses: actions/checkout@v2
@@ -47,6 +46,17 @@ jobs:
         owner: denoland
         repo: deno_std
         excludes: prerelease, draft
+
+    # The tag formats between denoland/deno and
+    # denoland/deno_std are inconsistent, so this step
+    # strips any 'v' prefixes that may be present
+    - name: Sanitise version numbers
+      id: sanitise-version-numbers
+      run: |
+        echo "::set-output name=supported-deno::${{steps.supported-deno-version.outputs.value}}"
+        echo "::set-output name=supported-std::${{steps.supported-std-version.outputs.value}}"
+        echo "::set-output name=latest-deno::$(echo ${{steps.latest-deno-version.outputs.release}} | sed s/v//)"
+        echo "::set-output name=latest-std::$(echo ${{steps.latest-std-version.outputs.release}} | sed s/v//)"
 
   upgrade:
     runs-on: ubuntu-latest
@@ -99,7 +109,7 @@ jobs:
         git config user.name "James Wright"
         git config user.email "hi@james.engineering"
         git remote add github "https://$GITHUB_ACTOR:${{secrets.PUSH_TOKEN}}@github.com/$GITHUB_REPOSITORY.git"
-        git checkout -b upgrade/${{steps.calculate-reno-version.outputs.value}}
+        git checkout -b upgrade/v${{steps.calculate-reno-version.outputs.value}}
         git add -A
         git commit -m "Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}"
-        git push -u origin upgrade/${{steps.calculate-reno-version.outputs.value}}
+        git push -u origin upgrade/v${{steps.calculate-reno-version.outputs.value}}
