@@ -109,9 +109,8 @@ jobs:
         branch: upgrade/v${{steps.calculate-reno-version.outputs.value}}
         delete-branch: true
         base: master
-        commit-message: [Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
         commiter: Reno Buildbot <${{secrets.BUILDBOT_EMAIL}}>
-        title: [Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}
+        title: '[Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}'
         body: This is an automated pull request.
 
     - name: Invoke CI workflow
