@@ -39,7 +39,7 @@ jobs:
       - name: Checkout master
         uses: actions/checkout@v2
         with:
-          branch: master
+          ref: master
 
       - name: Get Reno version
         id: get-reno-version
@@ -64,7 +64,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v5.6
         with:
           github_token: ${{secrets.UPGRADE_TOKEN}}
-          custom_tag: v${{steps.get-reno-version.outputs.value}}
+          custom_tag: ${{steps.get-reno-version.outputs.value}}
 
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
