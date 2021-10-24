@@ -62,9 +62,7 @@ jobs:
       uses: sergeysova/jq-action@v2
       with:
         cmd: |
-          deno_version=${{needs.determine-upgrade.outputs.latest-deno-version}}
-          std_version=${{needs.determine-upgrade.outputs.latest-std-version}}
-          echo "$(jq -r ".deno = \"$deno_version\" | .std = \"$std_version\"" deno_versions.json)" > deno_versions.json
+          echo "$(jq -r ".deno = \"${{needs.determine-upgrade.outputs.latest-deno-version}}\" | .std = \"${{needs.determine-upgrade.outputs.latest-std-version}}\"" deno_versions.json)" > deno_versions.json
 
     - name: Upgrade std version
       uses: jacobtomlinson/gha-find-replace@v2
