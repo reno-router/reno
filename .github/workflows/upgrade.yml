@@ -113,10 +113,3 @@ jobs:
         git add -A
         git commit -m "Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}"
         git push -u origin upgrade/v${{steps.calculate-reno-version.outputs.value}}
-
-    - name: Dispatch automated-upgrade-generated repository event
-      uses: peter-evans/repository-dispatch@v1
-      with:
-        token: ${{secrets.UPGRADE_TOKEN}}
-        event-type: automated-upgrade-generated
-
