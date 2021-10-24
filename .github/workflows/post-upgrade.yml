@@ -56,7 +56,8 @@ jobs:
 
       - name: Checkout master
         uses: actions/checkout@v2
-        branch: master
+        with:
+          branch: master
 
       - name: Create tag
         id: tag-version
