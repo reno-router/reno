@@ -21,4 +21,5 @@ jobs:
         password: ${{secrets.BUILDBOT_EMAIL_PASSWORD}}
         to: hi@james.engineering
         from: Reno Buildbot
+        subject: Reno automated upgrade failure
         body: "An automated attempt to upgrade Reno has failed. Please consult the run and manually intervene to resolve the issue: https://github.com/${{github.repository}}/actions/runs/${{github.event.inputs.ci_run_id}}"

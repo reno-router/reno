@@ -1,0 +1,127 @@
+name: Upgrade Deno runtime and std versions
+
+on:
+  push:
+    branches:
+      - feat/automated-upgrade
+
+jobs:
+  determine-upgrade:
+    runs-on: ubuntu-latest
+
+    outputs:
+      supported-deno-version: ${{steps.sanitise-version-numbers.outputs.supported-deno}}
+      supported-std-version: ${{steps.sanitise-version-numbers.outputs.supported-std}}
+      latest-deno-version: ${{steps.sanitise-version-numbers.outputs.latest-deno}}
+      latest-std-version: ${{steps.sanitise-version-numbers.outputs.latest-std}}
+      upgrade-required: ${{steps.sanitise-version-numbers.outputs.latest-deno > steps.sanitise-version-numbers.outputs.supported-deno || steps.sanitise-version-numbers.outputs.latest-std > steps.sanitise-version-numbers.outputs.supported-std }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Get supported Deno runtime version number
+      id: supported-deno-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r .deno deno_versions.json
+
+    - name: Get supported std version number
+      id: supported-std-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r .std deno_versions.json
+
+    - name: Get latest Deno runtime release
+      id: latest-deno-version
+      uses: pozetroninc/github-action-get-latest-release@master
+      with:
+        owner: denoland
+        repo: deno
+        excludes: prerelease, draft
+
+    - name: Get latest std release
+      id: latest-std-version
+      uses: pozetroninc/github-action-get-latest-release@master
+      with:
+        owner: denoland
+        repo: deno_std
+        excludes: prerelease, draft
+
+    # The tag formats between denoland/deno and
+    # denoland/deno_std are inconsistent, so this step
+    # strips any 'v' prefixes that may be present
+    - name: Sanitise version numbers
+      id: sanitise-version-numbers
+      run: |
+        echo "::set-output name=supported-deno::${{steps.supported-deno-version.outputs.value}}"
+        echo "::set-output name=supported-std::${{steps.supported-std-version.outputs.value}}"
+        echo "::set-output name=latest-deno::$(echo ${{steps.latest-deno-version.outputs.release}} | sed s/v//)"
+        echo "::set-output name=latest-std::$(echo ${{steps.latest-std-version.outputs.release}} | sed s/v//)"
+
+  upgrade:
+    runs-on: ubuntu-latest
+    needs: determine-upgrade
+    if: ${{needs.determine-upgrade.outputs.upgrade-required}}
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        token: ${{secrets.UPGRADE_TOKEN}}
+
+    - name: Bump deno_versions.json
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: |
+          echo "$(jq -r ".deno = \"${{needs.determine-upgrade.outputs.latest-deno-version}}\" | .std = \"${{needs.determine-upgrade.outputs.latest-std-version}}\"" deno_versions.json)" > deno_versions.json
+
+    - name: Upgrade std version
+      uses: jacobtomlinson/gha-find-replace@v2
+      with:
+        find: "https://deno.land/std@${{needs.determine-upgrade.outputs.supported-std-version}}"
+        replace: "https://deno.land/std@${{needs.determine-upgrade.outputs.latest-std-version}}"
+        regex: false
+
+    # There's probably a way to achieve the next two steps with
+    # one jq execution, but I can't figure it out right now.
+    - name: Calculate Reno version
+      id: calculate-reno-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json
+
+    - name: Bump Reno version
+      id: bump-reno-version
+      uses: sergeysova/jq-action@v2
+      with:
+        cmd: |
+          echo "$(jq -r ".version = \"${{steps.calculate-reno-version.outputs.value}}\"" egg.json)" > egg.json
+
+    - name: Generate README
+      run: |
+        curl -fsSL https://deno.land/x/install/install.sh | sh -s v${{needs.determine-upgrade.outputs.latest-deno-version}}
+        make generate-readme
+
+    - name: Create pull request
+      id: create-pull-request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{secrets.UPGRADE_TOKEN}}
+        branch: upgrade/v${{steps.calculate-reno-version.outputs.value}}
+        delete-branch: true
+        base: master
+        commiter: Reno Buildbot <${{secrets.BUILDBOT_EMAIL}}>
+        title: '[Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}'
+        body: This is an automated pull request.
+
+    - name: Invoke CI workflow
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: CI
+        repo: reno-router/reno
+        token: ${{secrets.UPGRADE_TOKEN}}
+        inputs: |
+          {
+            "pull-request-url": "${{steps.create-pull-request.outputs.pull-request-url}}"
+            "pull-request-number": ${{steps.create-pull-request.outputs.pull-request-number}}
+          }
+
