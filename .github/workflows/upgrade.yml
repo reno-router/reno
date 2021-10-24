@@ -1,9 +1,9 @@
 name: Upgrade Deno runtime and std versions
 
-on:
+on: # TODO: run via scheduler!
   push:
     branches:
-      - feat/automated-upgrade
+      - master
 
 jobs:
   determine-upgrade:
