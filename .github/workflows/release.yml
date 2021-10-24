@@ -13,9 +13,9 @@ jobs:
     - name: Deploy to deno.land/x
       run: echo "Reno is deployed to deno.land/x via a webhook"
 
-    - name: Install supported Deno version
+    - name: Install eggs-compatible Deno version
       run: |
-        curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
+        curl -fsSL https://deno.land/x/install/install.sh | sh -s v1.14.1
 
     - name: Deploy to nest.land
       run: |
