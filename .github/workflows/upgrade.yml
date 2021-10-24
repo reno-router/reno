@@ -35,7 +35,7 @@ jobs:
 
     - name: Get latest Deno runtime release
       id: latest-deno-version
-      uses: pozetroninc/github-action-get-latest-release@master
+      uses: pozetroninc/github-action-get-latest-release@v0.5.0
       with:
         owner: denoland
         repo: deno
@@ -43,7 +43,7 @@ jobs:
 
     - name: Get latest std release
       id: latest-std-version
-      uses: pozetroninc/github-action-get-latest-release@master
+      uses: pozetroninc/github-action-get-latest-release@v0.5.0
       with:
         owner: denoland
         repo: deno_std
