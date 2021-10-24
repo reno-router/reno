@@ -63,7 +63,7 @@ jobs:
   upgrade:
     runs-on: ubuntu-latest
     needs: determine-upgrade
-    if: ${{needs.determine-upgrade.outputs.upgrade-required}}
+    if: ${{needs.determine-upgrade.outputs.upgrade-required == 'true'}}
 
     steps:
     - uses: actions/checkout@v2
