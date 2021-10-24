@@ -29,6 +29,18 @@ jobs:
     needs: find-pr
     if: ${{github.event.inputs.build-result == 'success'}}
     steps:
+      - name: Merge upgrade PR
+        uses: juliangruber/merge-pull-request-action@v1
+        with:
+          github-token: ${{secrets.UPGRADE_TOKEN}}
+          number: ${{needs.find-pr.outputs.number}}
+          method: squash
+
+      - name: Checkout master
+        uses: actions/checkout@v2
+        with:
+          branch: master
+
       - name: Get Reno version
         id: get-reno-version
         uses: sergeysova/jq-action@v2
@@ -46,18 +58,6 @@ jobs:
         uses: sergeysova/jq-action@v2
         with:
           cmd: jq -r .std deno_versions.json
-
-      - name: Merge upgrade PR
-        uses: juliangruber/merge-pull-request-action@v1
-        with:
-          github-token: ${{secrets.UPGRADE_TOKEN}}
-          number: ${{needs.find-pr.outputs.number}}
-          method: squash
-
-      - name: Checkout master
-        uses: actions/checkout@v2
-        with:
-          branch: master
 
       - name: Create tag
         id: tag-version
