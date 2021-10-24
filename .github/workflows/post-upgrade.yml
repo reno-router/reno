@@ -6,10 +6,10 @@ on:
       success:
         required: true
         description: Whether the CI run succeeded or failed
-      pull_request_url:
+      pull-request-url:
         required: true
         description: URL of the associated pull request
-      pull_request_number:
+      pull-request-number:
         required: true
         description: Number of the associated pull request
 
@@ -40,7 +40,7 @@ jobs:
         uses: juliangruber/merge-pull-request-action@v1
         with:
           github-token: ${{secrets.UPGRADE_TOKEN}}
-          number: ${{github.event.inputs.pull_request_number}}
+          number: ${{github.event.inputs.pull-request-number}}
           method: squash
 
       - name: Checkout master
@@ -76,4 +76,4 @@ jobs:
         password: ${{secrets.BUILDBOT_EMAIL_PASSWORD}}
         to: hi@james.engineering
         from: Reno Buildbot
-        body: "An automated attempt to upgrade Reno has failed. Please consult the generated PR and manually intervene to resolve the issue: ${{github.event.inputs.pull_request_url}}"
+        body: "An automated attempt to upgrade Reno has failed. Please consult the generated PR and manually intervene to resolve the issue: ${{github.event.inputs.pull-request-url}}"
