@@ -57,5 +57,5 @@ jobs:
             {
               "success": ${{needs.build.result == 'success'}},
               "pull-request-url": "${{github.event.inputs.pull-request-url}}",
-              "pull-request-number": ${{github.event.inputs.pull-request-number}}
+              "pull-request-number": "${{github.event.inputs.pull-request-number}}"
             }

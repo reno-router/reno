@@ -122,6 +122,6 @@ jobs:
         inputs: |
           {
             "pull-request-url": "${{steps.create-pull-request.outputs.pull-request-url}}",
-            "pull-request-number": ${{steps.create-pull-request.outputs.pull-request-number}}
+            "pull-request-number": "${{steps.create-pull-request.outputs.pull-request-number}}"
           }
 
