@@ -38,7 +38,7 @@ jobs:
   post-upgrade:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{startsWith(github.ref, 'refs/heads/upgrade')}}
+    if: ${{always() && startsWith(github.ref, 'refs/heads/upgrade')}}
     steps:
       - name: Invoke post-upgrade workflow
         uses: benc-uk/workflow-dispatch@v1
