@@ -109,7 +109,7 @@ jobs:
         branch: upgrade/v${{steps.calculate-reno-version.outputs.value}}
         delete-branch: true
         base: master
-        commiter: Reno Buildbot <${{secrets.BUILDBOT_EMAIL}}>
+        committer: Reno Buildbot <${{secrets.BUILDBOT_EMAIL}}>
         title: '[Reno Buildbot] Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}'
         body: This is an automated pull request.
 
@@ -121,7 +121,7 @@ jobs:
         token: ${{secrets.UPGRADE_TOKEN}}
         inputs: |
           {
-            "pull-request-url": "${{steps.create-pull-request.outputs.pull-request-url}}"
+            "pull-request-url": "${{steps.create-pull-request.outputs.pull-request-url}}",
             "pull-request-number": ${{steps.create-pull-request.outputs.pull-request-number}}
           }
 
