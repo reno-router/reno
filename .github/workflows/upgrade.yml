@@ -66,7 +66,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        token: ${{secrets.PUSH_TOKEN}}
+        token: ${{secrets.UPGRADE_TOKEN}}
 
     - name: Bump deno_versions.json
       uses: sergeysova/jq-action@v2
@@ -106,10 +106,17 @@ jobs:
     # checking out the branch. I thus decided to roll my own.
     - name: Commit and push changes
       run: |
-        git config user.name "James Wright"
-        git config user.email "hi@james.engineering"
-        git remote add github "https://$GITHUB_ACTOR:${{secrets.PUSH_TOKEN}}@github.com/$GITHUB_REPOSITORY.git"
+        git config user.name "Reno Buildbot"
+        git config user.email ${{secrets.BUILDBOT_EMAIL}}
+        git remote add github "https://$GITHUB_ACTOR:${{secrets.UPGRADE_TOKEN}}@github.com/$GITHUB_REPOSITORY.git"
         git checkout -b upgrade/v${{steps.calculate-reno-version.outputs.value}}
         git add -A
         git commit -m "Upgrades Deno to ${{needs.determine-upgrade.outputs.latest-deno-version}} and std to ${{needs.determine-upgrade.outputs.latest-std-version}}"
         git push -u origin upgrade/v${{steps.calculate-reno-version.outputs.value}}
+
+    - name: Dispatch automated-upgrade-generated repository event
+      uses: peter-evans/repository-dispatch@v1
+      with:
+        token: ${{secrets.UPGRADE_TOKEN}}
+        event-type: automated-upgrade-generated
+

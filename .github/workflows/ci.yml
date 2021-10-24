@@ -3,10 +3,12 @@ name: CI
 on:
   push:
     branches:
-      - master
-      - feat/**
-      - fix/**
-      - upgrade/**
+    - master
+    - feat/**
+    - fix/**
+  repository_dispatch:
+    types:
+    - automated-upgrade-generated
 
 jobs:
   build:
@@ -34,3 +36,15 @@ jobs:
 
     - name: End-to-end tests
       run: make e2e
+
+  notify-failure:
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{github.event_name == "automated-upgrade-generated" && needs.build.result == "failure"}}
+    steps:
+      - name: Dispatch automated-upgrade-build-failed repository event
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{secrets.UPGRADE_TOKEN}}
+          event-type: automated-upgrade-build-failed
+
