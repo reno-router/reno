@@ -6,12 +6,6 @@ on:
       success:
         required: true
         description: Whether the CI run succeeded or failed
-      pull-request-url:
-        required: true
-        description: URL of the associated pull request
-      pull-request-number:
-        required: true
-        description: Number of the associated pull request
 
 jobs:
   success:
@@ -36,11 +30,21 @@ jobs:
         with:
           cmd: jq -r .std deno_versions.json
 
+      - name: Format branch
+        id: format-branch
+        run: echo "::set-output name=branch::$(echo ${{github.ref}} | sed 's/refs\/heads\///')"
+
+      - name: Find pull request
+        uses: juliangruber/find-pull-request-action@v1
+        id: find-pull-request
+        with:
+          branch: ${{steps.format-branch.outputs.branch}}
+
       - name: Merge upgrade PR
         uses: juliangruber/merge-pull-request-action@v1
         with:
           github-token: ${{secrets.UPGRADE_TOKEN}}
-          number: ${{github.event.inputs.pull-request-number}}
+          number: ${{steps.find-pull-request.outputs.number}}
           method: squash
 
       - name: Checkout master
