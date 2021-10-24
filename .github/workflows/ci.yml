@@ -35,7 +35,7 @@ jobs:
     - name: End-to-end tests
       run: make e2e
 
-  notify-upgrade:
+  post-upgrade:
     runs-on: ubuntu-latest
     needs: build
     if: ${{startsWith(github.ref, 'refs/heads/upgrade')}}
