@@ -69,7 +69,7 @@ jobs:
     - name: Upgrade std version
       uses: jacobtomlinson/gha-find-replace@v2
       with:
-        find: "https://deno.land/std@${{needs.determine-upgrade.outputs.current-std-version}}"
+        find: "https://deno.land/std@${{needs.determine-upgrade.outputs.supported-std-version}}"
         replace: "https://deno.land/std@${{needs.determine-upgrade.outputs.latest-std-version}}"
         regex: false
 
