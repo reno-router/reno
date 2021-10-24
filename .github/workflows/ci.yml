@@ -40,7 +40,7 @@ jobs:
   notify-failure:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{github.event_name == "automated-upgrade-generated" && needs.build.result == "failure"}}
+    if: ${{github.event_name == 'automated-upgrade-generated' && needs.build.result == 'failure'}}
     steps:
       - name: Dispatch automated-upgrade-build-failed repository event
         uses: peter-evans/repository-dispatch@v1
