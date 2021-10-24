@@ -84,8 +84,7 @@ jobs:
       uses: sergeysova/jq-action@v2
       with:
         cmd: |
-          version=${{steps.calculate-reno-version.outputs.value}}
-          echo "$(jq -r ".version = \"$version\"" egg.json)" > egg.json
+          echo "$(jq -r ".version = \"${{steps.calculate-reno-version.outputs.value}}\"" egg.json)" > egg.json
 
     - name: Generate README
       run: |
