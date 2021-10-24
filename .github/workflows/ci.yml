@@ -6,7 +6,14 @@ on:
     - master
     - feat/**
     - fix/**
-    - upgrade/**
+  workflow_dispatch:
+    inputs:
+      pull-request-url:
+        required: true
+        description: URL of the associated pull request, passed in from the upgrade workflow
+      pull-request-number:
+        required: true
+        description: Number of the associated pull request, passed in from the upgrade workflow
 
 jobs:
   build:
@@ -35,15 +42,20 @@ jobs:
     - name: End-to-end tests
       run: make e2e
 
-  notify-upgrade-failure:
+  notify-upgrade:
     runs-on: ubuntu-latest
     needs: build
-    if: ${{failure() && startsWith(github.ref, 'refs/heads/upgrade')}}
+    if: ${{startsWith(github.ref, 'refs/heads/upgrade')}}
     steps:
-      - name: Invoke upgrade failure workflow
+      - name: Invoke post-upgrade workflow
         uses: benc-uk/workflow-dispatch@v1
         with:
-          workflow: Upgrade failure
+          workflow: Post-upgrade
           repo: reno-router/reno
           token: ${{ secrets.UPGRADE_TOKEN }}
-          inputs: '{ "ci_run_id": "${{github.run_id}}" }'
+          inputs: |
+            {
+              "success": ${{needs.build.result == 'success'}},
+              "pull_request_url": "${{github.event.inputs.pull_request_url}}"
+              "pull_request_number": ${{github.event.inputs.pull_request_number}}
+            }
