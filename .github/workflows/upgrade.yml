@@ -98,7 +98,7 @@ jobs:
 
     - name: Generate README
       run: |
-        curl -fsSL https://deno.land/x/install/install.sh | sh -s ${{needs.determine-upgrade.outputs.latest-deno-version}}
+        curl -fsSL https://deno.land/x/install/install.sh | sh -s v${{needs.determine-upgrade.outputs.latest-deno-version}}
         make generate-readme
 
     # I tried using the EndBug/add-and-commit@v7 action for this
