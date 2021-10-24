@@ -6,15 +6,14 @@ on:
     - master
     - feat/**
     - fix/**
-  on:
-    workflow_dispatch:
-      inputs:
-        pull-request-url:
-          required: true
-          description: URL of the associated pull request, passed in from the upgrade workflow
-        pull-request-number:
-          required: true
-          description: Number of the associated pull request, passed in from the upgrade workflow
+  workflow_dispatch:
+    inputs:
+      pull-request-url:
+        required: true
+        description: URL of the associated pull request, passed in from the upgrade workflow
+      pull-request-number:
+        required: true
+        description: Number of the associated pull request, passed in from the upgrade workflow
 
 jobs:
   build:
