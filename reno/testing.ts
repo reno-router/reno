@@ -1,6 +1,30 @@
 import { assertEquals } from "../deps.ts";
 import { AugmentedResponse } from "./router.ts";
 
+export function createResponseSubset(
+  {
+    status,
+    statusText,
+    cookies,
+    headers,
+    ok,
+    redirected,
+    type,
+  }: AugmentedResponse,
+  body: string,
+) {
+  return {
+    status,
+    statusText,
+    cookies,
+    headers,
+    ok,
+    redirected,
+    type,
+    body,
+  };
+}
+
 export function createAssertResponsesAreEqual(assertEqls: typeof assertEquals) {
   return async function (
     actual: AugmentedResponse,
@@ -10,15 +34,11 @@ export function createAssertResponsesAreEqual(assertEqls: typeof assertEquals) {
       [actual, expected].map((res) => res.text()),
     );
 
+    /* It seems that deeply comparing the requests always fails
+     * so we instead have to match a subset of their fields. */
     assertEqls(
-      {
-        ...actual,
-        body: actualText,
-      },
-      {
-        ...expected,
-        body: expectedText,
-      },
+      createResponseSubset(actual, actualText),
+      createResponseSubset(expected, expectedText),
     );
   };
 }
