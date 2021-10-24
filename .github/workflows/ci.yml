@@ -40,9 +40,10 @@ jobs:
     needs: build
     if: ${{failure() && startsWith(github.ref, 'refs/heads/upgrade')}}
     steps:
-      - name: Dispatch automated-upgrade-build-failed repository event
-        uses: peter-evans/repository-dispatch@v1
+      - name: Invoke upgrade failure workflow
+        uses: benc-uk/workflow-dispatch@v1
         with:
-          token: ${{secrets.UPGRADE_TOKEN}}
-          event-type: automated-upgrade-build-failed
-
+          workflow: Upgrade failure
+          repo: reno-router/reno
+          token: ${{ secrets.UPGRADE_TOKEN }}
+          inputs: '{ "ci_run_id": "${{github.run_id}}" }'
