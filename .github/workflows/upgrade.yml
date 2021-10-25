@@ -13,10 +13,7 @@ jobs:
       supported-std-version: ${{steps.sanitise-version-numbers.outputs.supported-std}}
       latest-deno-version: ${{steps.sanitise-version-numbers.outputs.latest-deno}}
       latest-std-version: ${{steps.sanitise-version-numbers.outputs.latest-std}}
-
-      # Greater than operator would be nicer than !=,
-      # but it doesn't seem to work on strings :(
-      upgrade-required: ${{steps.sanitise-version-numbers.outputs.latest-deno != steps.sanitise-version-numbers.outputs.supported-deno || steps.sanitise-version-numbers.outputs.latest-std != steps.sanitise-version-numbers.outputs.supported-std}}
+      upgrade-required: ${{steps.sanitise-version-numbers.outputs.latest-deno > steps.sanitise-version-numbers.outputs.supported-deno || steps.sanitise-version-numbers.outputs.latest-std > steps.sanitise-version-numbers.outputs.supported-std}}
 
     steps:
     - uses: actions/checkout@v2
