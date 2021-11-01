@@ -238,14 +238,14 @@ Consult [Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.
 
 ## Local Development
 
-Once you've cloned the repository, you'll need to ensure you're running the version of Deno against which this project is developed; this is stored in `.deno_version`. To install the correct version, run:
+Once you've cloned the repository, you'll need to ensure you're running the version of Deno against which this project is developed; this is stored in `deno_versions.json`. To install the correct version, run:
 
 ```sh
 # If Deno isn't currently installed...
-$ curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(cat .deno_version)
+$ curl -fsSL https://deno.land/x/install/install.sh | sh -s v$(jq -r .deno deno_versions.json)
 
 # ...or it it's already present on your system
-deno upgrade --version $(cat .deno_version)
+deno upgrade --version $(jq -r .deno deno_versions.json)
 ```
 
 You should also run `make install-types` to install the TypeScript definitions for Deno and any other third-party dependencies.
