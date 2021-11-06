@@ -4,7 +4,7 @@
 
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions) [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v{{version}}/reno/mod.ts) [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
 
-Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://github.com/denoland/deno/tree/master/std/http).
+Reno is a thin routing library designed to sit on top of [Deno](https://deno.land/)'s [standard HTTP module](https://deno.land/std/http).
 
 * [Overview](#overview)
 * [Key Features](#key-features)
@@ -272,6 +272,5 @@ Then you can run:
 * [x] Custom headers
 * [x] Request bodies
 * [x] Cookies
-* [x] Streaming responses with [`Reader`](https://deno.land/typedoc/interfaces/_deno_.reader.html)
+* [x] Streaming responses with [`Deno.Reader`](https://doc.deno.land/builtin/stable#Deno.Reader)
 * [ ] Streaming request bodies
-
