@@ -16,6 +16,9 @@ lint:
 test:
 	${HOME}/.deno/bin/deno test reno example
 
+compile-example:
+	${HOME}/.deno/bin/deno compile -o server.out example/server.ts
+
 install-types:
 	mkdir -p types
 	${HOME}/.deno/bin/deno types > types/deno.d.ts

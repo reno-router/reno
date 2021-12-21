@@ -168,24 +168,26 @@ export function routerCreator(
  * Deno's HTTP server receives a request:
  *
  * ```ts
- * import { listenAndServe } from "https://deno.land/std@0.118.0/http/server.ts";
+ * import { serve } from "https://deno.land/std@0.118.0/http/server.ts";
  * import { createRouter } from "https://deno.land/x/reno@<VERSION>/reno/mod.ts";
  * import { routes } from "./routes.ts";
  *
- * const BINDING = ":8000";
+ * const PORT = ":8000";
  *
  * const router = createRouter(routes);
  *
- * console.log(`Listening for requests on ${BINDING}...`);
+ * console.log(`Listening for requests on ${PORT}...`);
  *
- * await listenAndServe(
- *   BINDING,
+ * await serve(
  *   async req => {
  *     try {
  *       return await router(req);
  *     } catch (e) {
  *       return mapToErrorResponse(e);
  *     }
+ *   },
+ *   {
+ *     port: PORT,
  *   },
  * );
  * ```

@@ -18,20 +18,22 @@ Reno is a thin routing library designed to sit on top of [Deno](https://deno.lan
 ## Overview
 
 ```tsx
-import { listenAndServe } from "https://deno.land/std@0.118.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.118.0/http/server.ts";
 
 import {
   AugmentedRequest,
   createRouteMap,
   createRouter,
   jsonResponse,
-  streamResponse,
   MissingRouteError,
+  streamResponse,
 } from "https://deno.land/x/reno@v{{version}}/reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@{{version}}/reno/mod.ts";
+ * import { ... } from "https://x.nest.land/reno@2.0.18/reno/mod.ts";
  */
+
+const PORT = 8000;
 
 function createErrorResponse(status: number, { message }: Error) {
   return new Response(message, {
@@ -40,7 +42,7 @@ function createErrorResponse(status: number, { message }: Error) {
 }
 
 export const routes = createRouteMap([
-  ["/home", () => new Response("Hello world!")],
+  ["/", () => new Response("Hello world!")],
 
   // Supports RegExp routes for further granularity
   [/^\/api\/swanson\/?([0-9]?)$/, async (req: AugmentedRequest) => {
@@ -54,9 +56,10 @@ export const routes = createRouteMap([
   }],
 
   // Supports Reader for streaming responses in chunks
-  ["/streamed-response", () => streamResponse(
-    new ReactReader(<App />),
-  )],
+  ["/streamed-response", () =>
+    streamResponse(
+      new ReactReader(<App />),
+    )],
 ]);
 
 const notFound = (e: MissingRouteError) => createErrorResponse(404, e);
@@ -67,16 +70,18 @@ const mapToErrorResponse = (e: Error) =>
 
 const router = createRouter(routes);
 
-console.log("Listening for requests...");
+console.log(`Listening for requests on port ${PORT}...`);
 
-await listenAndServe(
-  ":8001",
-  async req => {
+await serve(
+  async (req) => {
     try {
       return await router(req);
     } catch (e) {
       return mapToErrorResponse(e);
     }
+  },
+  {
+    port: PORT,
   },
 );
 ```
