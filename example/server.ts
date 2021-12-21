@@ -1,9 +1,11 @@
-import { listenAndServe } from "https://deno.land/std@0.118.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.118.0/http/server.ts";
 
 import app from "./app.ts";
 
-const BINDING = ":8000";
+const PORT = 8000;
 
-console.log(`Listening for requests on ${BINDING}...`);
+console.log(`Listening for requests on ${PORT}...`);
 
-await listenAndServe(BINDING, app);
+await serve(app, {
+  port: PORT,
+});
