@@ -1,7 +1,7 @@
 {
   "name": "reno",
   "description": "A thin routing library designed to sit on top of Deno's standard HTTP module",
-  "version": "2.0.20",
+  "version": "2.0.21",
   "repository": "https://github.com/reno-router/reno/",
   "stable": true,
   "files": [
