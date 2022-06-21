@@ -12,7 +12,7 @@ import parsePath from "./pathparser.ts";
 import { writeCookies } from "./cookies.ts";
 
 function isOneOf(items: (RegExp | string)[]) {
-  return testdouble.matchers.argThat((arg: (RegExp | string)) =>
+  return testdouble.matchers.argThat((arg: RegExp | string) =>
     items.some((item) => item.toString() === arg.toString())
   );
 }
