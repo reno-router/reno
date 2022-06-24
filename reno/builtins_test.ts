@@ -1,4 +1,4 @@
-import { assertStrictEquals, testdouble } from "../deps.ts";
+import { assertStrictEquals, sinon } from "../deps.ts";
 
 import {
   jsonResponse,
@@ -15,13 +15,9 @@ function createHandlerStub<TBody>(
   _: AugmentedRequest,
   expectedResponse?: Response,
 ) {
-  const handlerStub = testdouble.func();
-
-  testdouble
-    .when(handlerStub(testdouble.matchers.isA(Object)))
-    .thenReturn(expectedResponse);
-
-  return handlerStub as RouteHandler<ProcessedRequest<TBody>>;
+  return sinon.stub().returns(expectedResponse) as RouteHandler<
+    ProcessedRequest<TBody>
+  >;
 }
 
 Deno.test({
@@ -152,7 +148,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "withJsonBody should reject if the body can`t be parsed",
+  name: "withJsonBody should reject if the body can't be parsed",
   async fn() {
     const body = "{ not json rofl";
 
@@ -167,7 +163,10 @@ Deno.test({
 
     await augmentedHandler(request).catch((e) => {
       assertStrictEquals(e instanceof SyntaxError, true);
-      assertStrictEquals(e.message, "Unexpected token n in JSON at position 2");
+      assertStrictEquals(
+        e.message,
+        "Expected property name or '}' in JSON at position 2",
+      );
     });
   },
 });

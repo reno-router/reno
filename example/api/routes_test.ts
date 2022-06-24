@@ -1,16 +1,10 @@
-import { testdouble } from "../../deps.ts";
+import { sinon } from "../../deps.ts";
 import { assertResponsesAreEqual, jsonResponse } from "../../reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 function createFetchStub(response: string[]) {
-  const fetch = testdouble.func();
-  const json = testdouble.func();
-
-  testdouble.when(json()).thenResolve(response);
-
-  testdouble.when(fetch(
-    `https://ron-swanson-quotes.herokuapp.com/v2/quotes/${response.length}`,
-  )).thenResolve({ json });
+  const json = sinon.stub().resolves(response);
+  const fetch = sinon.stub().resolves({ json });
 
   return fetch as unknown as typeof window.fetch;
 }

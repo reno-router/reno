@@ -32,8 +32,8 @@ jobs:
     # This is a sanity check to ensure that
     # there haven't been any breaking changes
     # to server initialisation in Deno.
-    - name: Compile example app
-      run: make compile-example
+    - name: Check example app
+      run: make check-example
 
     - name: Unit tests
       run: make test
