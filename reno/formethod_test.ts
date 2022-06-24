@@ -1,7 +1,6 @@
-import { testdouble } from "../deps.ts";
-import { forMethod, HttpMethod } from "./formethod.ts";
+import { sinon, assert } from "../deps.ts";
+import { forMethod } from "./formethod.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
-import { AugmentedRequest, RouteHandler } from "./router.ts";
 import { assertResponsesAreEqual } from "./testing.ts";
 
 function createRes(body: string, status = 200) {
@@ -12,30 +11,16 @@ function createRes(body: string, status = 200) {
 
 function createRouteStub(
   responseBody: string,
-  expectedMethod: HttpMethod,
 ) {
-  const route = testdouble.func() as RouteHandler<AugmentedRequest>;
-
-  const stubber = testdouble
-    .when(route(
-      testdouble.matchers.contains({
-        method: expectedMethod,
-      }),
-    ));
-
-  const response = new Response(responseBody);
-
-  response instanceof Error
-    ? stubber.thenReject(response)
-    : stubber.thenResolve(response);
-
-  return route;
+  return sinon
+    .stub()
+    .resolves(new Response(responseBody));
 }
 
 const createMethodRouter = () => {
-  const getHandler = createRouteStub("Response for HTTP GET", "GET");
-  const putHandler = createRouteStub("Response for HTTP PUT", "PUT");
-  const postHandler = createRouteStub("Response for HTTP POST", "POST");
+  const getHandler = createRouteStub("Response for HTTP GET");
+  const putHandler = createRouteStub("Response for HTTP PUT");
+  const postHandler = createRouteStub("Response for HTTP POST");
 
   const methodRouter = forMethod([
     ["GET", getHandler],
@@ -71,9 +56,7 @@ Deno.test({
     await assertResponsesAreEqual(res, createRes("Response for HTTP POST"));
 
     [getHandler, putHandler].forEach((handler) => {
-      testdouble.verify(handler(req), {
-        times: 0,
-      });
+      assert(!getHandler.called)
     });
   },
 });
@@ -101,9 +84,7 @@ Deno.test({
     await assertResponsesAreEqual(res, expectedRes);
 
     [getHandler, putHandler, postHandler].forEach((handler) => {
-      testdouble.verify(handler(req), {
-        times: 0,
-      });
+      assert(!getHandler.called)
     });
   },
 });

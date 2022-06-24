@@ -1,4 +1,4 @@
-import { assertStrictEquals, testdouble } from "../deps.ts";
+import { assert, assertStrictEquals, sinon } from "../deps.ts";
 import {
   AugmentedRequest,
   createRouteMap,
@@ -9,50 +9,21 @@ import {
 import { assertResponsesAreEqual } from "./testing.ts";
 import { createServerRequest } from "../test_utils.ts";
 import parsePath from "./pathparser.ts";
-import { writeCookies } from "./cookies.ts";
-
-function isOneOf(items: (RegExp | string)[]) {
-  return testdouble.matchers.argThat((arg: RegExp | string) =>
-    items.some((item) => item.toString() === arg.toString())
-  );
-}
 
 function createRouteStub(
   response: Response | Error,
-  expectedPath: string,
-  expectedRouteParams: string[],
 ) {
-  const route = testdouble.func() as RouteHandler<AugmentedRequest>;
-
-  const stubber = testdouble
-    .when(route(
-      testdouble.matchers.contains({
-        url: expectedPath,
-        routeParams: expectedRouteParams,
-      }),
-      testdouble.matchers.anything(),
-      expectedRouteParams,
-    ));
+  const route = sinon.stub();
 
   response instanceof Error
-    ? stubber.thenReject(response)
-    : stubber.thenResolve(response);
+    ? route.rejects(response)
+    : route.resolves(response);
 
-  return route;
-}
-
-function createPathParserSpy(...paths: (RegExp | string)[]) {
-  const pathParser = testdouble.func() as typeof parsePath;
-
-  testdouble
-    .when(pathParser(isOneOf(paths)))
-    .thenDo(parsePath);
-
-  return pathParser;
+  return route as RouteHandler<AugmentedRequest>;
 }
 
 function createCookieWriterStub() {
-  return testdouble.func() as typeof writeCookies;
+  return sinon.stub();
 }
 
 Deno.test({
@@ -63,10 +34,9 @@ Deno.test({
     const routePath = "/foo";
     const routeRegExp = /\/foo$/;
 
-    const routeStub = createRouteStub(response, routePath, []);
-    const pathParser = createPathParserSpy(routeRegExp);
+    const routeStub = createRouteStub(response);
     const cookieWriter = createCookieWriterStub();
-    const createRouter = routerCreator(pathParser, cookieWriter);
+    const createRouter = routerCreator(parsePath, cookieWriter);
     const router = createRouter(createRouteMap([[routeRegExp, routeStub]]));
     const request = await createServerRequest({ path: routePath });
 
@@ -74,7 +44,7 @@ Deno.test({
 
     await assertResponsesAreEqual(actualResponse, response);
 
-    testdouble.verify(cookieWriter(actualResponse));
+    assert(cookieWriter.called);
   },
 });
 
@@ -86,10 +56,9 @@ Deno.test({
     const routePath = "/foo/*/bar/*/baz";
     const requestPath = "/foo/one/bar/two/baz";
 
-    const routeStub = createRouteStub(response, requestPath, ["one", "two"]);
-    const pathParser = createPathParserSpy(routePath);
+    const routeStub = createRouteStub(response);
     const cookieWriter = createCookieWriterStub();
-    const createRouter = routerCreator(pathParser, cookieWriter);
+    const createRouter = routerCreator(parsePath, cookieWriter);
     const router = createRouter(createRouteMap([[routePath, routeStub]]));
     const request = await createServerRequest({ path: requestPath });
 
@@ -97,7 +66,7 @@ Deno.test({
 
     await assertResponsesAreEqual(actualResponse, response);
 
-    testdouble.verify(cookieWriter(actualResponse));
+    assert(cookieWriter.called);
   },
 });
 
@@ -106,10 +75,9 @@ Deno.test({
   async fn() {
     const response = new Response();
     const path = "/foo/bar/baz?lol=rofl&rofl=lmao";
-    const routeStub = createRouteStub(response, path, []);
-    const pathParser = createPathParserSpy("/foo/*", "/bar/*", "/baz");
+    const routeStub = createRouteStub(response);
     const cookieWriter = createCookieWriterStub();
-    const createRouter = routerCreator(pathParser, cookieWriter);
+    const createRouter = routerCreator(parsePath, cookieWriter);
 
     const routes = createRouteMap([
       [
@@ -138,10 +106,9 @@ Deno.test({
     "createRouter`s routing function should reject with a RouteMissingError when no routes match",
   async fn() {
     const mismatchedRequest = await createServerRequest({ path: "/foo-bar" });
-    const routeStub = testdouble.func() as RouteHandler<AugmentedRequest>;
-    const pathParser = createPathParserSpy();
+    const routeStub = sinon.stub() as RouteHandler<AugmentedRequest>;
     const cookieWriter = createCookieWriterStub();
-    const createRouter = routerCreator(pathParser, cookieWriter);
+    const createRouter = routerCreator(parsePath, cookieWriter);
     const router = createRouter(createRouteMap([[/^\/foo$/, routeStub]]));
 
     // TODO: migrate all of this to async/await
@@ -164,10 +131,9 @@ Deno.test({
   async fn() {
     const path = "/foo";
     const mismatchedRequest = await createServerRequest({ path });
-    const routeStub = createRouteStub(new Error("Some error!"), path, []);
-    const pathParser = createPathParserSpy(/\/foo$/);
+    const routeStub = createRouteStub(new Error("Some error!"));
     const cookieWriter = createCookieWriterStub();
-    const createRouter = routerCreator(pathParser, cookieWriter);
+    const createRouter = routerCreator(parsePath, cookieWriter);
     const router = createRouter(createRouteMap([[/\/foo$/, routeStub]]));
 
     await router(mismatchedRequest).catch((e) => {
