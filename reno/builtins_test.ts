@@ -15,7 +15,9 @@ function createHandlerStub<TBody>(
   _: AugmentedRequest,
   expectedResponse?: Response,
 ) {
-  return sinon.stub().returns(expectedResponse) as RouteHandler<ProcessedRequest<TBody>>;
+  return sinon.stub().returns(expectedResponse) as RouteHandler<
+    ProcessedRequest<TBody>
+  >;
 }
 
 Deno.test({
@@ -161,7 +163,10 @@ Deno.test({
 
     await augmentedHandler(request).catch((e) => {
       assertStrictEquals(e instanceof SyntaxError, true);
-      assertStrictEquals(e.message, "Expected property name or '}' in JSON at position 2");
+      assertStrictEquals(
+        e.message,
+        "Expected property name or '}' in JSON at position 2",
+      );
     });
   },
 });

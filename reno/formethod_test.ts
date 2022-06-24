@@ -1,4 +1,4 @@
-import { sinon, assert } from "../deps.ts";
+import { assert, sinon } from "../deps.ts";
 import { forMethod } from "./formethod.ts";
 import { createAugmentedRequest } from "../test_utils.ts";
 import { assertResponsesAreEqual } from "./testing.ts";
@@ -56,7 +56,7 @@ Deno.test({
     await assertResponsesAreEqual(res, createRes("Response for HTTP POST"));
 
     [getHandler, putHandler].forEach((handler) => {
-      assert(!getHandler.called)
+      assert(!getHandler.called);
     });
   },
 });
@@ -84,7 +84,7 @@ Deno.test({
     await assertResponsesAreEqual(res, expectedRes);
 
     [getHandler, putHandler, postHandler].forEach((handler) => {
-      assert(!getHandler.called)
+      assert(!getHandler.called);
     });
   },
 });

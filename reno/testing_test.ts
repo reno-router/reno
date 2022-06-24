@@ -21,7 +21,7 @@ Deno.test({
       assertEqls.calledWith(
         createResponseSubset(a, "Response body A"),
         createResponseSubset(b, "Response body B"),
-      )
-    )
+      ),
+    );
   },
 });
