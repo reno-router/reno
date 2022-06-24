@@ -56,7 +56,7 @@ Deno.test({
     await assertResponsesAreEqual(res, createRes("Response for HTTP POST"));
 
     [getHandler, putHandler].forEach((handler) => {
-      assert(!getHandler.called);
+      assert(!handler.called);
     });
   },
 });
@@ -84,7 +84,7 @@ Deno.test({
     await assertResponsesAreEqual(res, expectedRes);
 
     [getHandler, putHandler, postHandler].forEach((handler) => {
-      assert(!getHandler.called);
+      assert(!handler.called);
     });
   },
 });
