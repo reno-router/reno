@@ -35,15 +35,15 @@ function withAuth(next: RouteHandler) {
   };
 }
 
-const withCaching = (handler: RouteHandler) =>
-  async (req: AugmentedRequest) => {
+const withCaching =
+  (handler: RouteHandler) => async (req: AugmentedRequest) => {
     const res = await handler(req);
     res.headers.append("Cache-Control", "max-age=86400");
     return res;
   };
 
-const withProtoCookie = (handler: RouteHandler) =>
-  async (req: AugmentedRequest) =>
+const withProtoCookie =
+  (handler: RouteHandler) => async (req: AugmentedRequest) =>
     withCookies(await handler(req), [
       ["requested_method", req.method],
     ]);

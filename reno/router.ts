@@ -128,38 +128,38 @@ export function routerCreator(
   cookieWriter: typeof writeCookies,
 ) {
   return (routes: RouteMap) =>
-    async (
-      req: Request | AugmentedRequest,
-      rootQueryParams?: URLSearchParams,
-      childPathParts?: string[],
-    ) => {
-      const url = new URL(
-        childPathParts ? childPathParts.join("/") : req.url,
-        "https://undefined", // real value not required for relative path parsing
-      );
-      const queryParams = rootQueryParams || url.searchParams;
+  async (
+    req: Request | AugmentedRequest,
+    rootQueryParams?: URLSearchParams,
+    childPathParts?: string[],
+  ) => {
+    const url = new URL(
+      childPathParts ? childPathParts.join("/") : req.url,
+      "https://undefined", // real value not required for relative path parsing
+    );
+    const queryParams = rootQueryParams || url.searchParams;
 
-      /* TODO: restructure this lookup to support O(1) retrieval.
+    /* TODO: restructure this lookup to support O(1) retrieval.
        * Perhaps precompute a radix tree or a similar structure. */
-      for (const [path, handler] of routes) {
-        const [firstMatch, ...restMatches] =
-          url.pathname.match(pathParser(path)) || [];
+    for (const [path, handler] of routes) {
+      const [firstMatch, ...restMatches] =
+        url.pathname.match(pathParser(path)) || [];
 
-        if (firstMatch) {
-          const res = await handler(
-            createAugmentedRequest(req, queryParams, restMatches),
-            queryParams,
-            restMatches,
-          );
+      if (firstMatch) {
+        const res = await handler(
+          createAugmentedRequest(req, queryParams, restMatches),
+          queryParams,
+          restMatches,
+        );
 
-          cookieWriter(res);
+        cookieWriter(res);
 
-          return res;
-        }
+        return res;
       }
+    }
 
-      return Promise.reject(new MissingRouteError(getPathname(req)));
-    };
+    return Promise.reject(new MissingRouteError(getPathname(req)));
+  };
 }
 
 /**

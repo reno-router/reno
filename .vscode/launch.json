@@ -7,7 +7,12 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "/home/james/.deno/bin/deno",
-      "runtimeArgs": ["test", "--inspect-brk", "-A", "example/api/routes_test.ts"],
+      "runtimeArgs": [
+        "test",
+        "--inspect-brk",
+        "-A",
+        "example/api/routes_test.ts"
+      ],
       "port": 9229
     }
   ]
