@@ -33,7 +33,7 @@ import {
 } from "https://deno.land/x/reno@v2.0.51/reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@2.0.18/reno/mod.ts";
+ * import { ... } from "https://x.nest.land/reno@2.0.51/reno/mod.ts";
  */
 
 const PORT = 8000;
