@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.151.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.152.0/http/server.ts";
 
 import app from "./app.ts";
 
