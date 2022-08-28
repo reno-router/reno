@@ -94,7 +94,7 @@ export class MissingRouteError extends Error {
  * ]);
  * ```
  */
-export function createRouteMap(routes: [RegExp | string, RouteHandler][]) {
+export function createRouteMap<R = RouteHandler>(routes: [RegExp | string, R][]) {
   return new Map(routes);
 }
 
