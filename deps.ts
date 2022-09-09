@@ -4,4 +4,4 @@ export * from "https://deno.land/std@0.154.0/testing/asserts.ts";
 export * from "https://deno.land/std@0.154.0/io/mod.ts";
 export * from "https://deno.land/std@0.154.0/http/cookie.ts";
 
-export * as sinon from "https://cdn.skypack.dev/sinon@v14.0.0";
+export * as sinon from "https://cdn.skypack.dev/sinon@v14.0.0/index.js";
