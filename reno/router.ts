@@ -168,7 +168,7 @@ export function routerCreator(
  * Deno's HTTP server receives a request:
  *
  * ```ts
- * import { serve } from "https://deno.land/std@0.161.0/http/server.ts";
+ * import { serve } from "https://deno.land/std@0.162.0/http/server.ts";
  * import { createRouter } from "https://deno.land/x/reno@<VERSION>/reno/mod.ts";
  * import { routes } from "./routes.ts";
  *
