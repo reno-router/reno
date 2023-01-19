@@ -3,6 +3,6 @@
 export * from "https://deno.land/std@0.173.0/testing/asserts.ts";
 export * from "https://deno.land/std@0.173.0/io/mod.ts";
 export * from "https://deno.land/std@0.173.0/http/cookie.ts";
-export { readableStreamFromReader } from "https://deno.land/std@0.173.0/streams/conversion.ts"
+export { readableStreamFromReader } from "https://deno.land/std@0.173.0/streams/readable_stream_from_reader.ts"
 
 export * as sinon from "https://cdn.skypack.dev/sinon@v14.0.0";
