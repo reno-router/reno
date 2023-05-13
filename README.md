@@ -3,7 +3,7 @@
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
-[![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v2.0.96/reno/mod.ts)
+[![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v2.0.97/reno/mod.ts)
 [![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
 
 Reno is a thin routing library designed to sit on top of
@@ -21,7 +21,7 @@ Reno is a thin routing library designed to sit on top of
 ## Overview
 
 ```tsx
-import { serve } from "https://deno.land/std@0.186.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.187.0/http/server.ts";
 
 import {
   AugmentedRequest,
@@ -30,10 +30,10 @@ import {
   jsonResponse,
   MissingRouteError,
   streamResponse,
-} from "https://deno.land/x/reno@v2.0.96/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.97/reno/mod.ts";
 
 /* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@2.0.96/reno/mod.ts";
+ * import { ... } from "https://x.nest.land/reno@2.0.97/reno/mod.ts";
  */
 
 const PORT = 8000;
@@ -101,7 +101,7 @@ testing Reno services a breeze:
 import {
   assertResponsesAreEqual,
   jsonResponse,
-} from "https://deno.land/x/reno@v2.0.96/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.97/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -196,7 +196,7 @@ import {
   AugmentedRequest,
   createRouteMap,
   RouteHandler,
-} from "https://deno.land/x/reno@v2.0.96/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.97/reno/mod.ts";
 
 import isValidAPIKey from "./api_keys.ts";
 
@@ -261,7 +261,7 @@ Deno.test("/ should return the expected response", async () => {
 ## Example Apps
 
 As well as the
-[example app found in this repo](https://github.com/reno-router/reno/tree/v2.0.96/example),
+[example app found in this repo](https://github.com/reno-router/reno/tree/v2.0.97/example),
 which is targetted by the end-to-end test suite, there is a
 [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice)
 built with Deno, Reno, PostgreSQL, and Docker.
@@ -269,7 +269,7 @@ built with Deno, Reno, PostgreSQL, and Docker.
 ## API Documentation
 
 Consult
-[Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v2.0.96/reno/mod.ts)
+[Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v2.0.97/reno/mod.ts)
 for comprehensive documentation on Reno's API.
 
 ## Local Development
