@@ -27,4 +27,4 @@ jobs:
     - name: Cat eggs debug file
       if: ${{ failure() }}
       run: |
-        cat /home/runner/work/reno/reno/eggs-debug.log
+        tail -n 250 /home/runner/work/reno/reno/eggs-debug.log
