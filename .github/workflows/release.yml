@@ -23,3 +23,7 @@ jobs:
         deno install -A --unstable https://x.nest.land/eggs@0.3.10/eggs.ts
         eggs link ${{ secrets.NEST_API_KEY }}
         eggs publish --yes --no-check
+
+    - name: Cat eggs debug file
+      run: |
+        [[ -e /home/runner/work/reno/reno/eggs-debug.log ]] && cat /home/runner/work/reno/reno/eggs-debug.log
