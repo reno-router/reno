@@ -25,5 +25,6 @@ jobs:
         eggs publish --yes --no-check
 
     - name: Cat eggs debug file
+      if: ${{ failure() }}
       run: |
-        [[ -e /home/runner/work/reno/reno/eggs-debug.log ]] && cat /home/runner/work/reno/reno/eggs-debug.log
+        cat /home/runner/work/reno/reno/eggs-debug.log
