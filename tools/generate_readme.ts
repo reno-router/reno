@@ -17,7 +17,7 @@ function writeStringToFile(filename: string, contents: string) {
   return Deno.writeFileSync(filename, encoder.encode(contents));
 }
 
-const metadata: Metadata = JSON.parse(readFileAsString("egg.json"));
+const metadata: Metadata = JSON.parse(readFileAsString("version.json"));
 const readmeTemplate = readFileAsString("README.template.md");
 const updatedReadme = readmeTemplate
   .replace(/\{\{version\}\}/g, metadata.version);

@@ -4,7 +4,6 @@
 
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
 [![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v2.0.97/reno/mod.ts)
-[![Published on Nest.land](https://nest.land/badge.svg)](https://nest.land/package/reno)
 
 Reno is a thin routing library designed to sit on top of
 [Deno](https://deno.land/)'s [standard HTTP module](https://deno.land/std/http).
@@ -31,10 +30,6 @@ import {
   MissingRouteError,
   streamResponse,
 } from "https://deno.land/x/reno@v2.0.97/reno/mod.ts";
-
-/* Alternatively, you can import Reno from nest.land:
- * import { ... } from "https://x.nest.land/reno@2.0.97/reno/mod.ts";
- */
 
 const PORT = 8000;
 

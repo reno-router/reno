@@ -45,7 +45,7 @@ jobs:
         id: get-reno-version
         uses: sergeysova/jq-action@v2
         with:
-          cmd: jq -r .version egg.json
+          cmd: jq -r .version version.json
 
       - name: Get supported Deno runtime version
         id: get-supported-deno-version

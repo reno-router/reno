@@ -86,14 +86,14 @@ jobs:
       id: calculate-reno-version
       uses: sergeysova/jq-action@v2
       with:
-        cmd: jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' egg.json
+        cmd: jq -r '.version | capture("(?<major>[0-9]*)\\.(?<minor>[0-9]*)\\.(?<patch>[0-9]*)") | to_entries | map(if .key == "patch" then .value | tonumber + 1  else .value end) | join(".")' version.json
 
     - name: Bump Reno version
       id: bump-reno-version
       uses: sergeysova/jq-action@v2
       with:
         cmd: |
-          echo "$(jq -r ".version = \"${{steps.calculate-reno-version.outputs.value}}\"" egg.json)" > egg.json
+          echo "$(jq -r ".version = \"${{steps.calculate-reno-version.outputs.value}}\"" version.json)" > version.json
 
     - name: Generate README
       run: |
