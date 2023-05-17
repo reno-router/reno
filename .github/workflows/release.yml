@@ -15,7 +15,7 @@ jobs:
 
     - name: Install eggs-compatible Deno version
       run: |
-        curl -fsSL https://deno.land/x/install/install.sh | sh -s v1.14.1
+        curl -fsSL https://deno.land/x/install/install.sh | sh -s v1.33.3
 
     - name: Deploy to nest.land
       run: |
