@@ -3,7 +3,7 @@
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
-[![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v2.0.101/reno/mod.ts)
+[![Deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/reno@v2.0.102/reno/mod.ts)
 
 Reno is a thin routing library designed to sit on top of
 [Deno](https://deno.land/)'s [standard HTTP module](https://deno.land/std/http).
@@ -29,7 +29,7 @@ import {
   jsonResponse,
   MissingRouteError,
   streamResponse,
-} from "https://deno.land/x/reno@v2.0.101/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.102/reno/mod.ts";
 
 const PORT = 8000;
 
@@ -96,7 +96,7 @@ testing Reno services a breeze:
 import {
   assertResponsesAreEqual,
   jsonResponse,
-} from "https://deno.land/x/reno@v2.0.101/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.102/reno/mod.ts";
 import { createRonSwansonQuoteHandler } from "./routes.ts";
 
 const createFetchStub = (response: string[]) =>
@@ -191,7 +191,7 @@ import {
   AugmentedRequest,
   createRouteMap,
   RouteHandler,
-} from "https://deno.land/x/reno@v2.0.101/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.102/reno/mod.ts";
 
 import isValidAPIKey from "./api_keys.ts";
 
@@ -256,7 +256,7 @@ Deno.test("/ should return the expected response", async () => {
 ## Example Apps
 
 As well as the
-[example app found in this repo](https://github.com/reno-router/reno/tree/v2.0.101/example),
+[example app found in this repo](https://github.com/reno-router/reno/tree/v2.0.102/example),
 which is targetted by the end-to-end test suite, there is a
 [standalone repository for a blog microservice](https://github.com/reno-router/blog-microservice)
 built with Deno, Reno, PostgreSQL, and Docker.
@@ -264,7 +264,7 @@ built with Deno, Reno, PostgreSQL, and Docker.
 ## API Documentation
 
 Consult
-[Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v2.0.101/reno/mod.ts)
+[Reno's entry on the Deno Doc website](https://doc.deno.land/https/deno.land/x/reno@v2.0.102/reno/mod.ts)
 for comprehensive documentation on Reno's API.
 
 ## Local Development
