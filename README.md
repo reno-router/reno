@@ -1,5 +1,16 @@
 # Reno
 
+> ## Notice
+> ⚠️ **Reno has been sunset,** and will thus no longer receive updates. The final version is v2.0.105, which supports Deno 1.34.3 and std 0.192.0.
+>
+> It is recommended that you use an alternative routing library or HTTP framework, such as [Oak](https://oakserver.github.io/oak/) or [Opine](https://github.com/cmorten/opine).
+>
+> Thank you to anyone who supported the project during its lifetime.
+>
+> **Reno: 2019-2023**
+
+---
+
 ![Reno logo](https://raw.githubusercontent.com/reno-router/reno/master/logo/reno-500.png)
 
 [![Build status](https://github.com/reno-router/reno/workflows/CI/badge.svg)](https://github.com/reno-router/reno/actions)
